@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brandparent — Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c1b2e; --ink-soft:#2a2940; --cream:#faf7f2; --paper:#fff;
+    --brand:#9B7FC4; --silver:#c9c6d3; --muted:#6b6880; --line:#e8e4dc;
+    --brand-soft:rgba(155,127,196,.14);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--cream);height:100vh;display:flex;overflow:hidden}
+  h1,h2,h3{font-family:'Fraunces',serif}
+  button{font-family:inherit;cursor:pointer}
+
+  aside{width:250px;background:var(--ink);color:#e8e5f2;display:flex;flex-direction:column;flex-shrink:0}
+  .side-head{padding:20px;display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:700;font-size:1.1rem;color:#fff;border-bottom:1px solid var(--ink-soft)}
+  .side-label{padding:18px 20px 8px;font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8c88a6;display:flex;justify-content:space-between;align-items:center}
+  .side-label .add{background:none;border:none;color:#8c88a6;font-size:1rem;line-height:1;padding:0 4px}
+  .side-label .add:hover{color:#fff}
+  .cub-btn{display:flex;align-items:center;gap:12px;width:100%;padding:11px 20px;background:none;border:none;color:#c9c5da;font-size:.92rem;font-weight:500;text-align:left;border-left:3px solid transparent}
+  .cub-btn:hover{background:var(--ink-soft);color:#fff}
+  .cub-btn.active{background:var(--ink-soft);color:#fff;border-left-color:var(--brand)}
+  .cub-dot{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:#fff;flex-shrink:0}
+  .side-foot{margin-top:auto;padding:16px 20px;border-top:1px solid var(--ink-soft);font-size:.8rem;color:#8c88a6}
+  .side-foot b{color:#fff;display:block;font-size:.88rem}
+  .studio-badge{display:inline-block;margin-top:6px;background:var(--silver);color:#fff;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:999px}
+  .logout{margin-top:10px;background:none;border:1px solid var(--ink-soft);color:#c9c5da;font-size:.78rem;padding:6px 12px;border-radius:999px}
+  .logout:hover{color:#fff;border-color:#8c88a6}
+
+  main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+  .topbar{background:var(--paper);border-bottom:1px solid var(--line);padding:0 28px;display:flex;align-items:center;gap:6px;height:58px;flex-shrink:0}
+  .topbar .brand-name{font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem;margin-right:auto;display:flex;align-items:center;gap:10px}
+  .tab{background:none;border:none;padding:8px 16px;border-radius:999px;font-size:.88rem;font-weight:600;color:var(--muted)}
+  .tab:hover{color:var(--ink)}
+  .tab.active{background:var(--brand-soft);color:var(--brand)}
+  .content{flex:1;overflow-y:auto;padding:28px}
+  .panel{display:none;max-width:880px;margin:0 auto}
+  .panel.show{display:block}
+
+  .composer-grid{display:grid;grid-template-columns:1fr 300px;gap:20px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .card h3{font-size:1rem;margin-bottom:12px}
+  textarea{width:100%;min-height:190px;border:1.5px solid var(--line);border-radius:10px;padding:14px;font-family:inherit;font-size:.95rem;line-height:1.6;resize:vertical;outline:none;background:var(--cream)}
+  textarea:focus{border-color:var(--brand)}
+  .comp-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;align-items:center}
+  .btn{padding:10px 20px;border-radius:999px;border:none;font-weight:600;font-size:.88rem}
+  .btn-brand{background:var(--brand);color:#fff}
+  .btn-ghost{background:none;border:1.5px solid var(--line);color:var(--ink)}
+  .btn-coral{background:var(--silver);color:#fff}
+  .btn:disabled{opacity:.55;cursor:default}
+  .sched-date{border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:.85rem;background:var(--cream)}
+
+  .bleed-status{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;font-weight:600;font-size:.9rem;margin-bottom:14px}
+  .bleed-clean{background:rgba(155,127,196,.12);color:#5B4A7E}
+  .bleed-dirty{background:rgba(155,150,170,.14);color:#c0392b}
+  .bleed-item{padding:10px 12px;border-radius:10px;background:var(--cream);margin-bottom:8px;font-size:.85rem}
+  .bleed-item b{font-family:'Fraunces',serif}
+  .bleed-item .from{display:inline-block;font-size:.7rem;font-weight:700;padding:2px 9px;border-radius:999px;color:#fff;margin-left:6px}
+  .bleed-empty{font-size:.85rem;color:var(--muted)}
+  mark{background:rgba(155,150,170,.3);border-radius:3px;padding:0 2px}
+  .preview{margin-top:14px;font-size:.9rem;line-height:1.6;color:var(--ink-soft);white-space:pre-wrap}
+
+  .optim-out{margin-top:14px;background:var(--cream);border-radius:10px;padding:14px;font-size:.9rem;line-height:1.6;display:none;white-space:pre-wrap}
+  .optim-note{font-size:.72rem;color:var(--muted);margin-top:8px}
+
+  .voice-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .voice-grid .card.full{grid-column:1/-1}
+  label{display:block;font-size:.78rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:12px 0 6px}
+  input[type=text]{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;font-family:inherit;font-size:.92rem;background:var(--cream);outline:none}
+  input[type=text]:focus{border-color:var(--brand)}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:var(--brand-soft);color:var(--brand);font-size:.8rem;font-weight:600;padding:5px 8px 5px 12px;border-radius:999px;margin:3px 4px 3px 0}
+  .chip.never{background:rgba(155,150,170,.12);color:#c0392b}
+  .chip button{background:none;border:none;color:inherit;opacity:.6;font-size:.9rem;line-height:1;padding:0}
+  .chip button:hover{opacity:1}
+  .chip-add{display:flex;gap:8px;margin-top:10px}
+  .chip-add input{flex:1}
+  .chip-add button{flex-shrink:0}
+  .save-row{margin-top:18px;display:flex;align-items:center;gap:12px}
+  .save-note{font-size:.8rem;color:var(--muted)}
+
+  .cal-day{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-bottom:12px;display:flex;gap:18px;align-items:baseline}
+  .cal-day .d{font-family:'Fraunces',serif;font-weight:700;min-width:110px}
+  .cal-day .t{font-size:.9rem;color:var(--ink-soft)}
+  .cal-day .tag{margin-left:auto;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:999px;color:#fff;flex-shrink:0}
+  .cal-empty{color:var(--muted);font-size:.9rem;padding:8px 2px}
+
+  .demo-note{max-width:880px;margin:0 auto 20px;font-size:.8rem;color:var(--muted);background:var(--paper);border:1px dashed var(--line);border-radius:10px;padding:10px 16px}
+  .empty-state{max-width:520px;margin:60px auto;text-align:center}
+  .empty-state h2{margin-bottom:10px}
+  .empty-state p{color:var(--muted);margin-bottom:24px}
+
+  .modal-bg{display:none;position:fixed;inset:0;background:rgba(28,27,46,.45);align-items:center;justify-content:center;z-index:100}
+  .modal-bg.show{display:flex}
+  .modal{background:var(--paper);border-radius:18px;padding:30px;width:100%;max-width:420px}
+  .modal h3{margin-bottom:4px}
+  .modal .sub{font-size:.85rem;color:var(--muted);margin-bottom:18px}
+  .color-row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .swatch{width:28px;height:28px;border-radius:8px;cursor:pointer;border:2px solid transparent}
+  .swatch.sel{border-color:var(--ink)}
+  .modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
+
+  @media(max-width:900px){.composer-grid,.voice-grid{grid-template-columns:1fr}aside{width:200px}}
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="side-head">
+    <img src="brandparent-logo.png" alt="" width="26" style="height:26px;width:auto;display:inline-block;vertical-align:middle" onerror="this.style.display='none'">
+    Brandparent
+  </div>
+  <div class="side-label"><span>Your Cubicles</span> <button class="add" onclick="openCubicleModal()" title="New cubicle">+</button></div>
+  <div id="cubicle-list"></div>
+  <div class="side-foot">
+    <b id="parent-name-el">—</b>
+    parent identity
+    <span class="studio-badge">Studio</span>
+    <br>
+    <button class="logout" onclick="logout()">Log out</button>
+  </div>
+</aside>
+
+<main>
+  <div class="topbar">
+    <span class="brand-name" id="active-name"></span>
+    <button class="tab active" data-panel="compose" onclick="showPanel('compose',this)">Composer</button>
+    <button class="tab" data-panel="voice" onclick="showPanel('voice',this)">Voice Profile</button>
+    <button class="tab" data-panel="calendar" onclick="showPanel('calendar',this)">Calendar</button>
+    <button class="tab" data-panel="connections" onclick="showPanel('connections',this)">Connections</button>
+  </div>
+
+  <div class="content" id="content-root">
+    <div class="demo-note" id="claude-note">✨ Caption optimization is live — running on a free AI stand-in for now. It'll automatically switch to Claude the moment the real ANTHROPIC_API_KEY secret is added to the Supabase project.</div>
+
+    <div id="no-cubicles" class="empty-state" style="display:none">
+      <h2>Set up your first cubicle</h2>
+      <p>Give one of your brands its own room — voice, audience, and vocabulary. Bleed Check learns as you go.</p>
+      <button class="btn btn-brand" onclick="openCubicleModal()">+ Create a cubicle</button>
+    </div>
+
+    <div id="paywall" class="empty-state" style="display:none">
+      <h2>Finish setting up your account</h2>
+      <p id="paywall-msg">Brandparent is $97 one-time — lifetime access to every cubicle you create.</p>
+      <button class="btn btn-brand" onclick="startCheckout()" id="paywall-btn">Complete your $97 purchase</button>
+    </div>
+
+    <div id="app-panels" style="display:none">
+      <div class="panel show" id="panel-compose">
+        <div class="composer-grid">
+          <div>
+            <div class="card">
+              <h3>Draft a post</h3>
+              <textarea id="draft" placeholder="Write as this brand… the Bleed Check watches as you type." oninput="runBleedCheck(); checkBlueskyLimit()"></textarea>
+              <label style="margin-top:14px">Image URL <span style="font-weight:400;text-transform:none;font-size:.78rem">(required for Instagram — Facebook works without one)</span></label>
+              <input type="text" id="draft-image" placeholder="https://… link to an already-hosted image">
+
+              <label style="margin-top:14px">Publish to</label>
+              <div id="publish-targets" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center"></div>
+              <div id="bsky-limit-warn" style="display:none;margin-top:8px;font-size:.8rem;font-weight:600;color:#c0392b"></div>
+
+              <div class="comp-actions">
+                <button class="btn btn-brand" onclick="runBleedCheck(true)">Run Bleed Check</button>
+                <button class="btn btn-coral" onclick="optimize()">✨ Optimize caption</button>
+                <input type="date" class="sched-date" id="sched-date">
+                <button class="btn btn-ghost" onclick="schedulePost()">Schedule</button>
+                <button class="btn btn-brand" onclick="publishNow()" id="publish-btn">🚀 Publish now</button>
+              </div>
+              <div class="optim-out" id="optim-out"></div>
+              <div class="optim-out" id="publish-out"></div>
+            </div>
+            <div class="card" style="margin-top:20px">
+              <h3>Draft preview <span style="font-weight:400;font-size:.8rem;color:var(--muted)">(leaks highlighted)</span></h3>
+              <div class="preview" id="preview">Nothing yet.</div>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <h3>Bleed Check™</h3>
+              <div class="bleed-status bleed-clean" id="bleed-status">✓ Clean — no contamination</div>
+              <div id="bleed-list"><p class="bleed-empty">Flagged terms from other cubicles will appear here.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-voice">
+        <div class="voice-grid">
+          <div class="card">
+            <h3>Voice</h3>
+            <label>Tone</label>
+            <input type="text" id="v-tone">
+            <label>Audience</label>
+            <input type="text" id="v-aud">
+          </div>
+          <div class="card">
+            <h3>Signature phrases</h3>
+            <div id="v-loves"></div>
+            <div class="chip-add"><input type="text" id="add-loves" placeholder="Add a phrase…"><button class="btn btn-ghost" onclick="addChip('signature_phrases','add-loves')">Add</button></div>
+          </div>
+          <div class="card full">
+            <h3>Lexicon — words this brand owns <span style="font-weight:400;font-size:.8rem;color:var(--muted)">(other cubicles get flagged for using them)</span></h3>
+            <div id="v-lex"></div>
+            <div class="chip-add"><input type="text" id="add-lex" placeholder="Add a word…"><button class="btn btn-ghost" onclick="addChip('lexicon','add-lex')">Add</button></div>
+            <h3 style="margin-top:18px">Never says</h3>
+            <div id="v-never"></div>
+            <div class="chip-add"><input type="text" id="add-never" placeholder="Add a blocked word…"><button class="btn btn-ghost" onclick="addChip('never_says','add-never')">Add</button></div>
+            <div class="save-row">
+              <button class="btn btn-brand" onclick="saveVoice()" id="save-voice-btn">Save voice profile</button>
+              <button class="btn btn-ghost" onclick="deleteCubicle()">Delete this cubicle</button>
+              <span class="save-note" id="save-note"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-calendar">
+        <div class="card">
+          <h3 style="margin-bottom:16px">Scheduled — <span id="cal-brand"></span></h3>
+          <div id="cal-list"></div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-connections">
+        <div class="card">
+          <h3>Connected accounts for <span id="conn-brand"></span></h3>
+          <p style="font-size:.85rem;color:var(--muted);margin-bottom:16px">Each cubicle connects to its own separate Facebook Page and Instagram account — never shared, so there's no way for one brand's posts to leak into another's account.</p>
+          <div id="conn-list"></div>
+          <div class="comp-actions" style="margin-top:16px">
+            <button class="btn btn-brand" onclick="connectMeta()">Connect Facebook &amp; Instagram</button>
+          </div>
+          <p style="font-size:.78rem;color:var(--muted);margin-top:12px" id="conn-dev-note">Note: this app is still in Meta's development mode, so only accounts with a role on the Brandparent Meta app (currently just you) can complete this connection until it passes App Review.</p>
+
+          <h3 style="margin-top:24px">Connect LinkedIn</h3>
+          <p style="font-size:.85rem;color:var(--muted);margin:6px 0 14px">Posts as your personal LinkedIn profile for now — a separate Company Page per brand needs LinkedIn's Community Management API, which requires a registered business entity, and is a later upgrade.</p>
+          <div class="comp-actions">
+            <button class="btn btn-brand" onclick="connectLinkedIn()">Connect LinkedIn</button>
+          </div>
+
+          <h3 style="margin-top:24px">Connect TikTok</h3>
+          <p style="font-size:.85rem;color:var(--muted);margin:6px 0 14px">Requires an image per post (TikTok's API is photo/video-first). Posts stay private (visible only to you) until this app passes TikTok's audit.</p>
+          <div class="comp-actions">
+            <button class="btn btn-brand" onclick="connectTikTok()">Connect TikTok</button>
+          </div>
+
+          <h3 style="margin-top:24px">Connect Bluesky</h3>
+          <p style="font-size:.85rem;color:var(--muted);margin:6px 0 14px">No developer approval needed — generate a free <b>App Password</b> at bsky.app → Settings → App Passwords (not your main login password), then enter it here for this cubicle only.</p>
+          <label>Handle</label>
+          <input type="text" id="bsky-handle" placeholder="e.g. djgreensatyr.bsky.social">
+          <label>App Password</label>
+          <input type="text" id="bsky-password" placeholder="xxxx-xxxx-xxxx-xxxx">
+          <div class="comp-actions" style="margin-top:14px">
+            <button class="btn btn-brand" onclick="connectBluesky()" id="bsky-connect-btn">Connect Bluesky</button>
+          </div>
+          <div class="optim-out" id="bsky-out"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="modal-bg" id="cubicle-modal">
+  <div class="modal">
+    <h3>New cubicle</h3>
+    <div class="sub">One room, one voice. You can fill in the rest after.</div>
+    <label>Brand name</label>
+    <input type="text" id="m-name" placeholder="e.g. Satyr Arcana">
+    <label>Initials (shows on the badge)</label>
+    <input type="text" id="m-initials" maxlength="3" placeholder="e.g. SA">
+    <label>Color</label>
+    <div class="color-row" id="m-colors"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeCubicleModal()">Cancel</button>
+      <button class="btn btn-brand" onclick="createCubicle()">Create</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/supabase-client.js"></script>
+<script>
+const COLORS = ['#1b5e20','#4a148c','#1565c0','#26374a','#5f7d54','#6b1620','#9B7FC4','#c0392b','#b8860b','#006d77'];
+let cubicles = [];
+let drafts = [];
+let active = null;
+let session = null;
+let selectedColor = COLORS[0];
+let connections = [];
+
+async function init() {
+  session = await requireSession();
+  if (!session) return;
+
+  const { data: profile } = await sb.from('profiles').select('parent_name, subscription_status').eq('id', session.user.id).single();
+  document.getElementById('parent-name-el').textContent = (profile && profile.parent_name) || 'My Identity';
+
+  const params = new URLSearchParams(window.location.search);
+  const paidStatuses = ['active', 'trialing'];
+  let status = profile && profile.subscription_status;
+
+  if (params.get('checkout') === 'success' && !paidStatuses.includes(status)) {
+    // Stripe just redirected back — the webhook may take a couple seconds to land.
+    document.getElementById('no-cubicles').style.display = 'none';
+    document.getElementById('app-panels').style.display = 'none';
+    document.getElementById('paywall').style.display = 'block';
+    document.getElementById('paywall-msg').textContent = 'Payment received — activating your account…';
+    document.getElementById('paywall-btn').style.display = 'none';
+    for (let i = 0; i < 8 && !paidStatuses.includes(status); i++) {
+      await new Promise(r => setTimeout(r, 2000));
+      const { data: p2 } = await sb.from('profiles').select('subscription_status').eq('id', session.user.id).single();
+      status = p2 && p2.subscription_status;
+    }
+    window.history.replaceState({}, '', 'app.html');
+    document.getElementById('paywall-btn').style.display = '';
+  }
+
+  if (!paidStatuses.includes(status)) {
+    document.getElementById('no-cubicles').style.display = 'none';
+    document.getElementById('app-panels').style.display = 'none';
+    document.getElementById('paywall').style.display = 'block';
+    document.getElementById('paywall-msg').textContent = status === 'past_due'
+      ? "Your last payment didn't go through — update it to keep your cubicles active."
+      : 'Brandparent is $97 one-time — lifetime access to every cubicle you create.';
+    return;
+  }
+  document.getElementById('paywall').style.display = 'none';
+
+  await loadCubicles();
+  renderColorSwatches();
+
+  if (params.get('connected')) {
+    alert('Connected: ' + params.get('connected'));
+    window.history.replaceState({}, '', 'app.html');
+    await renderConnections();
+  } else if (params.get('connect_error')) {
+    alert('Connection failed: ' + params.get('connect_error'));
+    window.history.replaceState({}, '', 'app.html');
+  }
+}
+
+async function startCheckout() {
+  const btn = document.getElementById('paywall-btn');
+  const msg = document.getElementById('paywall-msg');
+  btn.disabled = true; btn.textContent = 'Redirecting to payment…';
+
+  const { data, error } = await sb.functions.invoke('create-checkout-session', {
+    body: { tier: 'founding_member' }
+  });
+
+  if (error || !data || !data.url) {
+    msg.textContent = 'Could not start checkout: ' + (error ? error.message : 'no URL returned') + '. Try again in a moment.';
+    btn.disabled = false; btn.textContent = 'Complete your $97 purchase';
+    return;
+  }
+  window.location.href = data.url;
+}
+
+async function loadCubicles() {
+  const { data, error } = await sb.from('cubicles').select('*').order('created_at', { ascending: true });
+  if (error) { console.error(error); return; }
+  cubicles = data || [];
+
+  if (cubicles.length === 0) {
+    document.getElementById('no-cubicles').style.display = 'block';
+    document.getElementById('app-panels').style.display = 'none';
+    document.getElementById('active-name').innerHTML = '';
+    return;
+  }
+  document.getElementById('no-cubicles').style.display = 'none';
+  document.getElementById('app-panels').style.display = 'block';
+
+  if (!active || !cubicles.find(c => c.id === active.id)) active = cubicles[0];
+  else active = cubicles.find(c => c.id === active.id);
+
+  renderSidebar();
+  await setBrand(active.id);
+}
+
+function renderSidebar() {
+  const el = document.getElementById('cubicle-list');
+  el.innerHTML = cubicles.map(c => `
+    <button class="cub-btn ${active && c.id === active.id ? 'active' : ''}" onclick="setBrand('${c.id}')">
+      <span class="cub-dot" style="background:${c.color}">${(c.icon_initials || c.name.slice(0,2)).toUpperCase()}</span> ${escapeHtml(c.name)}
+    </button>`).join('');
+}
+
+async function setBrand(id) {
+  active = cubicles.find(c => c.id === id);
+  if (!active) return;
+  document.documentElement.style.setProperty('--brand', active.color);
+  document.documentElement.style.setProperty('--brand-soft', hexSoft(active.color));
+  document.getElementById('active-name').innerHTML =
+    `<span class="cub-dot" style="background:${active.color}">${(active.icon_initials || active.name.slice(0,2)).toUpperCase()}</span> ${escapeHtml(active.name)}`;
+  document.getElementById('draft').value = '';
+  document.getElementById('draft-image').value = '';
+  document.getElementById('optim-out').style.display = 'none';
+  document.getElementById('publish-out').style.display = 'none';
+  renderSidebar();
+  renderVoice();
+  await loadDrafts();
+  await renderConnections();
+  runBleedCheck();
+}
+
+function hexSoft(hex) {
+  const n = parseInt(hex.replace('#',''), 16);
+  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},.10)`;
+}
+
+function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderVoice() {
+  document.getElementById('v-tone').value = active.tone || '';
+  document.getElementById('v-aud').value = active.audience || '';
+  renderChips('v-loves', active.signature_phrases || [], 'signature_phrases', false);
+  renderChips('v-lex', active.lexicon || [], 'lexicon', false);
+  renderChips('v-never', active.never_says || [], 'never_says', true);
+}
+
+function renderChips(elId, arr, field, isNever) {
+  const el = document.getElementById(elId);
+  el.innerHTML = arr.map((w, i) => `
+    <span class="chip ${isNever ? 'never' : ''}">${escapeHtml(w)} <button onclick="removeChip('${field}',${i})">&times;</button></span>
+  `).join('') || '<span class="save-note">Nothing yet.</span>';
+}
+
+function addChip(field, inputId) {
+  const input = document.getElementById(inputId);
+  const val = input.value.trim();
+  if (!val) return;
+  active[field] = [...(active[field] || []), val];
+  input.value = '';
+  renderVoice();
+}
+
+function removeChip(field, idx) {
+  active[field] = (active[field] || []).filter((_, i) => i !== idx);
+  renderVoice();
+}
+
+async function saveVoice() {
+  const btn = document.getElementById('save-voice-btn');
+  const note = document.getElementById('save-note');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  const patch = {
+    tone: document.getElementById('v-tone').value,
+    audience: document.getElementById('v-aud').value,
+    signature_phrases: active.signature_phrases || [],
+    lexicon: active.lexicon || [],
+    never_says: active.never_says || []
+  };
+
+  const { error } = await sb.from('cubicles').update(patch).eq('id', active.id);
+  btn.disabled = false; btn.textContent = 'Save voice profile';
+
+  if (error) { note.textContent = 'Error: ' + error.message; note.style.color = '#c0392b'; return; }
+  Object.assign(active, patch);
+  const idx = cubicles.findIndex(c => c.id === active.id);
+  if (idx > -1) cubicles[idx] = active;
+  note.style.color = 'var(--muted)';
+  note.textContent = 'Saved ✓';
+  setTimeout(() => note.textContent = '', 2500);
+  runBleedCheck();
+}
+
+async function deleteCubicle() {
+  if (!confirm(`Delete "${active.name}" and all its drafts? This can't be undone.`)) return;
+  const { error } = await sb.from('cubicles').delete().eq('id', active.id);
+  if (error) { alert('Error: ' + error.message); return; }
+  active = null;
+  await loadCubicles();
+}
+
+function openCubicleModal() {
+  document.getElementById('m-name').value = '';
+  document.getElementById('m-initials').value = '';
+  selectedColor = COLORS[cubicles.length % COLORS.length];
+  renderColorSwatches();
+  document.getElementById('cubicle-modal').classList.add('show');
+}
+function closeCubicleModal() { document.getElementById('cubicle-modal').classList.remove('show'); }
+
+function renderColorSwatches() {
+  const el = document.getElementById('m-colors');
+  el.innerHTML = COLORS.map(c => `<div class="swatch ${c===selectedColor?'sel':''}" style="background:${c}" onclick="pickColor('${c}')"></div>`).join('');
+}
+function pickColor(c) { selectedColor = c; renderColorSwatches(); }
+
+async function createCubicle() {
+  const name = document.getElementById('m-name').value.trim();
+  const initials = document.getElementById('m-initials').value.trim() || name.slice(0,2).toUpperCase();
+  if (!name) { alert('Give the cubicle a name.'); return; }
+
+  const { data, error } = await sb.from('cubicles').insert({
+    user_id: session.user.id,
+    name, icon_initials: initials, color: selectedColor,
+    role: '', audience: '', tone: '',
+    signature_phrases: [], lexicon: [], never_says: []
+  }).select().single();
+
+  if (error) { alert('Error: ' + error.message); return; }
+  closeCubicleModal();
+  active = data;
+  await loadCubicles();
+}
+
+async function loadDrafts() {
+  const { data, error } = await sb.from('drafts').select('*').eq('cubicle_id', active.id).order('scheduled_for', { ascending: true, nullsFirst: false }).order('created_at', { ascending: false });
+  if (error) { console.error(error); drafts = []; } else { drafts = data || []; }
+  renderCal();
+}
+
+function renderCal() {
+  document.getElementById('cal-brand').textContent = active.name;
+  const list = document.getElementById('cal-list');
+  const scheduled = drafts.filter(d => d.status === 'scheduled');
+  if (!scheduled.length) { list.innerHTML = '<p class="cal-empty">Nothing scheduled.</p>'; return; }
+  list.innerHTML = scheduled.map(d => `
+    <div class="cal-day">
+      <span class="d">${d.scheduled_for ? new Date(d.scheduled_for).toLocaleDateString(undefined,{month:'short',day:'numeric'}) : 'No date'}</span>
+      <span class="t">${escapeHtml(d.content.length > 70 ? d.content.slice(0,70)+'…' : d.content)}</span>
+      <span class="tag" style="background:${active.color}">${(active.icon_initials||'').toUpperCase()}</span>
+    </div>`).join('');
+}
+
+function runBleedCheck() {
+  if (!active) return;
+  const raw = document.getElementById('draft').value;
+  const text = raw.toLowerCase();
+  const words = text.match(/[a-z']+/g) || [];
+  const leaks = [];
+
+  for (const c of cubicles) {
+    if (c.id === active.id) continue;
+    for (const term of (c.lexicon || [])) {
+      if ((active.lexicon || []).includes(term)) continue;
+      if ((active.signature_phrases || []).some(p => p.toLowerCase().split(/[^a-z']+/).includes(term))) continue;
+      if (words.includes(term)) leaks.push({ term, brand: c });
+    }
+    for (const phrase of (c.signature_phrases || [])) {
+      if (phrase && text.includes(phrase.toLowerCase())) leaks.push({ term: '"' + phrase + '"', brand: c, phrase: true });
+    }
+  }
+  for (const term of (active.never_says || [])) {
+    if (term && text.includes(term.toLowerCase())) leaks.push({ term, brand: null });
+  }
+
+  const status = document.getElementById('bleed-status');
+  const list = document.getElementById('bleed-list');
+  if (!raw.trim()) {
+    status.className = 'bleed-status bleed-clean';
+    status.textContent = '✓ Clean — no contamination';
+    list.innerHTML = '<p class="bleed-empty">Flagged terms from other cubicles will appear here.</p>';
+    document.getElementById('preview').textContent = 'Nothing yet.';
+    return;
+  }
+  if (leaks.length) {
+    status.className = 'bleed-status bleed-dirty';
+    status.textContent = '⚠ Contamination detected — ' + leaks.length + ' leak' + (leaks.length > 1 ? 's' : '');
+    list.innerHTML = leaks.map(l => l.brand
+      ? `<div class="bleed-item"><b>${escapeHtml(l.term)}</b> belongs to <span class="from" style="background:${l.brand.color}">${escapeHtml(l.brand.name)}</span></div>`
+      : `<div class="bleed-item"><b>${escapeHtml(l.term)}</b> is on <b>${escapeHtml(active.name)}</b>'s never-say list <span class="from" style="background:#c0392b">blocked term</span></div>`
+    ).join('');
+  } else {
+    status.className = 'bleed-status bleed-clean';
+    status.textContent = '✓ Clean — this reads as ' + active.name;
+    list.innerHTML = '<p class="bleed-empty">No leaks. Ship it.</p>';
+  }
+
+  let html = escapeHtml(raw);
+  const flagged = [...new Set(leaks.filter(l => !l.phrase).map(l => l.term.replace(/["]/g,'')))];
+  for (const t of flagged) {
+    try { html = html.replace(new RegExp('\\b(' + t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')\\b', 'gi'), '<mark>$1</mark>'); } catch(e) {}
+  }
+  for (const l of leaks.filter(l => l.phrase)) {
+    const p = l.term.replace(/["]/g,'');
+    try { html = html.replace(new RegExp('(' + p.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi'), '<mark>$1</mark>'); } catch(e) {}
+  }
+  document.getElementById('preview').innerHTML = html;
+}
+
+async function optimize() {
+  const raw = document.getElementById('draft').value.trim();
+  const out = document.getElementById('optim-out');
+  if (!raw) { out.style.display = 'block'; out.textContent = 'Write a draft first — then I\'ll tune it to ' + active.name + '\'s voice.'; return; }
+
+  out.style.display = 'block';
+  out.textContent = 'Optimizing…';
+
+  try {
+    const { data, error } = await sb.functions.invoke('optimize-caption', {
+      body: { draft: raw, tone: active.tone, audience: active.audience, signature_phrases: active.signature_phrases, lexicon: active.lexicon, never_says: active.never_says, brand_name: active.name }
+    });
+    if (error) throw error;
+    const providerLabel = data.provider === 'gemini' ? 'AI (free tier)' : 'Claude';
+    out.innerHTML = escapeHtml(data.caption) + '<div class="optim-note">✨ Optimized via ' + providerLabel + ' for ' + escapeHtml(active.name) + '.</div>';
+  } catch (e) {
+    out.innerHTML = 'Caption optimization isn\'t configured yet — the ANTHROPIC_API_KEY secret needs to be added to the Supabase project\'s Edge Function settings.' +
+      '<div class="optim-note">(' + escapeHtml(e.message || String(e)) + ')</div>';
+  }
+}
+
+async function schedulePost() {
+  const raw = document.getElementById('draft').value.trim();
+  if (!raw) { alert('Nothing to schedule yet — write a draft first.'); return; }
+  const dateVal = document.getElementById('sched-date').value;
+  const imageUrl = document.getElementById('draft-image').value.trim();
+  const targets = getSelectedPlatforms();
+  if (connections.length && !targets.length) { alert('Every platform is unchecked — check at least one under "Publish to" first.'); return; }
+
+  const { error } = await sb.from('drafts').insert({
+    user_id: session.user.id,
+    cubicle_id: active.id,
+    content: raw,
+    image_url: imageUrl || null,
+    status: 'scheduled',
+    scheduled_for: dateVal ? new Date(dateVal).toISOString() : null,
+    target_platforms: targets.length ? targets : null
+  });
+
+  if (error) { alert('Error: ' + error.message); return; }
+  await loadDrafts();
+  alert('Scheduled to ' + active.name + '\'s calendar. It will auto-publish to ' + (targets.length ? targets.join(', ') : 'every connected platform') + ' within 5 minutes of the scheduled time — no need to come back and click publish.');
+}
+
+async function publishNow() {
+  const raw = document.getElementById('draft').value.trim();
+  if (!raw) { alert('Nothing to publish yet — write a draft first.'); return; }
+  const imageUrl = document.getElementById('draft-image').value.trim();
+  const targets = getSelectedPlatforms();
+  if (connections.length && !targets.length) { alert('Every platform is unchecked — check at least one under "Publish to" first.'); return; }
+  const btn = document.getElementById('publish-btn');
+  const out = document.getElementById('publish-out');
+
+  btn.disabled = true; btn.textContent = 'Publishing…';
+  out.style.display = 'block';
+  out.textContent = 'Saving draft, then publishing…';
+
+  const { data: draftRow, error: insertErr } = await sb.from('drafts').insert({
+    user_id: session.user.id,
+    cubicle_id: active.id,
+    content: raw,
+    image_url: imageUrl || null,
+    status: 'draft',
+    target_platforms: targets.length ? targets : null
+  }).select().single();
+
+  if (insertErr) {
+    btn.disabled = false; btn.textContent = '🚀 Publish now';
+    out.innerHTML = 'Error saving draft: ' + escapeHtml(insertErr.message);
+    return;
+  }
+
+  try {
+    const { data, error } = await sb.functions.invoke('publish-post', { body: { draft_id: draftRow.id } });
+    if (error) throw error;
+
+    const lines = Object.entries(data.results || {}).map(([platform, r]) => {
+      return r.ok ? `✓ ${platform}: posted (${r.post_id})` : `✗ ${platform}: ${r.error}`;
+    });
+    out.innerHTML = lines.map(l => escapeHtml(l)).join('<br>') || 'No connected accounts to publish to for this cubicle — connect one under the Connections tab.';
+  } catch (e) {
+    out.innerHTML = 'Publish failed: ' + escapeHtml(e.message || String(e));
+  }
+
+  btn.disabled = false; btn.textContent = '🚀 Publish now';
+  await loadDrafts();
+}
+
+// Set once the LinkedIn Developer App exists (developer.linkedin.com — needs a
+// verified Company Page first). Not a secret; safe to expose client-side.
+const LINKEDIN_CLIENT_ID = '';
+// Set once the TikTok Developer App exists (developers.tiktok.com).
+const TIKTOK_CLIENT_KEY = 'awxiafyhdc1hunai';
+
+function connectLinkedIn() {
+  if (!LINKEDIN_CLIENT_ID) { alert('LinkedIn isn\'t connected yet — the developer app still needs to be created. Ask to get this set up.'); return; }
+  const REDIRECT_URI = 'https://owxaolqikmgtlegtficq.supabase.co/functions/v1/linkedin-oauth-callback';
+  const scopes = ['openid', 'profile', 'w_member_social'].join(' ');
+  const url = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(scopes)}&state=${encodeURIComponent(active.id)}`;
+  window.location.href = url;
+}
+
+function connectTikTok() {
+  if (!TIKTOK_CLIENT_KEY) { alert('TikTok isn\'t connected yet — the developer app still needs to be created. Ask to get this set up.'); return; }
+  const REDIRECT_URI = 'https://owxaolqikmgtlegtficq.supabase.co/functions/v1/tiktok-oauth-callback';
+  const scopes = ['user.info.basic', 'video.publish'].join(',');
+  const url = `https://www.tiktok.com/v2/auth/authorize/?client_key=${TIKTOK_CLIENT_KEY}&scope=${encodeURIComponent(scopes)}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&state=${encodeURIComponent(active.id)}`;
+  window.location.href = url;
+}
+
+function connectMeta() {
+  const APP_ID = '1536478337966065';
+  const REDIRECT_URI = 'https://owxaolqikmgtlegtficq.supabase.co/functions/v1/meta-oauth-callback';
+  const scopes = ['pages_show_list', 'pages_read_engagement', 'pages_manage_posts', 'instagram_basic', 'instagram_content_publish'].join(',');
+  const state = active.id;
+  const url = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${APP_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(scopes)}&state=${encodeURIComponent(state)}&response_type=code`;
+  alert('You\'ll be sent to Facebook — please grant access to ONLY the one Page that belongs to "' + active.name + '" when it asks which Pages to connect. That keeps this cubicle\'s connection separate from your other brands.');
+  window.location.href = url;
+}
+
+const PLATFORM_LABEL = { facebook: 'Facebook Page', instagram: 'Instagram', bluesky: 'Bluesky', linkedin: 'LinkedIn', tiktok: 'TikTok' };
+
+async function renderConnections() {
+  document.getElementById('conn-brand').textContent = active.name;
+  const { data, error } = await sb.from('social_accounts').select('*').eq('cubicle_id', active.id);
+  const list = document.getElementById('conn-list');
+  connections = (!error && data) ? data : [];
+
+  if (error) { list.innerHTML = '<p class="save-note">Error loading connections.</p>'; renderPublishTargets(); return; }
+  if (!data || data.length === 0) {
+    list.innerHTML = '<p class="save-note">No accounts connected yet for ' + escapeHtml(active.name) + '.</p>';
+    renderPublishTargets();
+    return;
+  }
+  list.innerHTML = data.map(a => `
+    <div class="bleed-item"><b>${PLATFORM_LABEL[a.platform] || a.platform}</b>: ${escapeHtml(a.external_account_name || a.external_account_id)}
+      <span class="from" style="background:#2E6B4A">connected</span></div>
+  `).join('');
+  renderPublishTargets();
+}
+
+function renderPublishTargets() {
+  const el = document.getElementById('publish-targets');
+  if (!el) return;
+  if (!connections.length) {
+    el.innerHTML = '<span class="save-note">No accounts connected yet — connect one under the Connections tab.</span>';
+    return;
+  }
+  el.innerHTML = connections.map(a => `
+    <label style="display:flex;align-items:center;gap:6px;text-transform:none;font-weight:500;font-size:.85rem;color:var(--ink)">
+      <input type="checkbox" class="publish-target-cb" value="${a.platform}" checked onchange="checkBlueskyLimit()">
+      ${PLATFORM_LABEL[a.platform] || a.platform} <span style="color:var(--muted);font-size:.78rem">(${escapeHtml(a.external_account_name || '')})</span>
+    </label>
+  `).join('');
+  checkBlueskyLimit();
+}
+
+function getSelectedPlatforms() {
+  return Array.from(document.querySelectorAll('.publish-target-cb:checked')).map(cb => cb.value);
+}
+
+function checkBlueskyLimit() {
+  const warn = document.getElementById('bsky-limit-warn');
+  if (!warn) return;
+  const blueskyChecked = document.querySelector('.publish-target-cb[value="bluesky"]:checked');
+  const len = document.getElementById('draft').value.length;
+  if (blueskyChecked && len > 300) {
+    warn.style.display = 'block';
+    warn.textContent = `⚠ ${len}/300 characters — too long for Bluesky. It'll get cut to fit. Uncheck Bluesky above, or shorten the post, if you'd rather post it there untrimmed.`;
+  } else if (blueskyChecked && len > 260) {
+    warn.style.display = 'block';
+    warn.style.color = 'var(--muted)';
+    warn.textContent = `${len}/300 characters for Bluesky — getting close to the limit.`;
+  } else {
+    warn.style.display = 'none';
+    warn.style.color = '#c0392b';
+  }
+}
+
+async function connectBluesky() {
+  const handle = document.getElementById('bsky-handle').value.trim();
+  const appPassword = document.getElementById('bsky-password').value.trim();
+  const btn = document.getElementById('bsky-connect-btn');
+  const out = document.getElementById('bsky-out');
+
+  if (!handle || !appPassword) {
+    out.style.display = 'block';
+    out.textContent = 'Enter both a handle and an app password first.';
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Connecting…';
+  out.style.display = 'block';
+  out.textContent = 'Verifying with Bluesky…';
+
+  try {
+    const { data, error } = await sb.functions.invoke('bluesky-connect', {
+      body: { cubicle_id: active.id, handle, app_password: appPassword }
+    });
+    if (error) throw error;
+    out.textContent = 'Connected as @' + data.handle + ' for ' + active.name + '.';
+    document.getElementById('bsky-handle').value = '';
+    document.getElementById('bsky-password').value = '';
+    await renderConnections();
+  } catch (e) {
+    out.textContent = 'Connection failed: ' + (e.message || String(e));
+  }
+
+  btn.disabled = false; btn.textContent = 'Connect Bluesky';
+}
+
+function showPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('show'));
+  document.getElementById('panel-' + name).classList.add('show');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+async function logout() {
+  await sb.auth.signOut();
+  window.location.href = 'login.html';
+}
+
+init();
+</script>
+</body>
+</html>

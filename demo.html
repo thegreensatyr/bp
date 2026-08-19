@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brandparent — Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c1b2e; --ink-soft:#2a2940; --cream:#faf7f2; --paper:#fff;
+    --brand:#9B7FC4; --silver:#c9c6d3; --muted:#6b6880; --line:#e8e4dc;
+    --brand-soft:rgba(155,127,196,.14);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--cream);height:100vh;display:flex;overflow:hidden}
+  h1,h2,h3{font-family:'Fraunces',serif}
+  button{font-family:inherit;cursor:pointer}
+
+  /* SIDEBAR */
+  aside{width:250px;background:var(--ink);color:#e8e5f2;display:flex;flex-direction:column;flex-shrink:0}
+  .side-head{padding:20px;display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:700;font-size:1.1rem;color:#fff;border-bottom:1px solid var(--ink-soft)}
+  .side-label{padding:18px 20px 8px;font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8c88a6}
+  .cub-btn{display:flex;align-items:center;gap:12px;width:100%;padding:11px 20px;background:none;border:none;color:#c9c5da;font-size:.92rem;font-weight:500;text-align:left;border-left:3px solid transparent}
+  .cub-btn:hover{background:var(--ink-soft);color:#fff}
+  .cub-btn.active{background:var(--ink-soft);color:#fff;border-left-color:var(--brand)}
+  .cub-dot{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:#fff;flex-shrink:0}
+  .side-foot{margin-top:auto;padding:16px 20px;border-top:1px solid var(--ink-soft);font-size:.8rem;color:#8c88a6}
+  .side-foot b{color:#fff;display:block;font-size:.88rem}
+  .studio-badge{display:inline-block;margin-top:6px;background:var(--silver);color:#fff;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:999px}
+
+  /* MAIN */
+  main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+  .topbar{background:var(--paper);border-bottom:1px solid var(--line);padding:0 28px;display:flex;align-items:center;gap:6px;height:58px;flex-shrink:0}
+  .topbar .brand-name{font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem;margin-right:auto;display:flex;align-items:center;gap:10px}
+  .tab{background:none;border:none;padding:8px 16px;border-radius:999px;font-size:.88rem;font-weight:600;color:var(--muted)}
+  .tab:hover{color:var(--ink)}
+  .tab.active{background:var(--brand-soft);color:var(--brand)}
+  .content{flex:1;overflow-y:auto;padding:28px}
+  .panel{display:none;max-width:880px;margin:0 auto}
+  .panel.show{display:block}
+
+  /* COMPOSER */
+  .composer-grid{display:grid;grid-template-columns:1fr 300px;gap:20px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .card h3{font-size:1rem;margin-bottom:12px}
+  textarea{width:100%;min-height:190px;border:1.5px solid var(--line);border-radius:10px;padding:14px;font-family:inherit;font-size:.95rem;line-height:1.6;resize:vertical;outline:none;background:var(--cream)}
+  textarea:focus{border-color:var(--brand)}
+  .comp-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .btn{padding:10px 20px;border-radius:999px;border:none;font-weight:600;font-size:.88rem}
+  .btn-brand{background:var(--brand);color:#fff}
+  .btn-ghost{background:none;border:1.5px solid var(--line);color:var(--ink)}
+  .btn-coral{background:var(--silver);color:#fff}
+
+  .bleed-status{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;font-weight:600;font-size:.9rem;margin-bottom:14px}
+  .bleed-clean{background:rgba(155,127,196,.12);color:#5B4A7E}
+  .bleed-dirty{background:rgba(155,150,170,.14);color:#c0392b}
+  .bleed-item{padding:10px 12px;border-radius:10px;background:var(--cream);margin-bottom:8px;font-size:.85rem}
+  .bleed-item b{font-family:'Fraunces',serif}
+  .bleed-item .from{display:inline-block;font-size:.7rem;font-weight:700;padding:2px 9px;border-radius:999px;color:#fff;margin-left:6px}
+  .bleed-empty{font-size:.85rem;color:var(--muted)}
+  mark{background:rgba(155,150,170,.3);border-radius:3px;padding:0 2px}
+  .preview{margin-top:14px;font-size:.9rem;line-height:1.6;color:var(--ink-soft);white-space:pre-wrap}
+
+  .optim-out{margin-top:14px;background:var(--cream);border-radius:10px;padding:14px;font-size:.9rem;line-height:1.6;display:none;white-space:pre-wrap}
+  .optim-note{font-size:.72rem;color:var(--muted);margin-top:8px}
+
+  /* VOICE */
+  .voice-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .voice-grid .card.full{grid-column:1/-1}
+  label{display:block;font-size:.78rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:12px 0 6px}
+  input[type=text]{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;font-family:inherit;font-size:.92rem;background:var(--cream);outline:none}
+  input[type=text]:focus{border-color:var(--brand)}
+  .chip{display:inline-block;background:var(--brand-soft);color:var(--brand);font-size:.8rem;font-weight:600;padding:5px 12px;border-radius:999px;margin:3px 4px 3px 0}
+  .chip.never{background:rgba(155,150,170,.12);color:#c0392b}
+
+  /* CALENDAR */
+  .cal-day{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-bottom:12px;display:flex;gap:18px;align-items:baseline}
+  .cal-day .d{font-family:'Fraunces',serif;font-weight:700;min-width:92px}
+  .cal-day .t{font-size:.9rem;color:var(--ink-soft)}
+  .cal-day .tag{margin-left:auto;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:999px;color:#fff;flex-shrink:0}
+  .cal-empty{color:var(--muted);font-size:.9rem;padding:8px 2px}
+
+  .demo-note{max-width:880px;margin:0 auto 20px;font-size:.8rem;color:var(--muted);background:var(--paper);border:1px dashed var(--line);border-radius:10px;padding:10px 16px}
+  @media(max-width:900px){.composer-grid,.voice-grid{grid-template-columns:1fr}aside{width:200px}}
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="side-head">
+    <img src="brandparent-logo.png" alt="Brandparent" width="26" style="height:26px;width:auto;display:inline-block;vertical-align:middle;">
+    Brandparent
+  </div>
+  <div class="side-label">Your Cubicles</div>
+  <div id="cubicle-list"></div>
+  <div class="side-foot">
+    <b>Leather</b>
+    The Green Satyr LLC · parent identity
+    <span class="studio-badge">Studio</span>
+  </div>
+</aside>
+
+<main>
+  <div class="topbar">
+    <span class="brand-name" id="active-name"></span>
+    <button class="tab active" data-panel="compose" onclick="showPanel('compose',this)">Composer</button>
+    <button class="tab" data-panel="voice" onclick="showPanel('voice',this)">Voice Profile</button>
+    <button class="tab" data-panel="calendar" onclick="showPanel('calendar',this)">Calendar</button>
+  </div>
+
+  <div class="content">
+    <div class="demo-note">🧪 <b>Demo build</b> — all data lives in this page. The production app connects real accounts, saves your cubicles, and uses the Claude API for caption optimization.</div>
+
+    <!-- COMPOSER -->
+    <div class="panel show" id="panel-compose">
+      <div class="composer-grid">
+        <div>
+          <div class="card">
+            <h3>Draft a post</h3>
+            <textarea id="draft" placeholder="Write as this brand… the Bleed Check watches as you type." oninput="runBleedCheck()"></textarea>
+            <div class="comp-actions">
+              <button class="btn btn-brand" onclick="runBleedCheck(true)">Run Bleed Check</button>
+              <button class="btn btn-coral" onclick="optimize()">✨ Optimize caption</button>
+              <button class="btn btn-ghost" onclick="schedulePost()">Schedule</button>
+            </div>
+            <div class="optim-out" id="optim-out"></div>
+          </div>
+          <div class="card" style="margin-top:20px">
+            <h3>Draft preview <span style="font-weight:400;font-size:.8rem;color:var(--muted)">(leaks highlighted)</span></h3>
+            <div class="preview" id="preview">Nothing yet.</div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <h3>Bleed Check™</h3>
+            <div class="bleed-status bleed-clean" id="bleed-status">✓ Clean — no contamination</div>
+            <div id="bleed-list"><p class="bleed-empty">Flagged terms from other cubicles will appear here.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VOICE -->
+    <div class="panel" id="panel-voice">
+      <div class="voice-grid">
+        <div class="card">
+          <h3>Voice</h3>
+          <label>Tone</label>
+          <input type="text" id="v-tone">
+          <label>Audience</label>
+          <input type="text" id="v-aud">
+        </div>
+        <div class="card">
+          <h3>Signature phrases</h3>
+          <div id="v-loves"></div>
+        </div>
+        <div class="card full">
+          <h3>Lexicon — words this brand owns <span style="font-weight:400;font-size:.8rem;color:var(--muted)">(other cubicles get flagged for using them)</span></h3>
+          <div id="v-lex"></div>
+          <h3 style="margin-top:18px">Never says</h3>
+          <div id="v-never"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div class="panel" id="panel-calendar">
+      <div class="card">
+        <h3 style="margin-bottom:16px">This week — <span id="cal-brand"></span> only</h3>
+        <div id="cal-list"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+const BRANDS = [
+  {
+    id:'djgs', initials:'DJ', name:'DJ Green Satyr', color:'#1b5e20',
+    tone:'Dark, theatrical, chromesthetic, inclusive, bold. Speaks from the stage.',
+    audience:'EDM fans, LGBTQ+ community, bears scene, occult-curious listeners',
+    loves:['hooves up','the grove is open','ritual beats'],
+    lexicon:['satyr','grove','hooves','set','drop','mix','groove','beats','stage','chromesthetic'],
+    never:['compliance','audit','pricing tiers'],
+    cal:[
+      {d:'Tue 14', t:'Satyr Arcana II teaser clip — 30s', done:false},
+      {d:'Thu 16', t:'Throwback set photos + lore thread', done:false},
+      {d:'Sat 18', t:'Live stream announcement', done:false}
+    ],
+    optimTail:'\n\nHooves up — the grove is open. 🌲🐐\n#DJGreenSatyr #TechHouse #RitualBeats'
+  },
+  {
+    id:'sa', initials:'SA', name:'Satyr Arcana', color:'#4a148c',
+    tone:'Mystical, ritualistic, poetic, cinematic. A dancefloor séance.',
+    audience:'Tarot & occult community, art-house audiences, alternative music fans',
+    loves:['the cards remember','a dancefloor séance','myth meets memory'],
+    lexicon:['arcana','tarot','deck','reading','spread','moon','spirit','ritual','card','veil'],
+    never:['banger','licensing','case file'],
+    cal:[
+      {d:'Wed 15', t:'Card of the week — Major Arcana spotlight', done:false},
+      {d:'Fri 17', t:'Part II teaser — Mixcloud clip', done:false}
+    ],
+    optimTail:'\n\nMyth meets memory. 🌙\n#SatyrArcana #Tarot #PartII'
+  },
+  {
+    id:'bt', initials:'BP', name:'BrandParent', color:'#1565c0',
+    tone:'Professional, innovative, music-forward, authoritative.',
+    audience:'Retail, hospitality, event & lifestyle brands (B2B)',
+    loves:['your brand has a sound','intentional sonic environments'],
+    lexicon:['licensing','playlist','curation','client','venue','hospitality','retail','campaign','consulting'],
+    never:['hooves','moon','vibes only'],
+    cal:[
+      {d:'Mon 13', t:'Service menu draft v1 — internal', done:true},
+      {d:'Thu 16', t:'Sample playlist package outline', done:false}
+    ],
+    optimTail:'\n\nYour brand has a sound. Let\'s find it.\n#BrandParent #BrandSound #MusicLicensing'
+  },
+  {
+    id:'cf', initials:'CF', name:'CasForensics', color:'#26374a',
+    tone:'Authoritative, precise, investigative, trustworthy. No mysticism, no slang.',
+    audience:'Legal professionals, insurance companies, private clients',
+    loves:['the evidence shows','case in point'],
+    lexicon:['forensics','compliance','audit','evidence','case','investigation','regulatory','fraud','analysis','claim'],
+    never:['vibes','ritual','moon','spirit'],
+    cal:[
+      {d:'Thu 16', t:'Brand scope document — working session (internal)', done:false}
+    ],
+    optimTail:'\n\nCase in point. Full analysis at the link.\n#CasForensics #Investigations #Compliance'
+  },
+  {
+    id:'vf', initials:'VF', name:'Virgo Focused', color:'#5f7d54',
+    tone:'Calm, precise, aspirational, grounded. Small steps, real systems.',
+    audience:'Creative entrepreneurs, wellness seekers, productivity-minded professionals',
+    loves:['one small system','protect the morning','focus is a practice'],
+    lexicon:['focus','routine','habit','productivity','wellness','mindful','planner','journal','clarity','discipline'],
+    never:['hustle harder','grind','occult'],
+    cal:[
+      {d:'Tue 14', t:'Morning routine breakdown — 3 steps', done:false},
+      {d:'Sun 19', t:'Weekly reset checklist', done:false}
+    ],
+    optimTail:'\n\nOne small system at a time. 🌿\n#VirgoFocused #IntentionalLiving #Clarity'
+  },
+  {
+    id:'cw', initials:'CW', name:'Cursed Worlds', color:'#6b1620',
+    tone:'Dark, literary, atmospheric, immersive. A storyteller\'s voice, not a marketer\'s.',
+    audience:'Dark fantasy & horror readers, book community, worldbuilding fans',
+    loves:['the curse remembers','every realm has a price','turn the page, break the spell'],
+    lexicon:['curse','realm','saga','chapter','prophecy','omen','shadow','fate','world','legend'],
+    never:['licensing','compliance','vibes only','pricing tiers'],
+    cal:[
+      {d:'Wed 15', t:'Chapter excerpt reveal — book one', done:false},
+      {d:'Sat 18', t:'Worldbuilding lore thread', done:false}
+    ],
+    optimTail:'\n\nEvery realm has a price. 🕯️\n#CursedWorlds #DarkFantasy #BookSeries'
+  }
+];
+
+let active = BRANDS[0];
+
+function hexSoft(hex){
+  const n = parseInt(hex.slice(1),16);
+  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},.10)`;
+}
+
+function renderSidebar(){
+  const el = document.getElementById('cubicle-list');
+  el.innerHTML = BRANDS.map(b=>`
+    <button class="cub-btn ${b.id===active.id?'active':''}" onclick="setBrand('${b.id}')">
+      <span class="cub-dot" style="background:${b.color}">${b.initials}</span> ${b.name}
+    </button>`).join('');
+}
+
+function setBrand(id){
+  active = BRANDS.find(b=>b.id===id);
+  document.documentElement.style.setProperty('--brand', active.color);
+  document.documentElement.style.setProperty('--brand-soft', hexSoft(active.color));
+  document.getElementById('active-name').innerHTML =
+    `<span class="cub-dot" style="background:${active.color}">${active.initials}</span> ${active.name}`;
+  document.getElementById('draft').value = '';
+  document.getElementById('optim-out').style.display = 'none';
+  renderSidebar(); renderVoice(); renderCal(); runBleedCheck();
+}
+
+function renderVoice(){
+  document.getElementById('v-tone').value = active.tone;
+  document.getElementById('v-aud').value = active.audience;
+  document.getElementById('v-loves').innerHTML = active.loves.map(p=>`<span class="chip">“${p}”</span>`).join('');
+  document.getElementById('v-lex').innerHTML = active.lexicon.map(w=>`<span class="chip">${w}</span>`).join('');
+  document.getElementById('v-never').innerHTML = active.never.map(w=>`<span class="chip never">${w}</span>`).join('');
+}
+
+function renderCal(){
+  document.getElementById('cal-brand').textContent = active.name;
+  const list = document.getElementById('cal-list');
+  if(!active.cal.length){ list.innerHTML = '<p class="cal-empty">Nothing scheduled.</p>'; return; }
+  list.innerHTML = active.cal.map(c=>`
+    <div class="cal-day">
+      <span class="d">${c.d}</span>
+      <span class="t">${c.done?'✓ ':''}${c.t}</span>
+      <span class="tag" style="background:${active.color}">${active.initials}</span>
+    </div>`).join('');
+}
+
+function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function runBleedCheck(){
+  const raw = document.getElementById('draft').value;
+  const text = raw.toLowerCase();
+  const words = text.match(/[a-z']+/g) || [];
+  const leaks = [];
+  for(const b of BRANDS){
+    if(b.id===active.id) continue;
+    for(const term of b.lexicon){
+      if(active.lexicon.includes(term)) continue; // shared vocabulary is fine
+      if(active.loves.some(p=>p.toLowerCase().split(/[^a-z']+/).includes(term))) continue; // words in this brand's own signature phrases are owned too
+      if(words.includes(term)) leaks.push({term, brand:b});
+    }
+    for(const phrase of b.loves){
+      if(text.includes(phrase.toLowerCase())) leaks.push({term:'“'+phrase+'”', brand:b, phrase:true});
+    }
+  }
+  // also flag this brand's own "never says"
+  for(const term of active.never){
+    if(text.includes(term.toLowerCase())) leaks.push({term, brand:null});
+  }
+
+  const status = document.getElementById('bleed-status');
+  const list = document.getElementById('bleed-list');
+  if(!raw.trim()){
+    status.className='bleed-status bleed-clean';
+    status.textContent='✓ Clean — no contamination';
+    list.innerHTML='<p class="bleed-empty">Flagged terms from other cubicles will appear here.</p>';
+    document.getElementById('preview').textContent='Nothing yet.';
+    return;
+  }
+  if(leaks.length){
+    status.className='bleed-status bleed-dirty';
+    status.textContent='⚠ Contamination detected — '+leaks.length+' leak'+(leaks.length>1?'s':'');
+    list.innerHTML = leaks.map(l=> l.brand
+      ? `<div class="bleed-item"><b>${l.term}</b> belongs to <span class="from" style="background:${l.brand.color}">${l.brand.name}</span></div>`
+      : `<div class="bleed-item"><b>${l.term}</b> is on <b>${active.name}</b>'s never-say list <span class="from" style="background:#c0392b">blocked term</span></div>`
+    ).join('');
+  } else {
+    status.className='bleed-status bleed-clean';
+    status.textContent='✓ Clean — this reads as '+active.name;
+    list.innerHTML='<p class="bleed-empty">No leaks. Ship it.</p>';
+  }
+
+  // highlighted preview
+  let html = escapeHtml(raw);
+  const flagged = [...new Set(leaks.filter(l=>!l.phrase).map(l=>l.term.replace(/[“”]/g,'')))];
+  for(const t of flagged){
+    html = html.replace(new RegExp('\\b('+t+')\\b','gi'),'<mark>$1</mark>');
+  }
+  for(const l of leaks.filter(l=>l.phrase)){
+    const p = l.term.replace(/[“”]/g,'');
+    html = html.replace(new RegExp('('+p.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>');
+  }
+  document.getElementById('preview').innerHTML = html;
+}
+
+function optimize(){
+  const raw = document.getElementById('draft').value.trim();
+  const out = document.getElementById('optim-out');
+  if(!raw){ out.style.display='block'; out.textContent='Write a draft first — then I\'ll tune it to '+active.name+'\'s voice.'; return; }
+  let text = raw.replace(/\s+$/,'');
+  if(!/[.!?…]$/.test(text)) text += '.';
+  out.style.display='block';
+  out.innerHTML = escapeHtml(text + active.optimTail) +
+    '<div class="optim-note">✨ Demo optimization — the production Studio tier sends this through the Claude API with '+active.name+'\'s full voice profile.</div>';
+}
+
+function schedulePost(){
+  const raw = document.getElementById('draft').value.trim();
+  if(!raw){ alert('Nothing to schedule yet — write a draft first.'); return; }
+  const label = raw.length>48 ? raw.slice(0,48)+'…' : raw;
+  active.cal.push({d:'Draft', t:label, done:false});
+  renderCal();
+  alert('Scheduled to '+active.name+'\'s calendar (demo — in-page only).');
+}
+
+function showPanel(name, btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
+  document.getElementById('panel-'+name).classList.add('show');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+setBrand('djgs');
+</script>
+</body>
+</html>

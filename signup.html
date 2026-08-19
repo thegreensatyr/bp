@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Become a Founding Member — Brandparent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c1b2e; --ink-soft:#2a2940; --cream:#faf7f2; --paper:#ffffff;
+    --brand:#9B7FC4; --brand-deep:#5B4A7E; --silver:#c9c6d3; --silver-deep:#6b6880;
+    --muted:#6b6880; --line:#e8e4dc; --radius:16px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--cream);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  h1{font-family:'Fraunces',serif;font-size:1.7rem;margin-bottom:6px}
+  a{color:var(--brand-deep);text-decoration:none;font-weight:600}
+  a:hover{text-decoration:underline}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:40px 36px;width:100%;max-width:420px;box-shadow:0 20px 50px rgba(28,27,46,.08)}
+  .logo{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:700;font-size:1.15rem;margin-bottom:28px}
+  .logo img{height:26px;width:auto}
+  .sub{color:var(--muted);font-size:.92rem;margin-bottom:24px}
+  label{display:block;font-size:.78rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:16px 0 6px}
+  input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:.95rem;background:var(--cream);outline:none}
+  input:focus{border-color:var(--brand)}
+  .hint{font-size:.78rem;color:var(--muted);margin-top:5px}
+  .btn{width:100%;margin-top:24px;padding:13px 20px;border-radius:999px;border:none;background:var(--ink);color:#fff;font-weight:600;font-size:.95rem;cursor:pointer;transition:transform .15s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn:disabled{opacity:.6;cursor:default;transform:none}
+  .msg{margin-top:16px;font-size:.88rem;padding:10px 14px;border-radius:10px;display:none}
+  .msg.err{background:rgba(192,57,43,.08);color:#c0392b;display:block}
+  .msg.ok{background:rgba(155,127,196,.12);color:var(--brand-deep);display:block}
+  .foot{margin-top:22px;text-align:center;font-size:.9rem;color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo"><img src="brandparent-logo.png" alt="" onerror="this.style.display='none'"> Brandparent</div>
+    <h1>Become a founding member</h1>
+    <p class="sub">$97 one-time · lifetime access · your cubicles start here.</p>
+
+    <form id="signup-form">
+      <label>Your name / parent identity</label>
+      <input type="text" id="parent-name" placeholder="e.g. The Green Satyr LLC" required>
+      <label>Email</label>
+      <input type="email" id="email" required autocomplete="email">
+      <label>Password</label>
+      <input type="password" id="password" required minlength="6" autocomplete="new-password">
+      <div class="hint">At least 6 characters.</div>
+      <button class="btn" type="submit" id="submit-btn">Create account</button>
+      <div class="msg" id="msg"></div>
+    </form>
+
+    <div class="foot">Already have an account? <a href="login.html">Log in →</a></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script>
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const msg = document.getElementById('msg');
+      msg.className = 'msg';
+      btn.disabled = true; btn.textContent = 'Creating account…';
+
+      const parentName = document.getElementById('parent-name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      const { data, error } = await sb.auth.signUp({
+        email, password,
+        options: { data: { parent_name: parentName } }
+      });
+
+      if (error) {
+        msg.className = 'msg err';
+        msg.textContent = error.message;
+        btn.disabled = false; btn.textContent = 'Create account';
+        return;
+      }
+
+      if (data.session) {
+        // Email confirmation is off — we're logged in immediately. Send to payment.
+        btn.textContent = 'Redirecting to payment…';
+        await goToCheckout();
+        return;
+      }
+
+      // Email confirmation is on — session is null until they click the link.
+      msg.className = 'msg ok';
+      msg.textContent = "Account created — check your email to confirm, then log in.";
+      btn.textContent = 'Check your email';
+    });
+
+    async function goToCheckout() {
+      const msg = document.getElementById('msg');
+      msg.className = 'msg';
+      msg.style.display = 'block';
+      msg.textContent = 'Setting up payment…';
+
+      const { data, error } = await sb.functions.invoke('create-checkout-session', {
+        body: { tier: 'founding_member' }
+      });
+
+      if (error || !data || !data.url) {
+        msg.className = 'msg err';
+        msg.textContent = 'Could not start checkout (' + (error ? error.message : 'no URL returned') + '). Taking you to your dashboard instead — you can complete payment from there.';
+        setTimeout(() => { window.location.href = 'app.html'; }, 2500);
+        return;
+      }
+
+      window.location.href = data.url;
+    }
+
+    sb.auth.getSession().then(({ data: { session } }) => {
+      if (session) window.location.href = 'app.html';
+    });
+  </script>
+</body>
+</html>
