@@ -40,7 +40,7 @@
   .topbar .brand-name{font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem;margin-right:auto;display:flex;align-items:center;gap:10px}
   .tab{background:none;border:none;padding:8px 16px;border-radius:999px;font-size:.88rem;font-weight:600;color:var(--muted)}
   .tab:hover{color:var(--ink)}
-  .tab.active{background:var(--brand-soft);color:var(--brand)}
+  .tab.active{background:var(--brand-soft);color:var(--brand);box-shadow:inset 0 -2px 0 var(--brand-secondary)}
   .content{flex:1;overflow-y:auto;padding:28px}
   .panel{display:none;max-width:880px;margin:0 auto}
   .panel.show{display:block}
@@ -126,6 +126,37 @@
   .swatch{width:28px;height:28px;border-radius:8px;cursor:pointer;border:2px solid transparent}
   .swatch.sel{border-color:var(--ink)}
   .modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
+  .modal-wide{max-width:640px;max-height:88vh;overflow-y:auto}
+  .field-help{font-size:.76rem;color:var(--muted);margin-top:6px;line-height:1.4}
+  .contrast-warn{display:none;margin-top:10px;font-size:.8rem;font-weight:600;color:#c0392b;background:rgba(192,57,43,.08);border-radius:8px;padding:8px 12px}
+  .contrast-warn.show{display:block}
+  .mini-preview{border:1.5px solid var(--line);border-radius:12px;padding:18px;margin-top:16px}
+  .mini-preview .h{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:700;margin-bottom:5px}
+  .mini-preview .b{font-size:.85rem}
+  .color-field{margin-bottom:16px}
+  .color-field > label{display:block;font-size:.78rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+
+  .tour-overlay{display:none;position:fixed;inset:0;z-index:200}
+  .tour-overlay.show{display:block}
+  .tour-dim{position:fixed;inset:0;background:rgba(28,27,46,.55)}
+  .tour-spot{position:fixed;border-radius:12px;box-shadow:0 0 0 4px var(--brand),0 0 0 9999px rgba(28,27,46,.55);transition:all .25s ease;pointer-events:none}
+  .tour-box{position:fixed;background:var(--paper);border-radius:14px;padding:20px;width:300px;box-shadow:0 20px 50px rgba(28,27,46,.25);transition:top .25s ease,left .25s ease}
+  .tour-box h4{font-family:'Fraunces',serif;margin-bottom:6px}
+  .tour-box p{font-size:.85rem;color:var(--ink-soft);line-height:1.5;margin-bottom:14px}
+  .tour-box .tour-actions{display:flex;align-items:center;justify-content:space-between}
+  .tour-box .tour-step-count{font-size:.75rem;color:var(--muted)}
+  .tour-box .tour-btns{display:flex;gap:8px}
+  .tour-btn{border:1.5px solid var(--line);background:none;color:var(--ink);font-size:.82rem;font-weight:600;padding:6px 14px;border-radius:999px;cursor:pointer}
+  .tour-btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+  .tutorial-toggle{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#c9c5da;margin-top:10px}
+  .tswitch{position:relative;width:32px;height:18px;flex-shrink:0}
+  .tswitch input{opacity:0;width:0;height:0}
+  .tswitch .slider{position:absolute;cursor:pointer;inset:0;background:#4a4863;border-radius:999px;transition:.2s}
+  .tswitch .slider:before{content:"";position:absolute;height:14px;width:14px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.2s}
+  .tswitch input:checked + .slider{background:var(--brand)}
+  .tswitch input:checked + .slider:before{transform:translateX(14px)}
+  .tour-link{background:none;border:none;color:#c9c5da;font-size:.78rem;text-decoration:underline;cursor:pointer;padding:0;text-align:left}
+  .tour-link:hover{color:#fff}
 
   /* --- Bloom Break: colorful floating destress tool --------------------- */
   .bloom-fab{position:fixed;right:24px;bottom:24px;width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;z-index:200;
@@ -153,6 +184,14 @@
     parent identity
     <span class="studio-badge">Studio</span>
     <br>
+    <button class="tour-link" onclick="startTour()" style="margin-top:10px">🎓 Take the tour</button>
+    <div class="tutorial-toggle">
+      <label class="tswitch">
+        <input type="checkbox" id="tutorial-toggle-input" checked onchange="toggleTutorials()">
+        <span class="slider"></span>
+      </label>
+      <span>Tutorials</span>
+    </div>
     <button class="logout" onclick="logout()">Log out</button>
   </div>
 </aside>
@@ -275,12 +314,26 @@
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
               <div>
-                <label>Primary color</label>
-                <div class="color-row" id="t-primary-colors"></div>
-                <input type="text" id="t-primary-hex" placeholder="#9B7FC4" style="margin-top:8px;max-width:140px" onchange="setThemeColorFromHexInput('primary')">
+                <label>Background</label>
+                <div class="field-help" style="margin-top:0;margin-bottom:6px">The page/card color behind your content.</div>
+                <div class="color-row" id="t-background-colors"></div>
+                <input type="text" id="t-background-hex" placeholder="#faf7f2" style="margin-top:8px;max-width:140px" onchange="setThemeColorFromHexInput('background')">
               </div>
               <div>
-                <label>Secondary color</label>
+                <label>Text color</label>
+                <div class="field-help" style="margin-top:0;margin-bottom:6px">Body copy — needs to read clearly on Background.</div>
+                <div class="color-row" id="t-text-colors"></div>
+                <input type="text" id="t-text-hex" placeholder="#1c1b2e" style="margin-top:8px;max-width:140px" onchange="setThemeColorFromHexInput('text')">
+              </div>
+              <div>
+                <label>Headline</label>
+                <div class="field-help" style="margin-top:0;margin-bottom:6px">Titles and your main accent color — badges, buttons.</div>
+                <div class="color-row" id="t-headline-colors"></div>
+                <input type="text" id="t-headline-hex" placeholder="#9B7FC4" style="margin-top:8px;max-width:140px" onchange="setThemeColorFromHexInput('headline')">
+              </div>
+              <div>
+                <label>Secondary</label>
+                <div class="field-help" style="margin-top:0;margin-bottom:6px">A supporting accent for smaller details.</div>
                 <div class="color-row" id="t-secondary-colors"></div>
                 <input type="text" id="t-secondary-hex" placeholder="#c9c6d3" style="margin-top:8px;max-width:140px" onchange="setThemeColorFromHexInput('secondary')">
               </div>
@@ -302,8 +355,9 @@
                 <span class="theme-preview-swatch" id="theme-preview-swatch2"></span>
               </div>
               <div id="theme-preview-heading" style="font-size:1.4rem;font-weight:700;margin-bottom:6px">This is how it feels</div>
-              <div id="theme-preview-body" style="font-size:.92rem;color:var(--ink-soft)">Sample caption text in this cubicle's body font — roughly what your composer and preview will look like once saved.</div>
+              <div id="theme-preview-body" style="font-size:.92rem">Sample caption text in this cubicle's body font — roughly what your composer and preview will look like once saved.</div>
             </div>
+            <div class="contrast-warn" id="t-contrast-warn"></div>
 
             <div class="save-row">
               <button class="btn btn-brand" onclick="saveTheme()" id="save-theme-btn">Save theme</button>
@@ -387,18 +441,82 @@
 <button class="bloom-fab" onclick="openBloomBreak()" id="bloom-fab-btn" title="Bloom Break — breathing, meditation room, singing bowls &amp; more (opens in a new window)">🌸</button>
 
 <div class="modal-bg" id="cubicle-modal">
-  <div class="modal">
+  <div class="modal modal-wide" id="cubicle-modal-inner">
     <h3>New cubicle</h3>
-    <div class="sub">One room, one voice. You can fill in the rest after.</div>
+    <div class="sub">One room, one voice. Set its name, logo, and brand colors now — you can fine-tune fonts and run the voice interview after.</div>
     <label>Brand name</label>
     <input type="text" id="m-name" placeholder="e.g. Satyr Arcana">
-    <label>Initials (shows on the badge)</label>
+    <label>Initials (shows on the badge until you add a logo)</label>
     <input type="text" id="m-initials" maxlength="3" placeholder="e.g. SA">
-    <label>Color</label>
-    <div class="color-row" id="m-colors"></div>
+
+    <label style="margin-top:14px">Logo <span style="font-weight:400;text-transform:none;font-size:.78rem">(optional — add it now or later)</span></label>
+    <div style="display:flex;align-items:center;gap:14px;margin-top:6px">
+      <div class="logo-preview-wrap" id="m-logo-preview-wrap">
+        <span class="logo-preview-fallback" id="m-logo-preview-fallback">?</span>
+        <img id="m-logo-preview-img" style="display:none">
+      </div>
+      <input type="file" id="m-logo-file" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="flex:1" onchange="onNewCubicleLogoChange(event)">
+    </div>
+    <div class="field-help" id="m-logo-note">PNG, JPG, WEBP, or SVG, up to 5MB.</div>
+
+    <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--line)">
+      <label style="margin-bottom:2px">Brand colors</label>
+      <div class="field-help" style="margin-top:0;margin-bottom:12px">These four colors are what set this cubicle apart — pick them for real contrast, not just to fill in the boxes.</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 20px">
+        <div class="color-field">
+          <label>Background</label>
+          <div class="field-help" style="margin-top:0;margin-bottom:6px">The page/card color behind your content.</div>
+          <div class="color-row" id="m-background-colors"></div>
+          <input type="text" id="m-background-hex" placeholder="#faf7f2" style="margin-top:8px;max-width:140px" onchange="setNewCubicleColorFromHexInput('background')">
+        </div>
+        <div class="color-field">
+          <label>Text color</label>
+          <div class="field-help" style="margin-top:0;margin-bottom:6px">Body copy — needs to read clearly on Background.</div>
+          <div class="color-row" id="m-text-colors"></div>
+          <input type="text" id="m-text-hex" placeholder="#1c1b2e" style="margin-top:8px;max-width:140px" onchange="setNewCubicleColorFromHexInput('text')">
+        </div>
+        <div class="color-field">
+          <label>Headline</label>
+          <div class="field-help" style="margin-top:0;margin-bottom:6px">Titles and your main accent color — badges, buttons.</div>
+          <div class="color-row" id="m-headline-colors"></div>
+          <input type="text" id="m-headline-hex" placeholder="#9B7FC4" style="margin-top:8px;max-width:140px" onchange="setNewCubicleColorFromHexInput('headline')">
+        </div>
+        <div class="color-field">
+          <label>Secondary</label>
+          <div class="field-help" style="margin-top:0;margin-bottom:6px">A supporting accent for smaller details.</div>
+          <div class="color-row" id="m-secondary-colors"></div>
+          <input type="text" id="m-secondary-hex" placeholder="#c9c6d3" style="margin-top:8px;max-width:140px" onchange="setNewCubicleColorFromHexInput('secondary')">
+        </div>
+      </div>
+
+      <div class="mini-preview" id="m-mini-preview">
+        <div class="h" id="m-preview-heading">This is how it feels</div>
+        <div class="b" id="m-preview-body">Sample caption text — roughly how your composer and preview will look.</div>
+      </div>
+      <div class="contrast-warn" id="m-contrast-warn"></div>
+    </div>
+
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeCubicleModal()">Cancel</button>
-      <button class="btn btn-brand" onclick="createCubicle()">Create</button>
+      <button class="btn btn-brand" onclick="createCubicle()" id="create-cubicle-btn">Create</button>
+    </div>
+  </div>
+</div>
+
+<div class="tour-overlay" id="tour-overlay">
+  <div class="tour-dim" onclick="endTour()"></div>
+  <div class="tour-spot" id="tour-spot"></div>
+  <div class="tour-box" id="tour-box">
+    <h4 id="tour-title"></h4>
+    <p id="tour-text"></p>
+    <div class="tour-actions">
+      <span class="tour-step-count" id="tour-count"></span>
+      <div class="tour-btns">
+        <button class="tour-btn" onclick="endTour()">Skip</button>
+        <button class="tour-btn" id="tour-prev-btn" onclick="prevTourStep()">Back</button>
+        <button class="tour-btn primary" id="tour-next-btn" onclick="nextTourStep()">Next</button>
+      </div>
     </div>
   </div>
 </div>
@@ -407,12 +525,47 @@
 <script src="js/supabase-client.js"></script>
 <script>
 const COLORS = ['#1b5e20','#4a148c','#1565c0','#26374a','#5f7d54','#6b1620','#9B7FC4','#c0392b','#b8860b','#006d77'];
+const BG_COLORS = ['#faf7f2','#ffffff','#1c1b2e','#26374a','#0f1720','#f4ede2'];
+const TEXT_COLORS = ['#1c1b2e','#2a2940','#ffffff','#faf7f2','#6b6880','#26374a'];
 let cubicles = [];
 let drafts = [];
 let active = null;
 let session = null;
-let selectedColor = COLORS[0];
 let connections = [];
+let tutorialsEnabled = true;
+
+// --- Color contrast (WCAG relative luminance) -----------------------------
+// Used to warn when a picked text/background (or headline/background) pair
+// won't actually be readable, instead of letting it silently ship invisible.
+function relLuminance(hex) {
+  const n = parseInt(String(hex).replace('#',''), 16);
+  const [r,g,b] = [(n>>16)&255,(n>>8)&255,n&255].map(v => {
+    v /= 255;
+    return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
+  });
+  return 0.2126*r + 0.7152*g + 0.0722*b;
+}
+function contrastRatio(hexA, hexB) {
+  const L1 = relLuminance(hexA), L2 = relLuminance(hexB);
+  const [lighter, darker] = L1 > L2 ? [L1, L2] : [L2, L1];
+  return (lighter + 0.05) / (darker + 0.05);
+}
+function isHex(v) { return /^#[0-9a-fA-F]{6}$/.test(String(v || '')); }
+function checkContrast(warnElId, textHex, bgHex, label) {
+  const el = document.getElementById(warnElId);
+  if (!el) return;
+  if (!isHex(textHex) || !isHex(bgHex)) { el.classList.remove('show'); return; }
+  const ratio = contrastRatio(textHex, bgHex);
+  if (ratio < 3) {
+    el.classList.add('show');
+    el.textContent = `⚠ ${label || 'Text'} and Background are too close (contrast ${ratio.toFixed(1)}:1) — this will be hard or impossible to read. Pick colors further apart.`;
+  } else if (ratio < 4.5) {
+    el.classList.add('show');
+    el.textContent = `⚠ Low contrast (${ratio.toFixed(1)}:1) between ${label || 'Text'} and Background — readable, but pick further apart colors if you can.`;
+  } else {
+    el.classList.remove('show');
+  }
+}
 
 // --- Sound alerts ---------------------------------------------------------
 // Synthesized with the Web Audio API (no external files/CDN — instant,
@@ -487,8 +640,10 @@ async function init() {
   session = await requireSession();
   if (!session) return;
 
-  const { data: profile } = await sb.from('profiles').select('parent_name, subscription_status').eq('id', session.user.id).single();
+  const { data: profile } = await sb.from('profiles').select('parent_name, subscription_status, tutorials_enabled').eq('id', session.user.id).single();
   document.getElementById('parent-name-el').textContent = (profile && profile.parent_name) || 'My Identity';
+  tutorialsEnabled = !profile || profile.tutorials_enabled !== false;
+  document.getElementById('tutorial-toggle-input').checked = tutorialsEnabled;
 
   const params = new URLSearchParams(window.location.search);
   const paidStatuses = ['active', 'trialing'];
@@ -522,7 +677,12 @@ async function init() {
   document.getElementById('paywall').style.display = 'none';
 
   await loadCubicles();
-  renderColorSwatches();
+
+  if (tutorialsEnabled && cubicles.length === 0) {
+    // Give the empty-state screen a moment to actually render before
+    // spotlighting anything on it.
+    setTimeout(() => startTour(), 500);
+  }
 
   if (params.get('connected')) {
     alert('Connected: ' + params.get('connected'));
@@ -767,22 +927,30 @@ function applyActiveTheme() {
   document.documentElement.style.setProperty('--brand-secondary', active.secondary_color || '#c9c6d3');
 }
 
+const THEME_FIELDS = ['background','text','headline','secondary'];
+function themeFieldPalette(kind) {
+  if (kind === 'background') return BG_COLORS;
+  if (kind === 'text') return TEXT_COLORS;
+  return COLORS;
+}
+
 function renderThemeCard() {
   if (!active) return;
   pendingTheme = {
-    primary: active.color,
+    background: active.background_color || '#faf7f2',
+    text: active.text_color || '#1c1b2e',
+    headline: active.color,
     secondary: active.secondary_color || '#c9c6d3',
     headingFont: active.font_heading || 'Fraunces',
     bodyFont: active.font_body || 'Inter'
   };
   ensureFontLoaded(pendingTheme.headingFont);
   ensureFontLoaded(pendingTheme.bodyFont);
-  renderThemeSwatches('t-primary-colors', pendingTheme.primary, 'primary');
-  renderThemeSwatches('t-secondary-colors', pendingTheme.secondary, 'secondary');
-  const pHex = document.getElementById('t-primary-hex');
-  const sHex = document.getElementById('t-secondary-hex');
-  if (pHex) pHex.value = pendingTheme.primary;
-  if (sHex) sHex.value = pendingTheme.secondary;
+  THEME_FIELDS.forEach(kind => {
+    renderThemeSwatches('t-' + kind + '-colors', pendingTheme[kind], kind);
+    const hexEl = document.getElementById('t-' + kind + '-hex');
+    if (hexEl) hexEl.value = pendingTheme[kind];
+  });
   renderFontSelect('t-heading-font', CURATED_HEADING_FONTS, pendingTheme.headingFont);
   renderFontSelect('t-body-font', CURATED_BODY_FONTS, pendingTheme.bodyFont);
   const detectOut = document.getElementById('t-detect-out');
@@ -797,19 +965,19 @@ function renderThemeCard() {
 function renderThemeSwatches(elId, selected, kind) {
   const el = document.getElementById(elId);
   if (!el) return;
-  el.innerHTML = COLORS.map(c => `<div class="swatch ${c.toLowerCase()===String(selected).toLowerCase()?'sel':''}" style="background:${c}" onclick="setThemeColor('${kind}','${c}')"></div>`).join('');
+  el.innerHTML = themeFieldPalette(kind).map(c => `<div class="swatch ${c.toLowerCase()===String(selected).toLowerCase()?'sel':''}" style="background:${c}" onclick="setThemeColor('${kind}','${c}')"></div>`).join('');
 }
 
 function setThemeColor(kind, hex) {
   pendingTheme[kind] = hex;
-  const hexInput = document.getElementById(kind === 'primary' ? 't-primary-hex' : 't-secondary-hex');
+  const hexInput = document.getElementById('t-' + kind + '-hex');
   if (hexInput) hexInput.value = hex;
-  renderThemeSwatches(kind === 'primary' ? 't-primary-colors' : 't-secondary-colors', hex, kind);
+  renderThemeSwatches('t-' + kind + '-colors', hex, kind);
   updateThemePreview();
 }
 
 function setThemeColorFromHexInput(kind) {
-  const el = document.getElementById(kind === 'primary' ? 't-primary-hex' : 't-secondary-hex');
+  const el = document.getElementById('t-' + kind + '-hex');
   const val = el.value.trim();
   if (!/^#[0-9a-fA-F]{6}$/.test(val)) { el.style.borderColor = '#c0392b'; return; }
   el.style.borderColor = '';
@@ -852,16 +1020,20 @@ function onFontCustomInput(elId, kind) {
 }
 
 function updateThemePreview() {
+  const box = document.getElementById('theme-preview');
   const h = document.getElementById('theme-preview-heading');
   const p = document.getElementById('theme-preview-body');
   const s1 = document.getElementById('theme-preview-swatch1');
   const s2 = document.getElementById('theme-preview-swatch2');
   if (!h || !pendingTheme) return;
+  box.style.background = pendingTheme.background;
   h.style.fontFamily = `'${pendingTheme.headingFont}', serif`;
-  h.style.color = pendingTheme.primary;
+  h.style.color = pendingTheme.headline;
   p.style.fontFamily = `'${pendingTheme.bodyFont}', sans-serif`;
-  s1.style.background = pendingTheme.primary;
+  p.style.color = pendingTheme.text;
+  s1.style.background = pendingTheme.headline;
   s2.style.background = pendingTheme.secondary;
+  checkContrast('t-contrast-warn', pendingTheme.text, pendingTheme.background, 'Text color');
 }
 
 async function saveTheme() {
@@ -870,8 +1042,10 @@ async function saveTheme() {
   btn.disabled = true; btn.textContent = 'Saving…';
 
   const patch = {
-    color: pendingTheme.primary,
+    color: pendingTheme.headline,
     secondary_color: pendingTheme.secondary,
+    background_color: pendingTheme.background,
+    text_color: pendingTheme.text,
     font_heading: pendingTheme.headingFont,
     font_body: pendingTheme.bodyFont
   };
@@ -910,8 +1084,10 @@ async function detectSiteTheme() {
     if (data.colors && data.colors.length) {
       html += '<div style="margin-top:10px"><b style="font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Colors found — click to use</b><div style="margin-top:6px">';
       html += data.colors.map(c => `
-        <span class="detect-chip" onclick="setThemeColor('primary','${c.hex}')" title="Use as primary"><span class="cw" style="background:${c.hex}"></span>${c.hex} → primary</span>
-        <span class="detect-chip" onclick="setThemeColor('secondary','${c.hex}')" title="Use as secondary"><span class="cw" style="background:${c.hex}"></span>${c.hex} → secondary</span>`).join('');
+        <span class="detect-chip" onclick="setThemeColor('headline','${c.hex}')" title="Use as headline"><span class="cw" style="background:${c.hex}"></span>${c.hex} → headline</span>
+        <span class="detect-chip" onclick="setThemeColor('secondary','${c.hex}')" title="Use as secondary"><span class="cw" style="background:${c.hex}"></span>${c.hex} → secondary</span>
+        <span class="detect-chip" onclick="setThemeColor('background','${c.hex}')" title="Use as background"><span class="cw" style="background:${c.hex}"></span>${c.hex} → background</span>
+        <span class="detect-chip" onclick="setThemeColor('text','${c.hex}')" title="Use as text color"><span class="cw" style="background:${c.hex}"></span>${c.hex} → text</span>`).join('');
       html += '</div></div>';
     }
     if (data.fonts && data.fonts.length) {
@@ -1055,34 +1231,125 @@ async function deleteCubicle() {
   await loadCubicles();
 }
 
+let newCubicleTheme = { background: '#faf7f2', text: '#1c1b2e', headline: COLORS[0], secondary: '#c9c6d3' };
+let newCubicleLogoFile = null;
+
 function openCubicleModal() {
   document.getElementById('m-name').value = '';
   document.getElementById('m-initials').value = '';
-  selectedColor = COLORS[cubicles.length % COLORS.length];
-  renderColorSwatches();
+  newCubicleLogoFile = null;
+  document.getElementById('m-logo-file').value = '';
+  document.getElementById('m-logo-preview-img').style.display = 'none';
+  document.getElementById('m-logo-preview-fallback').style.display = 'block';
+  document.getElementById('m-logo-preview-fallback').textContent = '?';
+  document.getElementById('m-logo-note').style.color = 'var(--muted)';
+  document.getElementById('m-logo-note').textContent = 'PNG, JPG, WEBP, or SVG, up to 5MB.';
+
+  newCubicleTheme = {
+    background: '#faf7f2',
+    text: '#1c1b2e',
+    headline: COLORS[cubicles.length % COLORS.length],
+    secondary: '#c9c6d3'
+  };
+  THEME_FIELDS.forEach(kind => {
+    renderNewCubicleSwatches(kind);
+    document.getElementById('m-' + kind + '-hex').value = newCubicleTheme[kind];
+  });
+  updateNewCubiclePreview();
   document.getElementById('cubicle-modal').classList.add('show');
 }
 function closeCubicleModal() { document.getElementById('cubicle-modal').classList.remove('show'); }
 
-function renderColorSwatches() {
-  const el = document.getElementById('m-colors');
-  el.innerHTML = COLORS.map(c => `<div class="swatch ${c===selectedColor?'sel':''}" style="background:${c}" onclick="pickColor('${c}')"></div>`).join('');
+function renderNewCubicleSwatches(kind) {
+  const el = document.getElementById('m-' + kind + '-colors');
+  if (!el) return;
+  const selected = newCubicleTheme[kind];
+  el.innerHTML = themeFieldPalette(kind).map(c => `<div class="swatch ${c.toLowerCase()===String(selected).toLowerCase()?'sel':''}" style="background:${c}" onclick="setNewCubicleColor('${kind}','${c}')"></div>`).join('');
 }
-function pickColor(c) { selectedColor = c; renderColorSwatches(); }
+function setNewCubicleColor(kind, hex) {
+  newCubicleTheme[kind] = hex;
+  const hexInput = document.getElementById('m-' + kind + '-hex');
+  if (hexInput) hexInput.value = hex;
+  renderNewCubicleSwatches(kind);
+  updateNewCubiclePreview();
+}
+function setNewCubicleColorFromHexInput(kind) {
+  const el = document.getElementById('m-' + kind + '-hex');
+  const val = el.value.trim();
+  if (!/^#[0-9a-fA-F]{6}$/.test(val)) { el.style.borderColor = '#c0392b'; return; }
+  el.style.borderColor = '';
+  setNewCubicleColor(kind, val);
+}
+function updateNewCubiclePreview() {
+  const box = document.getElementById('m-mini-preview');
+  const h = document.getElementById('m-preview-heading');
+  const p = document.getElementById('m-preview-body');
+  if (!box) return;
+  box.style.background = newCubicleTheme.background;
+  h.style.color = newCubicleTheme.headline;
+  p.style.color = newCubicleTheme.text;
+  checkContrast('m-contrast-warn', newCubicleTheme.text, newCubicleTheme.background, 'Text color');
+}
+
+function onNewCubicleLogoChange(event) {
+  const file = event.target.files[0];
+  const note = document.getElementById('m-logo-note');
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    note.style.color = '#c0392b'; note.textContent = 'File is over 5MB — pick a smaller image.';
+    event.target.value = ''; newCubicleLogoFile = null;
+    return;
+  }
+  newCubicleLogoFile = file;
+  note.style.color = 'var(--muted)'; note.textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('m-logo-preview-img');
+    img.src = e.target.result;
+    img.style.display = 'block';
+    document.getElementById('m-logo-preview-fallback').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
 
 async function createCubicle() {
   const name = document.getElementById('m-name').value.trim();
   const initials = document.getElementById('m-initials').value.trim() || name.slice(0,2).toUpperCase();
   if (!name) { alert('Give the cubicle a name.'); return; }
 
+  const btn = document.getElementById('create-cubicle-btn');
+  btn.disabled = true; btn.textContent = 'Creating…';
+
   const { data, error } = await sb.from('cubicles').insert({
     user_id: session.user.id,
-    name, icon_initials: initials, color: selectedColor,
+    name, icon_initials: initials,
+    color: newCubicleTheme.headline,
+    secondary_color: newCubicleTheme.secondary,
+    background_color: newCubicleTheme.background,
+    text_color: newCubicleTheme.text,
     role: '', audience: '', tone: '',
     signature_phrases: [], lexicon: [], never_says: []
   }).select().single();
 
-  if (error) { alert('Error: ' + error.message); return; }
+  if (error) { btn.disabled = false; btn.textContent = 'Create'; alert('Error: ' + error.message); return; }
+
+  // Logo upload needs the new row's id for its storage path, so it happens
+  // right after insert — from Dustin's/the user's side it's still one step.
+  if (newCubicleLogoFile) {
+    btn.textContent = 'Uploading logo…';
+    const path = `${session.user.id}/${data.id}-logo`;
+    const { error: upErr } = await sb.storage.from('cubicle-logos').upload(path, newCubicleLogoFile, { upsert: true, contentType: newCubicleLogoFile.type || 'application/octet-stream' });
+    if (!upErr) {
+      const { data: urlData } = sb.storage.from('cubicle-logos').getPublicUrl(path);
+      const publicUrl = urlData.publicUrl + '?t=' + Date.now();
+      const { error: dbErr } = await sb.from('cubicles').update({ logo_url: publicUrl }).eq('id', data.id);
+      if (!dbErr) data.logo_url = publicUrl;
+    }
+    // A logo upload hiccup here shouldn't block the cubicle from being created —
+    // it can always be added from the Voice tab afterward.
+  }
+
+  btn.disabled = false; btn.textContent = 'Create';
   playRewardTone();
   closeCubicleModal();
   active = data;
@@ -1380,6 +1647,93 @@ async function connectBluesky() {
   }
 
   btn.disabled = false; btn.textContent = 'Connect Bluesky';
+}
+
+// --- Guided tour -----------------------------------------------------------
+// Two scripts: a short one for a brand-new account (nothing to spotlight yet
+// but the Create button), and the full walkthrough once at least one
+// cubicle exists. Re-checked live each time startTour() runs so it always
+// matches what's actually on screen instead of a stale step list.
+function firstRunTourSteps() {
+  return [
+    { selector: '#no-cubicles .btn-brand', title: 'Start here', text: "Name, initials, logo, and all four brand colors are on this one screen now — no more hunting through tabs to finish setting up a cubicle." },
+    { selector: '.tutorial-toggle', title: 'Turning this off', text: "Flip this off anytime to stop tutorials from popping up. \"Take the tour\" right above it always brings this back on demand, even with tutorials off." }
+  ];
+}
+function fullTourSteps() {
+  return [
+    { selector: '.side-label', title: 'Your cubicles', text: "Every brand gets its own cubicle — its own voice, colors, and content — so nothing bleeds between brands you run." },
+    { before: () => showPanel('compose', document.querySelector('.tab[data-panel="compose"]')), selector: '.tab[data-panel="compose"]', title: 'Composer', text: "Write a post here for whichever cubicle is active. Bleed Check watches as you type." },
+    { selector: '#bleed-status', title: 'Bleed Check™', text: "Flags wording that actually belongs to a different one of your brands before it goes out under the wrong name." },
+    { before: () => showPanel('voice', document.querySelector('.tab[data-panel="voice"]')), selector: '.tab[data-panel="voice"]', title: 'Voice Profile', text: "Logo, the four brand colors, fonts, and the guided interview all live here — this is where you'd come back to rebrand a cubicle later." },
+    { selector: '#interview-card', title: 'Getting to know you', text: "A short guided interview that fills out this cubicle's tone, audience, and vocabulary for you — nothing saves until you review and apply it." },
+    { before: () => showPanel('calendar', document.querySelector('.tab[data-panel="calendar"]')), selector: '.tab[data-panel="calendar"]', title: 'Calendar', text: "See what's scheduled across all your cubicles at a glance." },
+    { selector: '.tutorial-toggle', title: 'Turning this off', text: "Flip this off anytime to stop tutorials from popping up automatically. \"Take the tour\" above it always brings this back on demand." }
+  ];
+}
+
+let tourSteps = [];
+let tourIndex = 0;
+
+function startTour() {
+  tourSteps = cubicles.length === 0 ? firstRunTourSteps() : fullTourSteps();
+  tourIndex = 0;
+  document.getElementById('tour-overlay').classList.add('show');
+  showTourStep();
+}
+
+function showTourStep() {
+  const step = tourSteps[tourIndex];
+  if (!step) { endTour(); return; }
+  if (step.before) { try { step.before(); } catch (e) { console.error(e); } }
+
+  // Let a panel switch from `before` finish rendering before we measure it.
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const el = document.querySelector(step.selector);
+    if (!el) { tourIndex++; showTourStep(); return; }
+    el.scrollIntoView({ block: 'center', behavior: 'instant' in document.documentElement.style ? 'instant' : 'auto' });
+    const r = el.getBoundingClientRect();
+    const pad = 8;
+    const spot = document.getElementById('tour-spot');
+    spot.style.top = (r.top - pad) + 'px';
+    spot.style.left = (r.left - pad) + 'px';
+    spot.style.width = (r.width + pad*2) + 'px';
+    spot.style.height = (r.height + pad*2) + 'px';
+
+    const box = document.getElementById('tour-box');
+    document.getElementById('tour-title').textContent = step.title;
+    document.getElementById('tour-text').textContent = step.text;
+    document.getElementById('tour-count').textContent = `${tourIndex+1} of ${tourSteps.length}`;
+    document.getElementById('tour-prev-btn').style.visibility = tourIndex === 0 ? 'hidden' : 'visible';
+    document.getElementById('tour-next-btn').textContent = tourIndex === tourSteps.length - 1 ? 'Done' : 'Next';
+
+    const boxW = 300, boxH = box.offsetHeight || 160;
+    let top = r.bottom + pad + 14;
+    if (top + boxH > window.innerHeight - 16) top = Math.max(16, r.top - boxH - 14);
+    let left = Math.min(Math.max(16, r.left), window.innerWidth - boxW - 16);
+    box.style.top = top + 'px';
+    box.style.left = left + 'px';
+  }));
+}
+
+function nextTourStep() {
+  if (tourIndex >= tourSteps.length - 1) { endTour(); return; }
+  tourIndex++;
+  showTourStep();
+}
+function prevTourStep() {
+  if (tourIndex === 0) return;
+  tourIndex--;
+  showTourStep();
+}
+function endTour() {
+  document.getElementById('tour-overlay').classList.remove('show');
+}
+
+async function toggleTutorials() {
+  tutorialsEnabled = document.getElementById('tutorial-toggle-input').checked;
+  if (!session) return;
+  await sb.from('profiles').update({ tutorials_enabled: tutorialsEnabled }).eq('id', session.user.id);
 }
 
 function showPanel(name, btn) {
