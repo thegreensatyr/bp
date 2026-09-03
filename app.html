@@ -752,8 +752,9 @@ function renderSidebar() {
 async function setBrand(id) {
   active = cubicles.find(c => c.id === id);
   if (!active) return;
-  document.documentElement.style.setProperty('--brand', active.color);
-  document.documentElement.style.setProperty('--brand-soft', hexSoft(active.color));
+  const contentRoot = document.getElementById('content-root');
+  contentRoot.style.setProperty('--brand', active.color);
+  contentRoot.style.setProperty('--brand-soft', hexSoft(active.color));
   applyActiveTheme();
   document.getElementById('active-name').innerHTML =
     `${cubDot(active)} ${escapeHtml(active.name)}`;
@@ -923,9 +924,10 @@ function applyActiveTheme() {
   const bodyFont = active.font_body || 'Inter';
   ensureFontLoaded(headingFont);
   ensureFontLoaded(bodyFont);
-  document.documentElement.style.setProperty('--font-heading', `'${headingFont}', serif`);
-  document.documentElement.style.setProperty('--font-body', `'${bodyFont}', system-ui, sans-serif`);
-  document.documentElement.style.setProperty('--brand-secondary', active.secondary_color || '#c9c6d3');
+  const contentRoot = document.getElementById('content-root');
+  contentRoot.style.setProperty('--font-heading', `'${headingFont}', serif`);
+  contentRoot.style.setProperty('--font-body', `'${bodyFont}', system-ui, sans-serif`);
+  contentRoot.style.setProperty('--brand-secondary', active.secondary_color || '#c9c6d3');
 }
 
 const THEME_FIELDS = ['background','text','headline','secondary'];
