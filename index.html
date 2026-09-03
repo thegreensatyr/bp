@@ -115,7 +115,7 @@
   /* WAITLIST */
   .waitlist{background:var(--ink);color:#f5f3ee;text-align:center}
   .waitlist h2{color:#fff}
-  .waitlist .lede{margin:0 auto 36px;color:#b9b5cb}
+  .waitlist .lede{margin:0 auto 20px;color:#b9b5cb}
   .wl-form{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;max-width:520px;margin:0 auto}
   .wl-form input{flex:1;min-width:240px;padding:14px 20px;border-radius:999px;border:1.5px solid var(--ink-soft);background:var(--ink-soft);color:#fff;font-size:1rem;font-family:inherit;outline:none}
   .wl-form input::placeholder{color:#8c88a6}
@@ -150,7 +150,7 @@
       <a href="#pricing">Pricing</a>
     </div>
     <a href="login.html" style="margin-right:16px">Log in</a>
-      <a class="btn btn-coral" href="signup.html">Become a Founding Member</a>
+      <a class="btn btn-coral" href="signup.html?tier=founding_member">Become a Founding Member</a>
   </div>
 </nav>
 
@@ -162,7 +162,7 @@
     <h1>One of you.<br><span class="teal">All of your brands.</span> <span class="coral">Zero bleed.</span></h1>
     <p class="sub">Brandparent gives every identity you run its own cubicle — separate voice, separate audience, separate content pipeline. Post as anyone. Contaminate no one.</p>
     <div class="hero-ctas">
-      <a class="btn btn-coral" href="#waitlist">Join the waitlist</a>
+      <a class="btn btn-coral" href="signup.html?tier=founding_member">Become a Founding Member</a>
       <a class='btn btn-ghost' href='demo.html'>Try the live demo →</a>
     </div>
     <p class="hero-note">Founding Member: $97 lifetime access — only 50 spots.</p>
@@ -322,7 +322,7 @@
           <li>Founding member badge</li>
           <li class="no">AI Caption Optimization</li>
         </ul>
-        <a class="btn btn-coral" href="signup.html">Become a founder</a>
+        <a class="btn btn-coral" href="signup.html?tier=founding_member">Become a founder</a>
       </div>
       <div class="tier">
         <h3>Studio</h3>
@@ -335,7 +335,7 @@
           <li>Voice-matched draft rewriting</li>
           <li>Priority support</li>
         </ul>
-        <a class="btn btn-primary" href="signup.html">Go Studio</a>
+        <a class="btn btn-primary" href="signup.html?tier=studio">Go Studio</a>
       </div>
     </div>
   </div>
@@ -343,15 +343,15 @@
 
 <section class="waitlist" id="waitlist">
   <div class="wrap">
-    <span class="kicker">Early Access</span>
-    <h2>Be a founding member.</h2>
-    <p class="lede">Early access is opening in waves. Founding members get lifetime access to the app and the founding member badge — only 50 spots.</p>
+    <span class="kicker">Stay in the loop</span>
+    <h2>Not ready to join yet?</h2>
+    <p class="lede">Get an email the moment new spots open, plus occasional updates on new cubicles and features.</p>
     <form class="wl-form" onsubmit="joinWaitlist(event)">
       <input type="email" id="wl-email" placeholder="you@yourbestbrand.com" required aria-label="Email address">
-      <button class="btn btn-coral" type="submit">Join the waitlist</button>
+      <button class="btn btn-coral" type="submit">Notify me</button>
     </form>
-    <p class="wl-ok" id="wl-ok">✓ You're on the list. Watch your inbox for your founding-member invite.</p>
-    <p class="wl-count">Join multi-brand creators already waiting for their cubicles.</p>
+    <p class="wl-ok" id="wl-ok">✓ You're on the list. Watch your inbox for updates.</p>
+    <p class="wl-count">Prefer not to wait? <a href="signup.html?tier=founding_member" style="color:#fff;text-decoration:underline;">Become a founding member now →</a></p>
   </div>
 </section>
 
@@ -374,7 +374,7 @@ async function joinWaitlist(e){
   var email = document.getElementById('wl-email').value.trim();
   btn.disabled = true; btn.textContent = 'Joining…';
   var res = await sb.from('waitlist').insert({ email: email });
-  btn.disabled = false; btn.textContent = 'Join the waitlist';
+  btn.disabled = false; btn.textContent = 'Notify me';
   if (res.error && res.error.code !== '23505') {
     alert('Something went wrong — try again in a moment. (' + res.error.message + ')');
     return;

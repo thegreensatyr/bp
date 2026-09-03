@@ -84,6 +84,12 @@
 
   .demo-note{max-width:880px;margin:0 auto 20px;font-size:.8rem;color:var(--muted);background:var(--paper);border:1px dashed var(--line);border-radius:10px;padding:10px 16px}
   @media(max-width:900px){.composer-grid,.voice-grid{grid-template-columns:1fr}aside{width:200px}}
+
+  /* Bridge back to the real purchase flow — the demo used to dead-end here */
+  .demo-cta{position:fixed;left:0;right:0;bottom:0;background:var(--ink);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;font-size:.92rem;z-index:999;box-shadow:0 -6px 20px rgba(0,0,0,.18)}
+  .demo-cta a{background:var(--brand);color:#fff;padding:9px 20px;border-radius:999px;font-weight:600;text-decoration:none}
+  .demo-cta a:hover{opacity:.92}
+  .content{padding-bottom:76px}
 </style>
 </head>
 <body>
@@ -172,6 +178,11 @@
         <div id="cal-list"></div>
       </div>
     </div>
+  </div>
+
+  <div class="demo-cta">
+    <span>Like what you see?</span>
+    <a href="signup.html?tier=founding_member">Become a Founding Member — $97, 50 spots →</a>
   </div>
 </main>
 
@@ -286,7 +297,7 @@ function setBrand(id){
 function renderVoice(){
   document.getElementById('v-tone').value = active.tone;
   document.getElementById('v-aud').value = active.audience;
-  document.getElementById('v-loves').innerHTML = active.loves.map(p=>`<span class="chip">“${p}”</span>`).join('');
+  document.getElementById('v-loves').innerHTML = active.loves.map(p=>`<span class="chip">"${p}"</span>`).join('');
   document.getElementById('v-lex').innerHTML = active.lexicon.map(w=>`<span class="chip">${w}</span>`).join('');
   document.getElementById('v-never').innerHTML = active.never.map(w=>`<span class="chip never">${w}</span>`).join('');
 }
@@ -318,7 +329,7 @@ function runBleedCheck(){
       if(words.includes(term)) leaks.push({term, brand:b});
     }
     for(const phrase of b.loves){
-      if(text.includes(phrase.toLowerCase())) leaks.push({term:'“'+phrase+'”', brand:b, phrase:true});
+      if(text.includes(phrase.toLowerCase())) leaks.push({term:'"'+phrase+'"', brand:b, phrase:true});
     }
   }
   // also flag this brand's own "never says"
@@ -350,12 +361,12 @@ function runBleedCheck(){
 
   // highlighted preview
   let html = escapeHtml(raw);
-  const flagged = [...new Set(leaks.filter(l=>!l.phrase).map(l=>l.term.replace(/[“”]/g,'')))];
+  const flagged = [...new Set(leaks.filter(l=>!l.phrase).map(l=>l.term.replace(/[""]/g,'')))];
   for(const t of flagged){
     html = html.replace(new RegExp('\\b('+t+')\\b','gi'),'<mark>$1</mark>');
   }
   for(const l of leaks.filter(l=>l.phrase)){
-    const p = l.term.replace(/[“”]/g,'');
+    const p = l.term.replace(/[""]/g,'');
     html = html.replace(new RegExp('('+p.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>');
   }
   document.getElementById('preview').innerHTML = html;

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Brandparent Works — Help</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c1b2e; --ink-soft:#2a2940; --cream:#faf7f2; --paper:#ffffff;
+    --brand:#9B7FC4; --brand-deep:#5B4A7E; --silver:#c9c6d3; --muted:#6b6880; --line:#e8e4dc;
+    --good:#3F7A5C; --warn:#A15A1F;
+    /* the six real cubicles, same hexes as the app */
+    --dj:#1b5e20; --sa:#4a148c; --bp:#1565c0; --cf:#26374a; --vf:#5f7d54; --cw:#6b1620;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--cream);line-height:1.65}
+  h1,h2,h3{font-family:'Fraunces',serif;line-height:1.2}
+  a{color:var(--brand-deep)}
+  .wrap{max-width:780px;margin:0 auto;padding:0 24px 100px}
+
+  header{padding:56px 0 28px;border-bottom:1px solid var(--line);margin-bottom:12px}
+  header .kicker{display:inline-block;font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-deep);margin-bottom:10px}
+  header h1{font-size:clamp(1.9rem,4vw,2.6rem);margin-bottom:10px}
+  header p{color:var(--muted);font-size:1.05rem;max-width:56ch}
+  header a.back{display:inline-block;margin-top:16px;font-size:.9rem;font-weight:600}
+
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px 16px;padding:20px 0 36px;font-size:.88rem}
+  nav.toc a{color:var(--ink-soft);font-weight:600;text-decoration:none}
+  nav.toc a:hover{color:var(--brand-deep)}
+
+  .step{padding:34px 0;border-top:1px solid var(--line)}
+  .step .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;background:var(--brand);color:#fff;font-family:'Fraunces',serif;font-weight:700;font-size:.95rem;margin-right:10px}
+  .step h2{font-size:1.4rem;display:flex;align-items:center;margin-bottom:6px}
+  .step > p{color:var(--ink-soft);margin-bottom:10px}
+  .step p.note{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:14px}
+  .step .label{display:inline-block;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-family:ui-monospace,'IBM Plex Mono',monospace;font-size:.82rem;color:var(--brand-deep)}
+  .step ol,.step ul{margin:10px 0 10px 22px;color:var(--ink-soft)}
+  .step li{margin-bottom:6px}
+
+  .status{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 10px;border-radius:999px;margin-left:10px}
+  .status.live{background:rgba(63,122,92,.12);color:var(--good)}
+  .status.limited{background:rgba(161,90,31,.12);color:var(--warn)}
+
+  figure{margin:18px 0 6px;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px 20px 14px}
+  figure svg{display:block;width:100%;height:auto;max-width:100%}
+  figcaption{margin-top:10px;font-size:.82rem;color:var(--muted);text-align:center}
+
+  footer{padding:36px 0;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line);margin-top:20px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <span class="kicker">Help</span>
+    <h1>How Brandparent works</h1>
+    <p>A cubicle is a room for one brand — its own voice, calendar, and lexicon. This walks through setting one up start to finish, in the order it actually makes sense to do it.</p>
+    <a class="back" href="app.html">← Back to your cubicles</a>
+  </header>
+
+  <nav class="toc">
+    <a href="#create">1. Create a cubicle</a>
+    <a href="#interview">2. Getting to know you</a>
+    <a href="#theme">3. Logo &amp; theme</a>
+    <a href="#compose">4. Draft &amp; Bleed Check</a>
+    <a href="#calendar">5. Calendar</a>
+    <a href="#connections">6. Connect accounts</a>
+  </nav>
+
+  <!-- 1. CREATE A CUBICLE -->
+  <div class="step" id="create">
+    <h2><span class="num">1</span>Create a cubicle</h2>
+    <p>Click the <span class="label">+</span> next to "Your Cubicles" in the sidebar, or <span class="label">+ Create a cubicle</span> if you're starting from empty. Give it a name and a color, save — everything below happens inside that room.</p>
+
+    <figure>
+      <svg viewBox="0 0 700 210" role="img" aria-label="A hallway of six brand cubicles — DJ Green Satyr, Satyr Arcana, Brandparent, CasForensics, Virgo Focused, and Cursed Worlds — each its own room, plus an empty seventh room with a plus sign being walked into as a new cubicle.">
+        <line x1="10" y1="176" x2="690" y2="176" stroke="var(--line)" stroke-width="2"/>
+        <g font-family="Inter,system-ui,sans-serif">
+          <g transform="translate(10,58)">
+            <rect width="76" height="110" rx="10" fill="var(--dj)" opacity="0.12" stroke="var(--dj)" stroke-width="2"/>
+            <circle cx="38" cy="34" r="16" fill="var(--dj)"/>
+            <text x="38" y="39" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">DJ</text>
+            <text x="38" y="72" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-weight="600">Green Satyr</text>
+          </g>
+          <g transform="translate(96,58)">
+            <rect width="76" height="110" rx="10" fill="var(--sa)" opacity="0.12" stroke="var(--sa)" stroke-width="2"/>
+            <circle cx="38" cy="34" r="16" fill="var(--sa)"/>
+            <text x="38" y="39" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">SA</text>
+            <text x="38" y="72" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-weight="600">Satyr Arcana</text>
+          </g>
+          <g transform="translate(182,58)">
+            <rect width="76" height="110" rx="10" fill="var(--bp)" opacity="0.12" stroke="var(--bp)" stroke-width="2"/>
+            <circle cx="38" cy="34" r="16" fill="var(--bp)"/>
+            <text x="38" y="39" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">BP</text>
+            <text x="38" y="72" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-weight="600">Brandparent</text>
+          </g>
+          <g transform="translate(268,58)">
+            <rect width="76" height="110" rx="10" fill="var(--cf)" opacity="0.12" stroke="var(--cf)" stroke-width="2"/>
+            <circle cx="38" cy="34" r="16" fill="var(--cf)"/>
+            <text x="38" y="39" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">CF</text>
+            <text x="38" y="72" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-weight="600">CasForensics</text>
+          </g>
+          <g transform="translate(354,58)">
+            <rect width="76" height="110" rx="10" fill="var(--vf)" opacity="0.12" stroke="var(--vf)" stroke-width="2"/>
+            <circle cx="38" cy="34" r="16" fill="var(--vf)"/>
+            <text x="38" y="39" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">VF</text>
+            <text x="38" y="72" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-weight="600">Virgo Focused</text>
+          </g>
+          <g transform="translate(440,58)">
+            <rect width="76" height="110" rx="10" fill="var(--cw)" opacity="0.12" stroke="var(--cw)" stroke-width="2"/>
+            <circle cx="38" cy="34" r="16" fill="var(--cw)"/>
+            <text x="38" y="39" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">CW</text>
+            <text x="38" y="72" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-weight="600">Cursed Worlds</text>
+          </g>
+          <!-- empty room being walked into -->
+          <g transform="translate(548,58)">
+            <rect width="76" height="110" rx="10" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="5 5"/>
+            <circle cx="38" cy="34" r="16" fill="none" stroke="var(--muted)" stroke-width="2"/>
+            <text x="38" y="40" text-anchor="middle" fill="var(--muted)" font-size="18" font-weight="700">+</text>
+            <text x="38" y="72" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-weight="600">new brand</text>
+          </g>
+        </g>
+        <path d="M 500 22 L 548 22" stroke="var(--brand-deep)" stroke-width="2" fill="none" marker-end="url(#arrow1)"/>
+        <text x="524" y="14" text-anchor="middle" fill="var(--brand-deep)" font-size="11" font-family="Inter,system-ui,sans-serif" font-weight="700">you walk in →</text>
+        <defs>
+          <marker id="arrow1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="var(--brand-deep)"/>
+          </marker>
+        </defs>
+      </svg>
+      <figcaption>Six real cubicles, one shared hallway. Walk into the empty one and you're sitting down as a new brand.</figcaption>
+    </figure>
+
+    <p class="note">Start with the brand you know best. Your own is the fastest to fill in correctly, and it doubles as your working example when you're showing this to anyone else.</p>
+  </div>
+
+  <!-- 2. INTERVIEW -->
+  <div class="step" id="interview">
+    <h2><span class="num">2</span>Getting to know you<span class="status live">Live</span></h2>
+    <p>Open a cubicle's <span class="label">Voice Profile</span> tab and click <span class="label">Start interview</span>. Answer a few questions in plain language — no right format — then apply the results.</p>
+
+    <figure>
+      <svg viewBox="0 0 640 210" role="img" aria-label="A short chat conversation on the left turns into a filled-in Voice Profile card on the right, with tone, audience, lexicon, and never-says rows lighting up as populated.">
+        <g font-family="Inter,system-ui,sans-serif">
+          <!-- chat -->
+          <rect x="10" y="12" width="230" height="34" rx="14" fill="var(--brand)" opacity="0.16"/>
+          <text x="26" y="33" fill="var(--ink)" font-size="11.5">"What's this brand for?"</text>
+
+          <rect x="55" y="56" width="185" height="34" rx="14" fill="var(--paper)" stroke="var(--line)"/>
+          <text x="71" y="77" fill="var(--ink)" font-size="11.5">a short, honest answer…</text>
+
+          <rect x="10" y="100" width="230" height="34" rx="14" fill="var(--brand)" opacity="0.16"/>
+          <text x="26" y="121" fill="var(--ink)" font-size="11.5">"Words you'd never say?"</text>
+
+          <rect x="55" y="144" width="185" height="34" rx="14" fill="var(--paper)" stroke="var(--line)"/>
+          <text x="71" y="165" fill="var(--ink)" font-size="11.5">a quick list…</text>
+
+          <!-- arrow -->
+          <path d="M 250 105 L 330 105" stroke="var(--brand-deep)" stroke-width="2" fill="none" marker-end="url(#arrow2)"/>
+          <text x="290" y="97" text-anchor="middle" fill="var(--brand-deep)" font-size="11" font-weight="700">Apply →</text>
+
+          <!-- profile card -->
+          <rect x="345" y="8" width="285" height="194" rx="14" fill="var(--cream)" stroke="var(--line)" stroke-width="1.5"/>
+          <text x="365" y="32" fill="var(--ink)" font-size="12.5" font-weight="700">Voice Profile</text>
+
+          <rect x="365" y="46" width="245" height="26" rx="7" fill="var(--good)" opacity="0.16"/>
+          <text x="375" y="63" fill="var(--ink-soft)" font-size="11">Tone — filled</text>
+
+          <rect x="365" y="80" width="245" height="26" rx="7" fill="var(--good)" opacity="0.16"/>
+          <text x="375" y="97" fill="var(--ink-soft)" font-size="11">Audience — filled</text>
+
+          <rect x="365" y="114" width="245" height="26" rx="7" fill="var(--good)" opacity="0.16"/>
+          <text x="375" y="131" fill="var(--ink-soft)" font-size="11">Lexicon — filled</text>
+
+          <rect x="365" y="148" width="245" height="26" rx="7" fill="var(--good)" opacity="0.16"/>
+          <text x="375" y="165" fill="var(--ink-soft)" font-size="11">Never says — filled</text>
+
+          <text x="365" y="192" fill="var(--muted)" font-size="10">review, then Save voice profile</text>
+        </g>
+        <defs>
+          <marker id="arrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="var(--brand-deep)"/>
+          </marker>
+        </defs>
+      </svg>
+      <figcaption>A few plain-language answers become four structured fields — nothing saves until you review and hit Save.</figcaption>
+    </figure>
+
+    <p class="note">Not happy with an answer? <span class="label">Start over</span> resets the chat without touching anything already saved.</p>
+  </div>
+
+  <!-- 3. LOGO & THEME -->
+  <div class="step" id="theme">
+    <h2><span class="num">3</span>Logo &amp; theme<span class="status live">Live</span></h2>
+    <p><b>Logo:</b> upload one per cubicle (PNG, JPG, WEBP, or SVG, up to 5MB) — it replaces the initials badge everywhere that brand shows up. <b>Theme:</b> pick colors and fonts by hand, or click <span class="label">Detect theme from my site</span> to pull them from a live website.</p>
+
+    <figure>
+      <svg viewBox="0 0 640 170" role="img" aria-label="Before and after: a plain initials badge becomes a real logo, paired with two color swatches and a font sample pulled from the brand's own site.">
+        <g font-family="Inter,system-ui,sans-serif">
+          <circle cx="70" cy="75" r="38" fill="var(--silver)" opacity="0.35" stroke="var(--muted)" stroke-width="1.5"/>
+          <text x="70" y="82" text-anchor="middle" fill="var(--ink-soft)" font-size="16" font-weight="700">DJ</text>
+          <text x="70" y="132" text-anchor="middle" fill="var(--muted)" font-size="11" font-weight="600">before</text>
+
+          <path d="M 128 75 L 200 75" stroke="var(--brand-deep)" stroke-width="2" fill="none" marker-end="url(#arrow3)"/>
+          <text x="164" y="66" text-anchor="middle" fill="var(--brand-deep)" font-size="10.5" font-weight="700">upload + detect</text>
+
+          <circle cx="260" cy="75" r="38" fill="var(--dj)"/>
+          <rect x="240" y="58" width="40" height="34" rx="6" fill="none" stroke="#fff" stroke-width="2"/>
+          <circle cx="250" cy="68" r="3" fill="#fff"/>
+          <path d="M 242 88 L 254 74 L 264 82 L 278 62" stroke="#fff" stroke-width="2" fill="none"/>
+          <text x="260" y="132" text-anchor="middle" fill="var(--muted)" font-size="11" font-weight="600">after</text>
+
+          <!-- swatches + font -->
+          <rect x="340" y="46" width="26" height="26" rx="6" fill="var(--dj)"/>
+          <rect x="372" y="46" width="26" height="26" rx="6" fill="var(--silver)"/>
+          <text x="340" y="92" fill="var(--muted)" font-size="10.5">primary / secondary</text>
+
+          <text x="470" y="70" fill="var(--ink)" font-size="26" font-weight="700" font-family="Fraunces, serif">Aa</text>
+          <text x="470" y="92" fill="var(--muted)" font-size="10.5">heading + body font</text>
+        </g>
+        <defs>
+          <marker id="arrow3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="var(--brand-deep)"/>
+          </marker>
+        </defs>
+      </svg>
+      <figcaption>Nothing applies until you hit Save theme — the preview box shows exactly this before you commit.</figcaption>
+    </figure>
+
+    <p class="note">Auto-detect is best-effort — a heavily JavaScript-rendered site may not return much. Manual entry always works as a fallback.</p>
+  </div>
+
+  <!-- 4. COMPOSE + BLEED CHECK -->
+  <div class="step" id="compose">
+    <h2><span class="num">4</span>Draft a post &amp; run Bleed Check<span class="status live">Live</span></h2>
+    <p>Write in the <span class="label">Composer</span> tab. Bleed Check runs as you type, comparing your draft against <em>every other cubicle's</em> vocabulary — not just this one's never-says.</p>
+
+    <figure>
+      <svg viewBox="0 0 640 250" role="img" aria-label="A draft is scanned against the lexicons of five other cubicles. A draft using only this brand's own words passes clean; a draft containing another brand's word gets flagged with that brand named.">
+        <g font-family="Inter,system-ui,sans-serif">
+          <!-- other cubicles' lexicon chips being scanned against -->
+          <text x="10" y="18" fill="var(--muted)" font-size="10.5" font-weight="700" letter-spacing="0.06em">CHECKED AGAINST</text>
+          <g transform="translate(10,26)">
+            <rect width="34" height="20" rx="6" fill="var(--sa)"/><text x="17" y="14" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">SA</text>
+            <rect x="42" width="34" height="20" rx="6" fill="var(--bp)"/><text x="59" y="14" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">BP</text>
+            <rect x="84" width="34" height="20" rx="6" fill="var(--cf)"/><text x="101" y="14" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">CF</text>
+            <rect x="126" width="34" height="20" rx="6" fill="var(--vf)"/><text x="143" y="14" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">VF</text>
+            <rect x="168" width="34" height="20" rx="6" fill="var(--cw)"/><text x="185" y="14" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">CW</text>
+          </g>
+
+          <!-- gate -->
+          <path d="M 300 20 L 300 60" stroke="var(--line)" stroke-width="2"/>
+          <path d="M 250 60 L 390 60 L 370 90 L 270 90 Z" fill="var(--paper)" stroke="var(--ink-soft)" stroke-width="1.5"/>
+          <text x="320" y="79" text-anchor="middle" fill="var(--ink-soft)" font-size="11" font-weight="700">Bleed Check</text>
+
+          <!-- clean draft -> left -->
+          <rect x="60" y="120" width="200" height="60" rx="10" fill="var(--paper)" stroke="var(--good)" stroke-width="1.5"/>
+          <text x="76" y="140" fill="var(--ink)" font-size="10.5">"Hooves up — the grove</text>
+          <text x="76" y="154" fill="var(--ink)" font-size="10.5">is open tonight."</text>
+          <path d="M 280 100 L 200 118" stroke="var(--good)" stroke-width="2" fill="none" marker-end="url(#arrow-good)"/>
+          <circle cx="160" cy="200" r="11" fill="var(--good)"/>
+          <path d="M155,200 l4,4 l8,-9" stroke="#fff" stroke-width="2" fill="none"/>
+          <text x="160" y="228" text-anchor="middle" fill="var(--good)" font-size="11" font-weight="700">Clean — ship it</text>
+
+          <!-- flagged draft -> right -->
+          <rect x="380" y="120" width="230" height="60" rx="10" fill="var(--paper)" stroke="var(--warn)" stroke-width="1.5"/>
+          <text x="396" y="140" fill="var(--ink)" font-size="10.5">"Hooves up — full </text>
+          <text x="396" y="154" fill="var(--ink)" font-size="10.5"><tspan fill="var(--warn)" font-weight="700" text-decoration="underline">tarot</tspan> reading tonight."</text>
+          <path d="M 360 100 L 460 118" stroke="var(--warn)" stroke-width="2" fill="none" marker-end="url(#arrow-warn)"/>
+          <circle cx="495" cy="200" r="11" fill="var(--warn)"/>
+          <text x="495" y="204" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">!</text>
+          <text x="495" y="228" text-anchor="middle" fill="var(--warn)" font-size="11" font-weight="700">Flagged — belongs to Satyr Arcana</text>
+        </g>
+        <defs>
+          <marker id="arrow-good" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="var(--good)"/>
+          </marker>
+          <marker id="arrow-warn" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="var(--warn)"/>
+          </marker>
+        </defs>
+      </svg>
+      <figcaption>Same brand, one word swapped — "tarot" belongs to Satyr Arcana, so DJ Green Satyr's draft gets flagged before it ships.</figcaption>
+    </figure>
+
+    <p><span class="label">✨ Optimize caption</span> rewrites your draft in this cubicle's voice. <span class="label">Schedule</span> adds it to that brand's calendar.</p>
+  </div>
+
+  <!-- 5. CALENDAR -->
+  <div class="step" id="calendar">
+    <h2><span class="num">5</span>Calendar<span class="status live">Live</span></h2>
+    <p>Each cubicle keeps its own calendar — nothing here is shared across brands.</p>
+
+    <figure>
+      <svg viewBox="0 0 640 140" role="img" aria-label="Six separate weekly calendar strips, one per cubicle, each a different color and walled off from the others with visible gaps.">
+        <g font-family="Inter,system-ui,sans-serif">
+          <g transform="translate(10,10)">
+            <rect width="92" height="110" rx="10" fill="var(--paper)" stroke="var(--line)"/>
+            <rect width="92" height="26" rx="10" fill="var(--dj)"/>
+            <text x="46" y="18" text-anchor="middle" fill="#fff" font-size="10.5" font-weight="700">DJ</text>
+            <circle cx="24" cy="50" r="4" fill="var(--dj)"/><circle cx="48" cy="66" r="4" fill="var(--dj)"/><circle cx="68" cy="86" r="4" fill="var(--dj)"/>
+          </g>
+          <g transform="translate(112,10)">
+            <rect width="92" height="110" rx="10" fill="var(--paper)" stroke="var(--line)"/>
+            <rect width="92" height="26" rx="10" fill="var(--sa)"/>
+            <text x="46" y="18" text-anchor="middle" fill="#fff" font-size="10.5" font-weight="700">SA</text>
+            <circle cx="30" cy="52" r="4" fill="var(--sa)"/><circle cx="60" cy="76" r="4" fill="var(--sa)"/>
+          </g>
+          <g transform="translate(214,10)">
+            <rect width="92" height="110" rx="10" fill="var(--paper)" stroke="var(--line)"/>
+            <rect width="92" height="26" rx="10" fill="var(--bp)"/>
+            <text x="46" y="18" text-anchor="middle" fill="#fff" font-size="10.5" font-weight="700">BP</text>
+            <circle cx="26" cy="48" r="4" fill="var(--bp)"/><circle cx="52" cy="60" r="4" fill="var(--bp)"/><circle cx="70" cy="90" r="4" fill="var(--bp)"/>
+          </g>
+          <g transform="translate(316,10)">
+            <rect width="92" height="110" rx="10" fill="var(--paper)" stroke="var(--line)"/>
+            <rect width="92" height="26" rx="10" fill="var(--cf)"/>
+            <text x="46" y="18" text-anchor="middle" fill="#fff" font-size="10.5" font-weight="700">CF</text>
+            <circle cx="40" cy="55" r="4" fill="var(--cf)"/>
+          </g>
+          <g transform="translate(418,10)">
+            <rect width="92" height="110" rx="10" fill="var(--paper)" stroke="var(--line)"/>
+            <rect width="92" height="26" rx="10" fill="var(--vf)"/>
+            <text x="46" y="18" text-anchor="middle" fill="#fff" font-size="10.5" font-weight="700">VF</text>
+            <circle cx="28" cy="50" r="4" fill="var(--vf)"/><circle cx="58" cy="70" r="4" fill="var(--vf)"/>
+          </g>
+          <g transform="translate(520,10)">
+            <rect width="92" height="110" rx="10" fill="var(--paper)" stroke="var(--line)"/>
+            <rect width="92" height="26" rx="10" fill="var(--cw)"/>
+            <text x="46" y="18" text-anchor="middle" fill="#fff" font-size="10.5" font-weight="700">CW</text>
+            <circle cx="32" cy="52" r="4" fill="var(--cw)"/><circle cx="64" cy="80" r="4" fill="var(--cw)"/>
+          </g>
+        </g>
+      </svg>
+      <figcaption>Six brands, six calendars, visible walls between them — never merged into one master schedule.</figcaption>
+    </figure>
+  </div>
+
+  <!-- 6. CONNECTIONS -->
+  <div class="step" id="connections">
+    <h2><span class="num">6</span>Connect accounts<span class="status limited">Partial</span></h2>
+    <p>Connections are per-cubicle — connecting an account for one brand never gives another brand access to it.</p>
+
+    <figure>
+      <svg viewBox="0 0 720 230" role="img" aria-label="DJ Green Satyr and Satyr Arcana each connect out to their own separate social accounts, with no line crossing between the two brands. Facebook, Instagram, and Bluesky are live; TikTok posts stay private; LinkedIn is not yet connectable.">
+        <g font-family="Inter,system-ui,sans-serif">
+          <!-- DJ hub, boxes to its right -->
+          <circle cx="85" cy="115" r="30" fill="var(--dj)"/>
+          <text x="85" y="121" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">DJ</text>
+
+          <line x1="113" y1="105" x2="165" y2="39" stroke="var(--dj)" stroke-width="2"/>
+          <rect x="165" y="25" width="150" height="28" rx="8" fill="var(--paper)" stroke="var(--dj)" stroke-width="1.5"/>
+          <text x="240" y="43" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-weight="600">Facebook + Instagram</text>
+
+          <line x1="115" y1="115" x2="165" y2="114" stroke="var(--dj)" stroke-width="2"/>
+          <rect x="165" y="100" width="150" height="28" rx="8" fill="var(--paper)" stroke="var(--dj)" stroke-width="1.5"/>
+          <text x="240" y="118" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-weight="600">Bluesky</text>
+
+          <line x1="113" y1="125" x2="165" y2="189" stroke="var(--dj)" stroke-width="2" stroke-dasharray="4 4"/>
+          <rect x="165" y="175" width="150" height="28" rx="8" fill="var(--paper)" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <text x="240" y="193" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-weight="600">TikTok — private</text>
+
+          <!-- gap marker -->
+          <text x="360" y="119" text-anchor="middle" fill="var(--muted)" font-size="16" font-weight="700">✕</text>
+          <text x="360" y="135" text-anchor="middle" fill="var(--muted)" font-size="9">no line crosses</text>
+
+          <!-- SA hub, boxes to its left -->
+          <circle cx="635" cy="115" r="30" fill="var(--sa)"/>
+          <text x="635" y="121" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">SA</text>
+
+          <line x1="607" y1="105" x2="555" y2="39" stroke="var(--sa)" stroke-width="2"/>
+          <rect x="405" y="25" width="150" height="28" rx="8" fill="var(--paper)" stroke="var(--sa)" stroke-width="1.5"/>
+          <text x="480" y="43" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-weight="600">Facebook + Instagram</text>
+
+          <line x1="605" y1="115" x2="555" y2="114" stroke="var(--sa)" stroke-width="2" stroke-dasharray="4 4"/>
+          <rect x="405" y="100" width="150" height="28" rx="8" fill="var(--paper)" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <text x="480" y="118" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-weight="600">LinkedIn — not yet</text>
+
+          <line x1="607" y1="125" x2="555" y2="189" stroke="var(--sa)" stroke-width="2"/>
+          <rect x="405" y="175" width="150" height="28" rx="8" fill="var(--paper)" stroke="var(--sa)" stroke-width="1.5"/>
+          <text x="480" y="193" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-weight="600">Bluesky</text>
+
+          <text x="200" y="222" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-weight="600">DJ Green Satyr's accounts</text>
+          <text x="520" y="222" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-weight="600">Satyr Arcana's accounts</text>
+        </g>
+      </svg>
+      <figcaption>Two brands, two completely separate sets of connected accounts — the isolation goes all the way out to social.</figcaption>
+    </figure>
+
+    <ul>
+      <li><b>Facebook &amp; Instagram</b> — live. Instagram posts need an image URL; Facebook doesn't.</li>
+      <li><b>Bluesky</b> — live. Generate a free app password at bsky.app and connect — no developer approval needed.</li>
+      <li><b>TikTok</b> — connects, but posts stay private (visible only to you) until the app passes TikTok's review.</li>
+      <li><b>LinkedIn</b> — not connectable yet; the developer app hasn't been created.</li>
+    </ul>
+    <p class="note">If a platform isn't ready yet, draft and schedule anyway — the post is ready to fire the moment that connection goes live.</p>
+  </div>
+
+  <footer>
+    Questions this page doesn't answer — ask directly, this is the first draft of the help docs.
+  </footer>
+</div>
+
+</body>
+</html>
