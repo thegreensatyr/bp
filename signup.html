@@ -84,7 +84,7 @@
 
       const { data, error } = await sb.auth.signUp({
         email, password,
-        options: { data: { parent_name: parentName } }
+        options: { data: { parent_name: parentName, tier: TIER } }
       });
 
       if (error) {

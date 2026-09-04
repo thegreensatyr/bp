@@ -116,6 +116,9 @@
   .empty-state{max-width:520px;margin:60px auto;text-align:center}
   .empty-state h2{margin-bottom:10px}
   .empty-state p{color:var(--muted);margin-bottom:24px}
+  .paywall-tier-toggle{display:inline-flex;gap:4px;margin:18px 0;background:var(--cream);border:1.5px solid var(--line);border-radius:999px;padding:4px}
+  .paywall-tier-btn{border:none;background:none;cursor:pointer;padding:9px 18px;border-radius:999px;font-size:.82rem;font-weight:700;color:var(--ink);font-family:inherit;transition:all .15s}
+  .paywall-tier-btn.active{background:var(--ink);color:#fff}
 
   .modal-bg{display:none;position:fixed;inset:0;background:rgba(28,27,46,.45);align-items:center;justify-content:center;z-index:100}
   .modal-bg.show{display:flex}
@@ -123,8 +126,9 @@
   .modal h3{margin-bottom:4px}
   .modal .sub{font-size:.85rem;color:var(--muted);margin-bottom:18px}
   .color-row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-  .swatch{width:28px;height:28px;border-radius:8px;cursor:pointer;border:2px solid transparent}
-  .swatch.sel{border-color:var(--ink)}
+  .swatch{width:28px;height:28px;border-radius:8px;cursor:pointer;border:2px solid transparent;position:relative;box-sizing:border-box}
+  .swatch.sel{border-color:transparent;box-shadow:0 0 0 2px #fff,0 0 0 4px var(--ink)}
+  .swatch.sel::after{content:'\2713';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:900;text-shadow:0 0 3px rgba(0,0,0,.9),0 1px 2px rgba(0,0,0,.9),0 0 6px rgba(0,0,0,.65)}
   .modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
   .modal-wide{max-width:640px;max-height:88vh;overflow-y:auto}
   .field-help{font-size:.76rem;color:var(--muted);margin-top:6px;line-height:1.4}
@@ -218,6 +222,10 @@
 
     <div id="paywall" class="empty-state" style="display:none">
       <h2>Finish setting up your account</h2>
+      <div class="paywall-tier-toggle" id="paywall-tier-toggle">
+        <button type="button" class="paywall-tier-btn" id="paywall-tier-founding" onclick="setPaywallTier('founding_member')">Founding — $97</button>
+        <button type="button" class="paywall-tier-btn" id="paywall-tier-studio" onclick="setPaywallTier('studio')">Studio — trial</button>
+      </div>
       <p id="paywall-msg">Brandparent is $97 one-time — lifetime access to every cubicle you create.</p>
       <button class="btn btn-brand" onclick="startCheckout()" id="paywall-btn">Complete your $97 purchase</button>
     </div>
@@ -534,6 +542,7 @@ let active = null;
 let session = null;
 let connections = [];
 let tutorialsEnabled = true;
+let paywallTier = 'founding_member';
 
 // --- Color contrast (WCAG relative luminance) -----------------------------
 // Used to warn when a picked text/background (or headline/background) pair
@@ -636,6 +645,22 @@ function openBloomBreak() {
   );
 }
 
+function renderPaywallCopy() {
+  document.getElementById('paywall-msg').textContent = paywallTier === 'studio'
+    ? '$27/month · 14-day free trial · cancel anytime.'
+    : 'Brandparent is $97 one-time — lifetime access to every cubicle you create.';
+  document.getElementById('paywall-btn').textContent = paywallTier === 'studio'
+    ? 'Start your free trial'
+    : 'Complete your $97 purchase';
+}
+
+function setPaywallTier(tier) {
+  paywallTier = tier === 'studio' ? 'studio' : 'founding_member';
+  document.getElementById('paywall-tier-founding').classList.toggle('active', paywallTier === 'founding_member');
+  document.getElementById('paywall-tier-studio').classList.toggle('active', paywallTier === 'studio');
+  renderPaywallCopy();
+}
+
 async function init() {
   renderSoundToggle();
   session = await requireSession();
@@ -646,6 +671,12 @@ async function init() {
   tutorialsEnabled = !profile || profile.tutorials_enabled !== false;
   document.getElementById('tutorial-toggle-input').checked = tutorialsEnabled;
 
+  // Which tier they intended, captured at signup (see signup.html) and stored on
+  // the auth user's metadata — otherwise lost once email confirmation routes them
+  // through a link instead of straight to checkout.
+  const metaTier = session.user.user_metadata && session.user.user_metadata.tier;
+  setPaywallTier(metaTier === 'studio' ? 'studio' : 'founding_member');
+
   const params = new URLSearchParams(window.location.search);
   const paidStatuses = ['active', 'trialing'];
   let status = profile && profile.subscription_status;
@@ -655,6 +686,7 @@ async function init() {
     document.getElementById('no-cubicles').style.display = 'none';
     document.getElementById('app-panels').style.display = 'none';
     document.getElementById('paywall').style.display = 'block';
+    document.getElementById('paywall-tier-toggle').style.display = 'none';
     document.getElementById('paywall-msg').textContent = 'Payment received — activating your account…';
     document.getElementById('paywall-btn').style.display = 'none';
     for (let i = 0; i < 8 && !paidStatuses.includes(status); i++) {
@@ -664,15 +696,21 @@ async function init() {
     }
     window.history.replaceState({}, '', 'app.html');
     document.getElementById('paywall-btn').style.display = '';
+    document.getElementById('paywall-tier-toggle').style.display = '';
   }
 
   if (!paidStatuses.includes(status)) {
     document.getElementById('no-cubicles').style.display = 'none';
     document.getElementById('app-panels').style.display = 'none';
     document.getElementById('paywall').style.display = 'block';
-    document.getElementById('paywall-msg').textContent = status === 'past_due'
-      ? "Your last payment didn't go through — update it to keep your cubicles active."
-      : 'Brandparent is $97 one-time — lifetime access to every cubicle you create.';
+    if (status === 'past_due') {
+      document.getElementById('paywall-tier-toggle').style.display = 'none';
+      document.getElementById('paywall-msg').textContent = "Your last payment didn't go through — update it to keep your cubicles active.";
+      document.getElementById('paywall-btn').textContent = 'Update payment';
+    } else {
+      document.getElementById('paywall-tier-toggle').style.display = '';
+      renderPaywallCopy();
+    }
     return;
   }
   document.getElementById('paywall').style.display = 'none';
@@ -698,15 +736,17 @@ async function init() {
 async function startCheckout() {
   const btn = document.getElementById('paywall-btn');
   const msg = document.getElementById('paywall-msg');
-  btn.disabled = true; btn.textContent = 'Redirecting to payment…';
+  btn.disabled = true;
+  btn.textContent = paywallTier === 'studio' ? 'Setting up your trial…' : 'Redirecting to payment…';
 
   const { data, error } = await sb.functions.invoke('create-checkout-session', {
-    body: { tier: 'founding_member' }
+    body: { tier: paywallTier }
   });
 
   if (error || !data || !data.url) {
     msg.textContent = 'Could not start checkout: ' + (error ? error.message : 'no URL returned') + '. Try again in a moment.';
-    btn.disabled = false; btn.textContent = 'Complete your $97 purchase';
+    btn.disabled = false;
+    renderPaywallCopy();
     return;
   }
   window.location.href = data.url;
