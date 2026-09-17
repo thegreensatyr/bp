@@ -1487,15 +1487,20 @@ async function optimize() {
   out.textContent = 'Optimizing…';
 
   try {
+    const targets = getSelectedPlatforms();
     const { data, error } = await sb.functions.invoke('optimize-caption', {
-      body: { draft: raw, tone: active.tone, audience: active.audience, signature_phrases: active.signature_phrases, lexicon: active.lexicon, never_says: active.never_says, brand_name: active.name }
+      body: { draft: raw, tone: active.tone, audience: active.audience, signature_phrases: active.signature_phrases, lexicon: active.lexicon, never_says: active.never_says, brand_name: active.name, target_platforms: targets }
     });
     if (error) throw error;
     const providerLabel = data.provider === 'gemini' ? 'AI (free tier)' : 'Claude';
     playRewardTone();
-    out.innerHTML = escapeHtml(data.caption) + '<div class="optim-note">✨ Optimized via ' + providerLabel + ' for ' + escapeHtml(active.name) + '.</div>';
+    let note = '✨ Optimized via ' + providerLabel + ' for ' + escapeHtml(active.name) + '.';
+    if (data.limit) {
+      note += ' ' + data.char_count + '/' + data.limit + ' characters' + (data.trimmed ? ' (trimmed to fit)' : '') + '.';
+    }
+    out.innerHTML = escapeHtml(data.caption) + '<div class="optim-note">' + note + '</div>';
   } catch (e) {
-    out.innerHTML = 'Caption optimization isn\'t configured yet — the ANTHROPIC_API_KEY secret needs to be added to the Supabase project\'s Edge Function settings.' +
+    out.innerHTML = 'Caption optimization hit an error.' +
       '<div class="optim-note">(' + escapeHtml(e.message || String(e)) + ')</div>';
   }
 }
