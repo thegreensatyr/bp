@@ -173,6 +173,59 @@
   @keyframes bloom-pulse{0%,100%{box-shadow:0 6px 20px rgba(167,139,250,.45)}50%{box-shadow:0 6px 32px rgba(255,107,107,.55)}}
 
   @media(max-width:900px){.composer-grid,.voice-grid{grid-template-columns:1fr}aside{width:200px}}
+
+  /* --- Brand-immersive workspace (2026-09-22) ------------------------------
+     Every surface reads from these variables. applyThemeVars() rewrites them
+     on <html> whenever a cubicle is selected (or while a theme is being
+     edited), so the WHOLE workspace — sidebar, top bar, cards, composer,
+     fonts, background image — becomes that brand. */
+  :root{
+    --side-bg:#1c1b2e; --side-fg:#e8e5f2; --side-muted:#8c88a6; --side-hover:#2a2940;
+    --on-brand:#fff; --paper-a:#fff; --content-bg-image:none; --brand-text:#9B7FC4;
+  }
+  body{transition:background-color .25s ease,color .25s ease}
+  input,textarea,select{color:var(--ink)}
+  aside{background:var(--side-bg);color:var(--side-fg);transition:background-color .25s ease}
+  .side-head{color:var(--side-fg);border-bottom-color:var(--side-hover)}
+  .side-label,.side-label .add,.side-foot,.tutorial-toggle,.tour-link{color:var(--side-muted)}
+  .side-label .add:hover,.tour-link:hover{color:var(--side-fg)}
+  .cub-btn{color:var(--side-fg);opacity:.78}
+  .cub-btn:hover{background:var(--side-hover);color:var(--side-fg);opacity:1}
+  .cub-btn.active{background:var(--side-hover);color:var(--side-fg);opacity:1;font-weight:700}
+  .side-foot{border-top-color:var(--side-hover)}
+  .side-foot b{color:var(--side-fg)}
+  .logout{border-color:var(--side-hover);color:var(--side-muted)}
+  .logout:hover{color:var(--side-fg);border-color:var(--side-muted)}
+  .cub-dot.has-logo{background:#fff !important;padding:2px}
+  .cub-dot img{object-fit:contain}
+  .topbar{border-bottom:3px solid var(--brand);height:66px}
+  .topbar .brand-name{font-family:var(--font-heading);font-size:1.25rem;color:var(--ink)}
+  .topbar .brand-name .cub-dot{width:42px;height:42px;border-radius:11px;font-size:.9rem}
+  .tab.active{color:var(--brand-text)}
+  .btn-brand,.tour-btn.primary{color:var(--on-brand)}
+  .btn-coral,.studio-badge{color:var(--on-secondary,#fff)}
+  .chip{color:var(--brand-text)}
+  .bleed-clean{background:var(--brand-soft);color:var(--ink)}
+  .bleed-item b,.cal-day .d,.logo-preview-fallback,.mini-preview .h,.tour-box h4{font-family:var(--font-heading)}
+  .logo-preview-wrap{background:#fff}
+  .logo-preview-wrap img{object-fit:contain}
+  .content{background-color:var(--cream);background-image:var(--content-bg-image);background-size:cover;background-position:center;background-repeat:no-repeat;transition:background-color .25s ease}
+  .has-bg-image .card,.has-bg-image .demo-note{background:var(--paper-a);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  .posting-as{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:var(--brand);color:var(--on-brand);font-weight:600;font-size:.9rem;margin-bottom:14px;flex-wrap:wrap}
+  .posting-as b{font-family:var(--font-heading);font-size:1.02rem}
+  .posting-as .to{font-weight:500;opacity:.9;font-size:.82rem}
+  .posting-as .cub-dot{width:28px;height:28px}
+  .theme-live-note{display:none;margin-top:10px;font-size:.8rem;font-weight:600;color:var(--ink);background:var(--brand-soft);border-radius:8px;padding:8px 12px}
+  .theme-live-note.show{display:block}
+  .bg-thumb{width:120px;height:72px;border-radius:10px;border:1.5px solid var(--line);background:var(--cream) center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-size:.72rem;color:var(--muted);flex-shrink:0}
+  .suggest-box{border:1.5px solid var(--line);border-radius:12px;padding:14px;margin-top:12px;background:var(--paper)}
+  .suggest-row{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 12px}
+  .suggest-sw{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.7rem;color:var(--muted);min-width:64px}
+  .suggest-sw span.sq{width:44px;height:44px;border-radius:10px;border:1.5px solid var(--line);display:block}
+  .role-btn{border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font-size:.7rem;font-weight:700;border-radius:999px;padding:2px 8px;margin-left:3px;cursor:pointer}
+  .role-btn:hover{border-color:var(--brand)}
+  .pick-color{display:inline-flex;align-items:center;gap:4px;margin:4px 10px 4px 0;font-size:.75rem}
+  .pick-color .cw{width:18px;height:18px;border-radius:5px;border:1px solid var(--line);display:inline-block}
 </style>
 </head>
 <body>
@@ -236,6 +289,7 @@
         <div class="composer-grid">
           <div>
             <div class="card">
+              <div class="posting-as" id="posting-as"></div>
               <h3>Draft a post</h3>
               <textarea id="draft" placeholder="Write as this brand… the Bleed Check watches as you type." oninput="runBleedCheck(); checkBlueskyLimit()"></textarea>
               <label style="margin-top:14px">Image URL <span style="font-weight:400;text-transform:none;font-size:.78rem">(required for Instagram — Facebook works without one)</span></label>
@@ -311,7 +365,7 @@
 
           <div class="card full" id="theme-card">
             <h3>Cubicle theme</h3>
-            <p style="font-size:.85rem;color:var(--muted);margin-bottom:14px">Make this room feel like its own place — pick colors and fonts by hand, or pull them straight from your website.</p>
+            <p style="font-size:.85rem;color:var(--muted);margin-bottom:14px">Make this room feel like your brand's own place — pull your look straight from your website, or pick colors, fonts, and a background by hand. The whole workspace changes live as you pick.</p>
 
             <div class="detect-box">
               <label style="margin-top:0">Import from your site</label>
@@ -359,6 +413,24 @@
               </div>
             </div>
 
+            <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line)">
+              <label style="margin-top:0">Background image or texture <span style="font-weight:400;text-transform:none;font-size:.78rem">(optional)</span></label>
+              <div class="field-help" style="margin-top:0">A photo, texture, or artwork that sits behind this brand's whole workspace. JPG, PNG, or WEBP — large images are shrunk automatically.</div>
+              <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px">
+                <div class="bg-thumb" id="bg-thumb">None</div>
+                <input type="file" id="bg-file" accept="image/png,image/jpeg,image/webp" style="max-width:220px">
+                <button class="btn btn-brand" onclick="uploadBackground()" id="bg-upload-btn">Upload</button>
+                <button class="btn btn-ghost" onclick="removeBackground()" id="bg-remove-btn">Remove</button>
+              </div>
+              <div class="save-note" id="bg-note" style="margin-top:8px"></div>
+              <label>Image strength</label>
+              <div style="display:flex;align-items:center;gap:12px">
+                <input type="range" id="t-overlay" min="5" max="95" step="5" style="flex:1;max-width:320px" oninput="onOverlayInput()">
+                <span class="save-note" id="t-overlay-val"></span>
+              </div>
+              <div class="field-help">Lower = softer image so text stays easy to read. Save theme to keep it.</div>
+            </div>
+
             <div class="theme-preview" id="theme-preview">
               <div style="display:flex;gap:8px;margin-bottom:10px">
                 <span class="theme-preview-swatch" id="theme-preview-swatch1"></span>
@@ -371,8 +443,10 @@
 
             <div class="save-row">
               <button class="btn btn-brand" onclick="saveTheme()" id="save-theme-btn">Save theme</button>
+              <button class="btn btn-ghost" onclick="revertTheme()" id="revert-theme-btn">Undo changes</button>
               <span class="save-note" id="theme-note"></span>
             </div>
+            <div class="theme-live-note" id="theme-live-note">👀 You're previewing this look across the whole workspace. Click <b>Save theme</b> to keep it, or <b>Undo changes</b>.</div>
           </div>
 
           <div class="card">
@@ -773,8 +847,13 @@ async function loadCubicles() {
   document.getElementById('no-cubicles').style.display = 'none';
   document.getElementById('app-panels').style.display = 'block';
 
-  if (!active || !cubicles.find(c => c.id === active.id)) active = cubicles[0];
-  else active = cubicles.find(c => c.id === active.id);
+  if (!active || !cubicles.find(c => c.id === active.id)) {
+    const urlPick = new URLSearchParams(window.location.search).get('cubicle');
+    const wanted = urlPick || recallActive();
+    active = cubicles.find(c => c.id === wanted) || cubicles[0];
+  } else {
+    active = cubicles.find(c => c.id === active.id);
+  }
 
   renderSidebar();
   await setBrand(active.id);
@@ -783,7 +862,7 @@ async function loadCubicles() {
 function cubDot(c) {
   const initials = (c.icon_initials || c.name.slice(0,2)).toUpperCase();
   if (c.logo_url) {
-    return `<span class="cub-dot" style="background:${c.color}"><img src="${c.logo_url}" alt=""></span>`;
+    return `<span class="cub-dot has-logo"><img src="${escapeHtml(c.logo_url)}" alt=""></span>`;
   }
   return `<span class="cub-dot" style="background:${c.color}">${initials}</span>`;
 }
@@ -796,17 +875,43 @@ function renderSidebar() {
     </button>`).join('');
 }
 
+// --- Brand lock -------------------------------------------------------------
+// The selected cubicle is remembered per account, so a page reload, a login,
+// or coming back from connecting Facebook/Bluesky/etc. lands you back in the
+// SAME brand instead of silently jumping to the first one. Unsent drafts are
+// kept per brand while you switch around, so nothing is lost or posted to
+// the wrong place.
+const draftCache = {};
+function activeKey() { return session && session.user ? 'bp_active_cubicle_' + session.user.id : 'bp_active_cubicle'; }
+function rememberActive(id) { try { localStorage.setItem(activeKey(), id); } catch (e) {} }
+function recallActive() { try { return localStorage.getItem(activeKey()); } catch (e) { return null; } }
+
+function renderPostingAs() {
+  const el = document.getElementById('posting-as');
+  if (!el || !active) return;
+  const names = (connections || []).map(a => PLATFORM_LABEL[a.platform] || a.platform);
+  el.innerHTML = `${cubDot(active)} <span>Posting as <b>${escapeHtml(active.name)}</b></span>` +
+    `<span class="to">${names.length ? '→ ' + escapeHtml(names.join(', ')) : '→ no accounts connected yet'}</span>`;
+}
+
 async function setBrand(id) {
-  active = cubicles.find(c => c.id === id);
-  if (!active) return;
-  const contentRoot = document.getElementById('content-root');
-  contentRoot.style.setProperty('--brand', active.color);
-  contentRoot.style.setProperty('--brand-soft', hexSoft(active.color));
+  const next = cubicles.find(c => c.id === id);
+  if (!next) return;
+  if (active && document.getElementById('draft')) {
+    draftCache[active.id] = {
+      text: document.getElementById('draft').value,
+      image: document.getElementById('draft-image').value
+    };
+  }
+  active = next;
+  rememberActive(active.id);
   applyActiveTheme();
   document.getElementById('active-name').innerHTML =
     `${cubDot(active)} ${escapeHtml(active.name)}`;
-  document.getElementById('draft').value = '';
-  document.getElementById('draft-image').value = '';
+  const cached = draftCache[active.id] || { text: '', image: '' };
+  document.getElementById('draft').value = cached.text || '';
+  document.getElementById('draft-image').value = cached.image || '';
+  renderPostingAs();
   document.getElementById('optim-out').style.display = 'none';
   document.getElementById('publish-out').style.display = 'none';
   renderSidebar();
@@ -906,11 +1011,19 @@ async function sendInterviewTurn() {
   const input = document.getElementById('interview-answer');
   btn.disabled = true; input.disabled = true;
 
+  const log = document.getElementById('interview-log');
+  const typing = document.createElement('div');
+  typing.className = 'interview-bubble assistant';
+  typing.textContent = '…';
+  log.appendChild(typing);
+  log.scrollTop = log.scrollHeight;
+
   try {
     const { data, error } = await sb.functions.invoke('voice-interview', {
-      body: { brand_name: active.name, messages: interviewMessages }
+      body: { brand_name: active.name, messages: interviewMessages.filter(m => !m.isError) }
     });
-    if (error) throw error;
+    if (error) throw new Error(await fnErrorMessage(error));
+    if (!data || !data.reply) throw new Error((data && data.message) || 'No reply came back — please try again.');
     interviewMessages.push({ role: 'assistant', content: data.reply });
     renderInterviewLog();
 
@@ -922,8 +1035,17 @@ async function sendInterviewTurn() {
       document.getElementById('interview-done-row').style.display = 'block';
     }
   } catch (e) {
-    interviewMessages.push({ role: 'assistant', content: "Something went wrong: " + (e.message || String(e)) });
+    // Error bubbles are shown but never sent back to the AI as conversation.
+    interviewMessages.push({ role: 'assistant', isError: true, content: "Hmm — " + (e.message || String(e)) + " Send your answer again to retry." });
     renderInterviewLog();
+    // let them resend the last answer
+    const lastUser = [...interviewMessages].reverse().find(m => m.role === 'user');
+    if (lastUser) {
+      interviewMessages = interviewMessages.filter(m => m !== lastUser && !m.isError);
+      interviewMessages.push({ role: 'assistant', isError: true, content: "Hmm — " + (e.message || String(e)) + " Your answer is back in the box — press Send to retry." });
+      renderInterviewLog();
+      document.getElementById('interview-answer').value = lastUser.content;
+    }
   }
 
   btn.disabled = false; input.disabled = false;
@@ -949,8 +1071,8 @@ function applyInterviewProfile() {
   note.textContent = 'Applied — review below, then click "Save voice profile" to keep it.';
 }
 
-const CURATED_HEADING_FONTS =['Fraunces','Playfair Display','Cormorant Garamond','DM Serif Display','Libre Baskerville','Bitter','Cinzel'];
-const CURATED_BODY_FONTS = ['Inter','Poppins','Work Sans','Manrope','Nunito Sans','Space Grotesk','IBM Plex Sans'];
+const CURATED_HEADING_FONTS = ['Fraunces','Playfair Display','Cormorant Garamond','DM Serif Display','Libre Baskerville','Bitter','Cinzel','Cinzel Decorative','Abril Fatface','Bebas Neue','Oswald','Anton','Archivo Black','Alfa Slab One','Righteous','Lobster','Pacifico','Permanent Marker','Special Elite','IM Fell English','UnifrakturMaguntia','Pirata One','Creepster','Metal Mania','Rye','Monoton','Montserrat','Josefin Sans','Space Grotesk'];
+const CURATED_BODY_FONTS = ['Inter','Poppins','Work Sans','Manrope','Nunito Sans','Space Grotesk','IBM Plex Sans','Lato','Open Sans','Source Sans 3','Raleway','Montserrat','Karla','Lora','Merriweather','EB Garamond','Crimson Text','Libre Baskerville','JetBrains Mono','Courier Prime'];
 const loadedFonts = new Set(['Fraunces','Inter']);
 let pendingTheme = null;
 
@@ -961,20 +1083,128 @@ function ensureFontLoaded(name) {
   loadedFonts.add(name);
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(name).replace(/%20/g,'+') + ':wght@400;600;700&display=swap';
+  const fam = encodeURIComponent(name).replace(/%20/g,'+');
+  link.href = 'https://fonts.googleapis.com/css2?family=' + fam + ':wght@400;600;700&display=swap';
+  // Many display fonts (Bebas Neue, Abril Fatface, Lobster…) only ship one
+  // weight, and Google rejects the whole request if a listed weight is
+  // missing — retry with the font's default weight so it still loads.
+  link.onerror = () => {
+    if (link.dataset.retried) return;
+    link.dataset.retried = '1';
+    link.href = 'https://fonts.googleapis.com/css2?family=' + fam + '&display=swap';
+  };
   document.head.appendChild(link);
+}
+
+// --- Brand theme engine ----------------------------------------------------
+// Turns a cubicle's saved (or in-progress) theme into CSS variables on <html>
+// so every surface of the workspace — not just a few buttons — becomes that
+// brand. Readability is protected automatically: if a text/background pair
+// is too close, the display quietly falls back to a readable color.
+function hexToRgbArr(hex) {
+  const n = parseInt(String(hex || '#000000').replace('#',''), 16);
+  return [(n>>16)&255,(n>>8)&255,n&255];
+}
+function mixHex(a, b, t) {
+  const x = hexToRgbArr(a), y = hexToRgbArr(b);
+  return '#' + x.map((v,i) => Math.round(v + (y[i]-v)*t).toString(16).padStart(2,'0')).join('');
+}
+function rgbaOf(hex, alpha) { const [r,g,b] = hexToRgbArr(hex); return `rgba(${r},${g},${b},${alpha})`; }
+function safeHex(v, fallback) { return isHex(v) ? v : fallback; }
+
+function themeFromCubicle(c) {
+  return {
+    background: safeHex(c.background_color, '#faf7f2'),
+    text: safeHex(c.text_color, '#1c1b2e'),
+    headline: safeHex(c.color, '#9B7FC4'),
+    secondary: safeHex(c.secondary_color, '#c9c6d3'),
+    headingFont: c.font_heading || 'Fraunces',
+    bodyFont: c.font_body || 'Inter',
+    bgImage: c.background_image_url || '',
+    overlay: (c.background_overlay === 0 || c.background_overlay) ? c.background_overlay : 55
+  };
+}
+
+function applyThemeVars(t) {
+  const root = document.documentElement;
+  const bg = t.background;
+  let text = t.text;
+  if (contrastRatio(text, bg) < 4.5) text = relLuminance(bg) > 0.35 ? '#141320' : '#ffffff';
+  const dark = relLuminance(bg) < 0.2;
+  const paper = dark ? mixHex(bg, '#ffffff', 0.07) : mixHex(bg, '#ffffff', 0.7);
+  const brand = t.headline;
+  const onBrand = contrastRatio('#ffffff', brand) >= 3 ? '#ffffff' : '#141320';
+  const brandText = contrastRatio(brand, paper) >= 3 ? brand : mixHex(brand, text, 0.55);
+  const sideBg = mixHex(brand, '#000000', dark ? 0.62 : 0.5);
+  const sideFg = relLuminance(sideBg) > 0.35 ? '#141320' : '#ffffff';
+  const vars = {
+    '--cream': bg,
+    '--paper': paper,
+    '--paper-a': rgbaOf(paper, 0.9),
+    '--ink': text,
+    '--ink-soft': mixHex(bg, text, 0.82),
+    '--muted': mixHex(bg, text, 0.6),
+    '--line': mixHex(bg, text, 0.16),
+    '--brand': brand,
+    '--brand-text': brandText,
+    '--brand-soft': rgbaOf(brand, dark ? 0.24 : 0.13),
+    '--brand-secondary': t.secondary,
+    '--silver': t.secondary,
+    '--on-brand': onBrand,
+    '--on-secondary': contrastRatio('#ffffff', t.secondary) >= 3 ? '#ffffff' : '#141320',
+    '--side-bg': sideBg,
+    '--side-fg': sideFg,
+    '--side-muted': mixHex(sideBg, sideFg, 0.62),
+    '--side-hover': mixHex(sideBg, sideFg, 0.12),
+    '--font-heading': `'${t.headingFont}', serif`,
+    '--font-body': `'${t.bodyFont}', system-ui, sans-serif`
+  };
+  if (t.bgImage) {
+    const fade = Math.max(0, Math.min(0.95, 1 - (Number(t.overlay) || 55) / 100));
+    vars['--content-bg-image'] = `linear-gradient(${rgbaOf(bg, fade)}, ${rgbaOf(bg, fade)}), url("${String(t.bgImage).replace(/"/g, '%22')}")`;
+  } else {
+    vars['--content-bg-image'] = 'none';
+  }
+  Object.entries(vars).forEach(([k, v]) => root.style.setProperty(k, v));
+  document.body.classList.toggle('has-bg-image', !!t.bgImage);
+  ensureFontLoaded(t.headingFont);
+  ensureFontLoaded(t.bodyFont);
+  // Older builds set these on #content-root directly — clear them so the
+  // root-level theme always wins.
+  const cr = document.getElementById('content-root');
+  if (cr) ['--brand','--brand-soft','--font-heading','--font-body','--brand-secondary'].forEach(k => cr.style.removeProperty(k));
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', brand);
 }
 
 function applyActiveTheme() {
   if (!active) return;
-  const headingFont = active.font_heading || 'Fraunces';
-  const bodyFont = active.font_body || 'Inter';
-  ensureFontLoaded(headingFont);
-  ensureFontLoaded(bodyFont);
-  const contentRoot = document.getElementById('content-root');
-  contentRoot.style.setProperty('--font-heading', `'${headingFont}', serif`);
-  contentRoot.style.setProperty('--font-body', `'${bodyFont}', system-ui, sans-serif`);
-  contentRoot.style.setProperty('--brand-secondary', active.secondary_color || '#c9c6d3');
+  applyThemeVars(themeFromCubicle(active));
+  const liveNote = document.getElementById('theme-live-note');
+  if (liveNote) liveNote.classList.remove('show');
+}
+
+function pendingThemeFull() {
+  return Object.assign(themeFromCubicle(active), {
+    background: pendingTheme.background, text: pendingTheme.text,
+    headline: pendingTheme.headline, secondary: pendingTheme.secondary,
+    headingFont: pendingTheme.headingFont, bodyFont: pendingTheme.bodyFont,
+    overlay: pendingTheme.overlay
+  });
+}
+
+function themeIsDirty() {
+  if (!active || !pendingTheme) return false;
+  const a = themeFromCubicle(active), p = pendingThemeFull();
+  return ['background','text','headline','secondary','headingFont','bodyFont','overlay']
+    .some(k => String(a[k]).toLowerCase() !== String(p[k]).toLowerCase());
+}
+
+function revertTheme() {
+  renderThemeCard();
+  applyActiveTheme();
+  const note = document.getElementById('theme-note');
+  if (note) { note.style.color = 'var(--muted)'; note.textContent = 'Changes undone.'; setTimeout(() => { if (note.textContent === 'Changes undone.') note.textContent = ''; }, 2000); }
 }
 
 const THEME_FIELDS = ['background','text','headline','secondary'];
@@ -992,8 +1222,12 @@ function renderThemeCard() {
     headline: active.color,
     secondary: active.secondary_color || '#c9c6d3',
     headingFont: active.font_heading || 'Fraunces',
-    bodyFont: active.font_body || 'Inter'
+    bodyFont: active.font_body || 'Inter',
+    overlay: (active.background_overlay === 0 || active.background_overlay) ? active.background_overlay : 55
   };
+  const ov = document.getElementById('t-overlay');
+  if (ov) ov.value = pendingTheme.overlay;
+  renderBgControls();
   ensureFontLoaded(pendingTheme.headingFont);
   ensureFontLoaded(pendingTheme.bodyFont);
   THEME_FIELDS.forEach(kind => {
@@ -1061,12 +1295,18 @@ function onFontSelectChange(elId, kind) {
   updateThemePreview();
 }
 
+let fontTypeTimer = null;
 function onFontCustomInput(elId, kind) {
   const val = document.getElementById(elId + '-custom').value.trim();
   if (!val) return;
-  pendingTheme[kind] = val;
-  ensureFontLoaded(val);
-  updateThemePreview();
+  clearTimeout(fontTypeTimer);
+  // wait until they stop typing so we don't request "B", "Be", "Beb"…
+  fontTypeTimer = setTimeout(() => {
+    const name = val.replace(/\s+/g, ' ').replace(/\b\w/g, ch => ch.toUpperCase());
+    pendingTheme[kind] = name;
+    ensureFontLoaded(name);
+    updateThemePreview();
+  }, 600);
 }
 
 function updateThemePreview() {
@@ -1084,6 +1324,123 @@ function updateThemePreview() {
   s1.style.background = pendingTheme.headline;
   s2.style.background = pendingTheme.secondary;
   checkContrast('t-contrast-warn', pendingTheme.text, pendingTheme.background, 'Text color');
+  // Live: the whole workspace previews the pending theme.
+  if (active) {
+    applyThemeVars(pendingThemeFull());
+    const liveNote = document.getElementById('theme-live-note');
+    if (liveNote) liveNote.classList.toggle('show', themeIsDirty());
+  }
+  const ovVal = document.getElementById('t-overlay-val');
+  if (ovVal) ovVal.textContent = (pendingTheme.overlay || 0) + '%';
+}
+
+function onOverlayInput() {
+  const ov = document.getElementById('t-overlay');
+  pendingTheme.overlay = parseInt(ov.value, 10);
+  updateThemePreview();
+}
+
+function renderBgControls() {
+  const thumb = document.getElementById('bg-thumb');
+  if (!thumb || !active) return;
+  if (active.background_image_url) {
+    thumb.style.backgroundImage = `url("${String(active.background_image_url).replace(/"/g, '%22')}")`;
+    thumb.textContent = '';
+  } else {
+    thumb.style.backgroundImage = 'none';
+    thumb.textContent = 'None';
+  }
+  const rm = document.getElementById('bg-remove-btn');
+  if (rm) rm.disabled = !active.background_image_url;
+  const note = document.getElementById('bg-note');
+  if (note) note.textContent = '';
+  const f = document.getElementById('bg-file');
+  if (f) f.value = '';
+}
+
+// Shrink big photos in the browser before upload (keeps them under the 5MB
+// cap and makes the workspace load fast). Returns a File.
+async function shrinkImage(file, maxDim, quality) {
+  if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return file;
+  let bmp;
+  try { bmp = await createImageBitmap(file); } catch (e) { return file; }
+  const scale = Math.min(1, maxDim / Math.max(bmp.width, bmp.height));
+  if (scale === 1 && file.size < 1.5 * 1024 * 1024) return file;
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(bmp.width * scale);
+  canvas.height = Math.round(bmp.height * scale);
+  canvas.getContext('2d').drawImage(bmp, 0, 0, canvas.width, canvas.height);
+  const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', quality));
+  if (!blob) return file;
+  return new File([blob], (file.name || 'image').replace(/\.[^.]+$/, '') + '.jpg', { type: 'image/jpeg' });
+}
+
+async function freshAccessToken() {
+  try {
+    const { data } = await sb.auth.getSession();
+    if (data && data.session) { session = data.session; return data.session.access_token; }
+  } catch (e) {}
+  return session ? session.access_token : '';
+}
+
+async function brandImageRequest(method, body, headers) {
+  const token = await freshAccessToken();
+  const resp = await fetch(`https://owxaolqikmgtlegtficq.supabase.co/functions/v1/upload-cubicle-logo`, {
+    method, body, headers: Object.assign({ Authorization: `Bearer ${token}` }, headers || {})
+  });
+  let result = {};
+  try { result = await resp.json(); } catch (e) {}
+  if (!resp.ok || !result.ok) throw new Error(result.message || result.error || ('error ' + resp.status));
+  return result;
+}
+
+async function uploadBackground() {
+  const fileInput = document.getElementById('bg-file');
+  const note = document.getElementById('bg-note');
+  const btn = document.getElementById('bg-upload-btn');
+  let file = fileInput.files[0];
+  if (!file) { note.style.color = '#c0392b'; note.textContent = 'Choose an image first.'; return; }
+  btn.disabled = true; btn.textContent = 'Uploading…';
+  note.style.color = 'var(--muted)'; note.textContent = 'Preparing image…';
+  try {
+    file = await shrinkImage(file, 2400, 0.85);
+    if (file.size > 5 * 1024 * 1024) throw new Error('That image is still over 5MB after shrinking — try a smaller one.');
+    note.textContent = 'Uploading…';
+    const fd = new FormData();
+    fd.append('cubicle_id', active.id);
+    fd.append('kind', 'background');
+    fd.append('file', file);
+    const result = await brandImageRequest('POST', fd);
+    active.background_image_url = result.url;
+    const idx = cubicles.findIndex(c => c.id === active.id);
+    if (idx > -1) cubicles[idx] = active;
+    renderBgControls();
+    updateThemePreview();
+    if (!themeIsDirty()) applyActiveTheme();
+    playRewardTone();
+    note.style.color = 'var(--muted)'; note.textContent = 'Background added ✓';
+  } catch (e) {
+    note.style.color = '#c0392b'; note.textContent = 'Upload failed: ' + (e.message || String(e));
+  }
+  btn.disabled = false; btn.textContent = 'Upload';
+}
+
+async function removeBackground() {
+  if (!active.background_image_url) return;
+  if (!confirm(`Remove the background image for "${active.name}"?`)) return;
+  const note = document.getElementById('bg-note');
+  try {
+    await brandImageRequest('DELETE', JSON.stringify({ cubicle_id: active.id, kind: 'background' }), { 'Content-Type': 'application/json' });
+    active.background_image_url = null;
+    const idx = cubicles.findIndex(c => c.id === active.id);
+    if (idx > -1) cubicles[idx] = active;
+    renderBgControls();
+    updateThemePreview();
+    if (!themeIsDirty()) applyActiveTheme();
+    note.style.color = 'var(--muted)'; note.textContent = 'Background removed.';
+  } catch (e) {
+    note.style.color = '#c0392b'; note.textContent = 'Error: ' + (e.message || String(e));
+  }
 }
 
 // Supabase's background token-refresh timer can lag if this browser tab sat
@@ -1119,7 +1476,8 @@ async function saveTheme() {
     background_color: pendingTheme.background,
     text_color: pendingTheme.text,
     font_heading: pendingTheme.headingFont,
-    font_body: pendingTheme.bodyFont
+    font_body: pendingTheme.bodyFont,
+    background_overlay: Math.max(0, Math.min(95, parseInt(pendingTheme.overlay, 10) || 55))
   };
   const { error } = await sb.from('cubicles').update(patch).eq('id', active.id);
   btn.disabled = false; btn.textContent = 'Save theme';
@@ -1132,10 +1490,40 @@ async function saveTheme() {
   applyActiveTheme();
   renderSidebar();
   document.getElementById('active-name').innerHTML = `${cubDot(active)} ${escapeHtml(active.name)}`;
+  renderPostingAs();
 
   playRewardTone();
   note.style.color = 'var(--muted)'; note.textContent = 'Theme saved ✓';
   setTimeout(() => { if (note.textContent === 'Theme saved ✓') note.textContent = ''; }, 2500);
+}
+
+// Supabase wraps non-2xx function replies in a generic "Edge Function returned
+// a non-2xx status code" error — dig out the real message the function sent.
+async function fnErrorMessage(e) {
+  try {
+    if (e && e.context && typeof e.context.json === 'function') {
+      const j = await e.context.json();
+      if (j && (j.message || j.error)) return j.message || j.error;
+    }
+  } catch (_) {}
+  return (e && e.message) || String(e);
+}
+
+let lastDetect = null;
+function applySuggestedTheme() {
+  if (!lastDetect || !lastDetect.suggested) return;
+  const s = lastDetect.suggested;
+  ['background','text','headline','secondary'].forEach(k => { if (isHex(s[k])) pendingTheme[k] = s[k]; });
+  if (s.heading_font) { pendingTheme.headingFont = s.heading_font; ensureFontLoaded(s.heading_font); }
+  if (s.body_font) { pendingTheme.bodyFont = s.body_font; ensureFontLoaded(s.body_font); }
+  THEME_FIELDS.forEach(kind => {
+    renderThemeSwatches('t-' + kind + '-colors', pendingTheme[kind], kind);
+    const hexEl = document.getElementById('t-' + kind + '-hex');
+    if (hexEl) hexEl.value = pendingTheme[kind];
+  });
+  renderFontSelect('t-heading-font', CURATED_HEADING_FONTS, pendingTheme.headingFont);
+  renderFontSelect('t-body-font', CURATED_BODY_FONTS, pendingTheme.bodyFont);
+  updateThemePreview();
 }
 
 async function detectSiteTheme() {
@@ -1149,11 +1537,36 @@ async function detectSiteTheme() {
 
   try {
     const { data, error } = await sb.functions.invoke('detect-site-theme', { body: { url } });
-    if (error) throw error;
-    if (!data.ok) { out.innerHTML = `<p class="save-note" style="color:#c0392b">${escapeHtml(data.error)}</p>`; return; }
+    if (error) throw new Error(await fnErrorMessage(error));
+    if (!data.ok) {
+      out.innerHTML = `<p class="save-note" style="color:#c0392b">${escapeHtml(data.error)}</p>`;
+      btn.disabled = false; btn.textContent = 'Detect theme from my site';
+      return;
+    }
+    lastDetect = data;
 
     let html = '';
+    if (data.suggested) {
+      const s = data.suggested;
+      const sw = (hex, label) => `<div class="suggest-sw"><span class="sq" style="background:${hex}"></span>${label}<br>${hex}</div>`;
+      html += `<div class="suggest-box">
+        <b style="font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Your site's look</b>
+        <div class="suggest-row">${sw(s.background,'Background')}${sw(s.text,'Text')}${sw(s.headline,'Main accent')}${sw(s.secondary,'Second accent')}</div>
+        <div style="font-size:.85rem;margin-bottom:12px">Heading font: <b>${escapeHtml(s.heading_font || '—')}</b> &nbsp;·&nbsp; Body font: <b>${escapeHtml(s.body_font || '—')}</b></div>
+        <button class="btn btn-brand" onclick="applySuggestedTheme()">✨ Use this whole look</button>
+        <div class="field-help">Previews live across the whole workspace. Fine-tune anything below, then hit Save theme.</div>
+      </div>`;
+    }
     if (data.colors && data.colors.length) {
+      html += '<div style="margin-top:12px"><b style="font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Or place colors one at a time</b><div style="margin-top:6px">';
+      html += data.colors.map(c => `<span class="pick-color"><span class="cw" style="background:${c.hex}"></span>${c.hex}
+        <button class="role-btn" onclick="setThemeColor('background','${c.hex}')">BG</button>
+        <button class="role-btn" onclick="setThemeColor('text','${c.hex}')">Text</button>
+        <button class="role-btn" onclick="setThemeColor('headline','${c.hex}')">Accent</button>
+        <button class="role-btn" onclick="setThemeColor('secondary','${c.hex}')">2nd</button></span>`).join('');
+      html += '</div></div>';
+    }
+    if (false && data.colors && data.colors.length) {
       html += '<div style="margin-top:10px"><b style="font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Colors found — click to use</b><div style="margin-top:6px">';
       html += data.colors.map(c => `
         <span class="detect-chip" onclick="setThemeColor('headline','${c.hex}')" title="Use as headline"><span class="cw" style="background:${c.hex}"></span>${c.hex} → headline</span>
@@ -1174,6 +1587,8 @@ async function detectSiteTheme() {
   } catch (e) {
     out.innerHTML = `<p class="save-note" style="color:#c0392b">Detection failed: ${escapeHtml(e.message || String(e))}</p>`;
   }
+  btn.disabled = false; btn.textContent = 'Detect theme from my site';
+  return;
 
   btn.disabled = false; btn.textContent = 'Detect theme from my site';
 }
@@ -1211,7 +1626,7 @@ async function uploadLogo() {
   try {
     resp = await fetch(`https://owxaolqikmgtlegtficq.supabase.co/functions/v1/upload-cubicle-logo`, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${session.access_token}` },
+      headers: { Authorization: `Bearer ${await freshAccessToken()}` },
       body: fd,
     });
     result = await resp.json();
@@ -1236,6 +1651,7 @@ async function uploadLogo() {
   renderLogoPreview();
   renderSidebar();
   document.getElementById('active-name').innerHTML = `${cubDot(active)} ${escapeHtml(active.name)}`;
+  renderPostingAs();
 
   playRewardTone();
   note.style.color = 'var(--muted)'; note.textContent = 'Logo updated ✓';
@@ -1252,7 +1668,7 @@ async function removeLogo() {
   try {
     resp = await fetch(`https://owxaolqikmgtlegtficq.supabase.co/functions/v1/upload-cubicle-logo`, {
       method: 'DELETE',
-      headers: { Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
+      headers: { Authorization: `Bearer ${await freshAccessToken()}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ cubicle_id: active.id }),
     });
     result = await resp.json();
@@ -1562,8 +1978,9 @@ async function optimize() {
     }
     out.innerHTML = escapeHtml(data.caption) + '<div class="optim-note">' + note + '</div>';
   } catch (e) {
+    const msg = await fnErrorMessage(e);
     out.innerHTML = 'Caption optimization hit an error.' +
-      '<div class="optim-note">(' + escapeHtml(e.message || String(e)) + ')</div>';
+      '<div class="optim-note">(' + escapeHtml(msg) + ')</div>';
   }
 }
 
@@ -1574,6 +1991,9 @@ async function schedulePost() {
   const imageUrl = document.getElementById('draft-image').value.trim();
   const targets = getSelectedPlatforms();
   if (connections.length && !targets.length) { alert('Every platform is unchecked — check at least one under "Publish to" first.'); return; }
+
+  const schedLabel = (targets.length ? targets : connections.map(a => a.platform)).map(p => PLATFORM_LABEL[p] || p).join(', ') || 'every connected platform';
+  if (!confirm(`Schedule this post as "${active.name}" to ${schedLabel}${dateVal ? ' on ' + dateVal : ''}?`)) return;
 
   const { error } = await sb.from('drafts').insert({
     user_id: session.user.id,
@@ -1587,6 +2007,7 @@ async function schedulePost() {
 
   if (error) { alert('Error: ' + error.message); return; }
   playRewardTone();
+  draftCache[active.id] = { text: '', image: '' };
   await loadDrafts();
   alert('Scheduled to ' + active.name + '\'s calendar. It will auto-publish to ' + (targets.length ? targets.join(', ') : 'every connected platform') + ' within 5 minutes of the scheduled time — no need to come back and click publish.');
 }
@@ -1597,6 +2018,8 @@ async function publishNow() {
   const imageUrl = document.getElementById('draft-image').value.trim();
   const targets = getSelectedPlatforms();
   if (connections.length && !targets.length) { alert('Every platform is unchecked — check at least one under "Publish to" first.'); return; }
+  const targetLabel = (targets.length ? targets : connections.map(a => a.platform)).map(p => PLATFORM_LABEL[p] || p).join(', ') || 'no connected accounts';
+  if (!confirm(`Publish this post as "${active.name}" to ${targetLabel}?`)) return;
   const btn = document.getElementById('publish-btn');
   const out = document.getElementById('publish-out');
 
@@ -1702,6 +2125,7 @@ async function renderConnections() {
 }
 
 function renderPublishTargets() {
+  renderPostingAs();
   const el = document.getElementById('publish-targets');
   if (!el) return;
   if (!connections.length) {
