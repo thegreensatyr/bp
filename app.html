@@ -208,7 +208,7 @@
     <button class="tab" data-panel="voice" onclick="showPanel('voice',this)">Voice Profile</button>
     <button class="tab" data-panel="calendar" onclick="showPanel('calendar',this)">Calendar</button>
     <button class="tab" data-panel="connections" onclick="showPanel('connections',this)">Connections</button>
-    <a class="tab" href="help.html" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center;">Help</a>
+    <a class='tab' href='/help' rel='noopener' style='text-decoration:none;display:inline-flex;align-items:center;' target='_blank'>Help</a>
     <button class="sound-toggle" onclick="toggleSound()" id="sound-toggle-btn" title="Toggle sound alerts"></button>
   </div>
 
@@ -1199,30 +1199,36 @@ async function uploadLogo() {
 
   await ensureFreshSession();
 
-  const path = `${session.user.id}/${active.id}-logo`;
+  // Uploaded through the upload-cubicle-logo edge function (server-side,
+  // service-role write) instead of the browser writing to Storage directly —
+  // this removes the dependency on the browser's session/RLS handshake,
+  // which was the actual cause of persistent "row-level security" failures.
+  const fd = new FormData();
+  fd.append('cubicle_id', active.id);
+  fd.append('file', file);
 
-  let { error: upErr } = await sb.storage.from('cubicle-logos').upload(path, file, { upsert: true, contentType: file.type || 'application/octet-stream' });
-  if (upErr && looksLikeAuthError(upErr.message)) {
-    // The proactive check above can still race a token that expires in the
-    // next few seconds — force an explicit refresh and try exactly once more
-    // before bothering the customer with an error.
-    await sb.auth.refreshSession();
-    ({ error: upErr } = await sb.storage.from('cubicle-logos').upload(path, file, { upsert: true, contentType: file.type || 'application/octet-stream' }));
-  }
-  if (upErr) {
+  let resp, result;
+  try {
+    resp = await fetch(`https://owxaolqikmgtlegtficq.supabase.co/functions/v1/upload-cubicle-logo`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${session.access_token}` },
+      body: fd,
+    });
+    result = await resp.json();
+  } catch (e) {
     btn.disabled = false; btn.textContent = 'Upload';
-    note.style.color = '#c0392b'; note.textContent = 'Upload failed: ' + upErr.message;
+    note.style.color = '#c0392b'; note.textContent = 'Upload failed: network error, please try again.';
     return;
   }
 
-  const { data: urlData } = sb.storage.from('cubicle-logos').getPublicUrl(path);
-  const publicUrl = urlData.publicUrl + '?t=' + Date.now();
-
-  const { error: dbErr } = await sb.from('cubicles').update({ logo_url: publicUrl }).eq('id', active.id);
   btn.disabled = false; btn.textContent = 'Upload';
 
-  if (dbErr) { note.style.color = '#c0392b'; note.textContent = 'Saved the file but failed to save it to this cubicle: ' + dbErr.message; return; }
+  if (!resp.ok || !result.ok) {
+    note.style.color = '#c0392b'; note.textContent = 'Upload failed: ' + (result.message || result.error || 'unknown error');
+    return;
+  }
 
+  const publicUrl = result.url;
   active.logo_url = publicUrl;
   const idx = cubicles.findIndex(c => c.id === active.id);
   if (idx > -1) cubicles[idx] = active;
@@ -1242,8 +1248,19 @@ async function removeLogo() {
   const note = document.getElementById('logo-note');
   await ensureFreshSession();
 
-  const { error } = await sb.from('cubicles').update({ logo_url: null }).eq('id', active.id);
-  if (error) { note.style.color = '#c0392b'; note.textContent = 'Error: ' + error.message; return; }
+  let resp, result;
+  try {
+    resp = await fetch(`https://owxaolqikmgtlegtficq.supabase.co/functions/v1/upload-cubicle-logo`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cubicle_id: active.id }),
+    });
+    result = await resp.json();
+  } catch (e) {
+    note.style.color = '#c0392b'; note.textContent = 'Error: network error, please try again.';
+    return;
+  }
+  if (!resp.ok || !result.ok) { note.style.color = '#c0392b'; note.textContent = 'Error: ' + (result.message || result.error || 'unknown error'); return; }
 
   active.logo_url = null;
   const idx = cubicles.findIndex(c => c.id === active.id);
@@ -1422,18 +1439,18 @@ async function createCubicle() {
   // right after insert — from Dustin's/the user's side it's still one step.
   if (newCubicleLogoFile) {
     btn.textContent = 'Uploading logo…';
-    const path = `${session.user.id}/${data.id}-logo`;
-    let { error: upErr } = await sb.storage.from('cubicle-logos').upload(path, newCubicleLogoFile, { upsert: true, contentType: newCubicleLogoFile.type || 'application/octet-stream' });
-    if (upErr && looksLikeAuthError(upErr.message)) {
-      await sb.auth.refreshSession();
-      ({ error: upErr } = await sb.storage.from('cubicle-logos').upload(path, newCubicleLogoFile, { upsert: true, contentType: newCubicleLogoFile.type || 'application/octet-stream' }));
-    }
-    if (!upErr) {
-      const { data: urlData } = sb.storage.from('cubicle-logos').getPublicUrl(path);
-      const publicUrl = urlData.publicUrl + '?t=' + Date.now();
-      const { error: dbErr } = await sb.from('cubicles').update({ logo_url: publicUrl }).eq('id', data.id);
-      if (!dbErr) data.logo_url = publicUrl;
-    }
+    const fd = new FormData();
+    fd.append('cubicle_id', data.id);
+    fd.append('file', newCubicleLogoFile);
+    try {
+      const resp = await fetch(`https://owxaolqikmgtlegtficq.supabase.co/functions/v1/upload-cubicle-logo`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: fd,
+      });
+      const result = await resp.json();
+      if (resp.ok && result.ok) data.logo_url = result.url;
+    } catch (e) { /* fall through — see note below */ }
     // A logo upload hiccup here shouldn't block the cubicle from being created —
     // it can always be added from the Voice tab afterward.
   }
