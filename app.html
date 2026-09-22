@@ -432,6 +432,12 @@
             <button class="btn btn-brand" onclick="connectTikTok()">Connect TikTok</button>
           </div>
 
+          <h3 style="margin-top:24px">Connect Pinterest</h3>
+          <p style="font-size:.85rem;color:var(--muted);margin:6px 0 14px">Pins go to the first board on your Pinterest account (the one it finds when you connect). Requires an image per post.</p>
+          <div class="comp-actions">
+            <button class="btn btn-brand" onclick="connectPinterest()">Connect Pinterest</button>
+          </div>
+
           <h3 style="margin-top:24px">Connect Bluesky</h3>
           <p style="font-size:.85rem;color:var(--muted);margin:6px 0 14px">No developer approval needed — generate a free <b>App Password</b> at bsky.app → Settings → App Passwords (not your main login password), then enter it here for this cubicle only.</p>
           <label>Handle</label>
@@ -1080,10 +1086,32 @@ function updateThemePreview() {
   checkContrast('t-contrast-warn', pendingTheme.text, pendingTheme.background, 'Text color');
 }
 
+// Supabase's background token-refresh timer can lag if this browser tab sat
+// inactive/backgrounded for a while (browsers throttle timers in background
+// tabs), so a customer who steps away and comes back can hit a stale access
+// token on their very next save — surfacing as a confusing "row-level
+// security policy" error even though nothing they did was wrong. Calling
+// sb.auth.getSession() checks the stored token's expiry and transparently
+// refreshes it if needed, so calling this right before any write means the
+// customer never sees that error in the first place. Returns false (and
+// sends them to log back in) only if they're genuinely signed out.
+async function ensureFreshSession() {
+  try {
+    const { data, error } = await sb.auth.getSession();
+    if (error || !data.session) { window.location.href = 'login.html'; return false; }
+    return true;
+  } catch (e) { return true; } // a network hiccup here shouldn't block the save attempt
+}
+
+function looksLikeAuthError(msg) {
+  return /row-level security|rls|permission|not authorized|unauthorized|jwt/i.test(String(msg || ''));
+}
+
 async function saveTheme() {
   const btn = document.getElementById('save-theme-btn');
   const note = document.getElementById('theme-note');
   btn.disabled = true; btn.textContent = 'Saving…';
+  await ensureFreshSession();
 
   const patch = {
     color: pendingTheme.headline,
@@ -1169,9 +1197,18 @@ async function uploadLogo() {
   btn.disabled = true; btn.textContent = 'Uploading…';
   note.style.color = 'var(--muted)'; note.textContent = 'Uploading…';
 
+  await ensureFreshSession();
+
   const path = `${session.user.id}/${active.id}-logo`;
 
-  const { error: upErr } = await sb.storage.from('cubicle-logos').upload(path, file, { upsert: true, contentType: file.type || 'application/octet-stream' });
+  let { error: upErr } = await sb.storage.from('cubicle-logos').upload(path, file, { upsert: true, contentType: file.type || 'application/octet-stream' });
+  if (upErr && looksLikeAuthError(upErr.message)) {
+    // The proactive check above can still race a token that expires in the
+    // next few seconds — force an explicit refresh and try exactly once more
+    // before bothering the customer with an error.
+    await sb.auth.refreshSession();
+    ({ error: upErr } = await sb.storage.from('cubicle-logos').upload(path, file, { upsert: true, contentType: file.type || 'application/octet-stream' }));
+  }
   if (upErr) {
     btn.disabled = false; btn.textContent = 'Upload';
     note.style.color = '#c0392b'; note.textContent = 'Upload failed: ' + upErr.message;
@@ -1203,6 +1240,7 @@ async function removeLogo() {
   if (!active.logo_url) return;
   if (!confirm(`Remove the logo for "${active.name}"? It'll fall back to the initials badge.`)) return;
   const note = document.getElementById('logo-note');
+  await ensureFreshSession();
 
   const { error } = await sb.from('cubicles').update({ logo_url: null }).eq('id', active.id);
   if (error) { note.style.color = '#c0392b'; note.textContent = 'Error: ' + error.message; return; }
@@ -1244,6 +1282,7 @@ async function saveVoice() {
   const btn = document.getElementById('save-voice-btn');
   const note = document.getElementById('save-note');
   btn.disabled = true; btn.textContent = 'Saving…';
+  await ensureFreshSession();
 
   const patch = {
     tone: document.getElementById('v-tone').value,
@@ -1269,6 +1308,7 @@ async function saveVoice() {
 
 async function deleteCubicle() {
   if (!confirm(`Delete "${active.name}" and all its drafts? This can't be undone.`)) return;
+  await ensureFreshSession();
   const { error } = await sb.from('cubicles').delete().eq('id', active.id);
   if (error) { alert('Error: ' + error.message); return; }
   active = null;
@@ -1363,6 +1403,7 @@ async function createCubicle() {
 
   const btn = document.getElementById('create-cubicle-btn');
   btn.disabled = true; btn.textContent = 'Creating…';
+  await ensureFreshSession();
 
   const { data, error } = await sb.from('cubicles').insert({
     user_id: session.user.id,
@@ -1382,7 +1423,11 @@ async function createCubicle() {
   if (newCubicleLogoFile) {
     btn.textContent = 'Uploading logo…';
     const path = `${session.user.id}/${data.id}-logo`;
-    const { error: upErr } = await sb.storage.from('cubicle-logos').upload(path, newCubicleLogoFile, { upsert: true, contentType: newCubicleLogoFile.type || 'application/octet-stream' });
+    let { error: upErr } = await sb.storage.from('cubicle-logos').upload(path, newCubicleLogoFile, { upsert: true, contentType: newCubicleLogoFile.type || 'application/octet-stream' });
+    if (upErr && looksLikeAuthError(upErr.message)) {
+      await sb.auth.refreshSession();
+      ({ error: upErr } = await sb.storage.from('cubicle-logos').upload(path, newCubicleLogoFile, { upsert: true, contentType: newCubicleLogoFile.type || 'application/octet-stream' }));
+    }
     if (!upErr) {
       const { data: urlData } = sb.storage.from('cubicle-logos').getPublicUrl(path);
       const publicUrl = urlData.publicUrl + '?t=' + Date.now();
@@ -1580,6 +1625,9 @@ async function publishNow() {
 const LINKEDIN_CLIENT_ID = '';
 // Set once the TikTok Developer App exists (developers.tiktok.com).
 const TIKTOK_CLIENT_KEY = 'awxiafyhdc1hunai';
+// Set once the Pinterest Developer App exists (developers.pinterest.com).
+// Not a secret; safe to expose client-side.
+const PINTEREST_CLIENT_ID = '';
 
 function connectLinkedIn() {
   if (!LINKEDIN_CLIENT_ID) { alert('LinkedIn isn\'t connected yet — the developer app still needs to be created. Ask to get this set up.'); return; }
@@ -1597,6 +1645,14 @@ function connectTikTok() {
   window.location.href = url;
 }
 
+function connectPinterest() {
+  if (!PINTEREST_CLIENT_ID) { alert('Pinterest isn\'t connected yet — the developer app still needs to be created. Ask to get this set up.'); return; }
+  const REDIRECT_URI = 'https://owxaolqikmgtlegtficq.supabase.co/functions/v1/pinterest-oauth-callback';
+  const scopes = ['boards:read', 'pins:write', 'user_accounts:read'].join(',');
+  const url = `https://www.pinterest.com/oauth/?client_id=${PINTEREST_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(scopes)}&state=${encodeURIComponent(active.id)}`;
+  window.location.href = url;
+}
+
 function connectMeta() {
   const APP_ID = '1536478337966065';
   const REDIRECT_URI = 'https://owxaolqikmgtlegtficq.supabase.co/functions/v1/meta-oauth-callback';
@@ -1607,7 +1663,7 @@ function connectMeta() {
   window.location.href = url;
 }
 
-const PLATFORM_LABEL = { facebook: 'Facebook Page', instagram: 'Instagram', bluesky: 'Bluesky', linkedin: 'LinkedIn', tiktok: 'TikTok' };
+const PLATFORM_LABEL = { facebook: 'Facebook Page', instagram: 'Instagram', bluesky: 'Bluesky', linkedin: 'LinkedIn', tiktok: 'TikTok', pinterest: 'Pinterest' };
 
 async function renderConnections() {
   document.getElementById('conn-brand').textContent = active.name;
