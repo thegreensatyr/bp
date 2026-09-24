@@ -215,6 +215,22 @@
   .posting-as b{font-family:var(--font-heading);font-size:1.02rem}
   .posting-as .to{font-weight:500;opacity:.9;font-size:.82rem}
   .posting-as .cub-dot{width:28px;height:28px}
+  /* TikTok post settings (TikTok Content Posting API UX requirements) */
+  .tt-panel{margin-top:16px;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;background:var(--cream)}
+  .tt-head{display:flex;align-items:center;gap:10px;font-weight:700;font-size:.92rem;color:var(--ink);flex-wrap:wrap}
+  .tt-head img{width:32px;height:32px;border-radius:50%;object-fit:cover;border:1.5px solid var(--line)}
+  .tt-head .tt-badge{background:#111;color:#fff;border-radius:6px;padding:3px 8px;font-size:.72rem;letter-spacing:.04em}
+  .tt-panel select{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-family:inherit;font-size:.9rem;background:#fff;color:#222}
+  .tt-row{display:flex;gap:18px;flex-wrap:wrap}
+  .tt-check{display:flex;align-items:center;gap:6px;text-transform:none;font-weight:500;font-size:.86rem;color:var(--ink);margin:4px 0;letter-spacing:0}
+  .tt-check.off{opacity:.45}
+  .tt-sub{font-size:.76rem;color:var(--muted);margin:2px 0 0 24px;text-transform:none;letter-spacing:0;font-weight:400}
+  .tt-preview{margin-top:10px;max-width:220px;border-radius:10px;overflow:hidden;border:1.5px solid var(--line);background:#000}
+  .tt-preview img,.tt-preview video{display:block;width:100%;max-height:320px;object-fit:contain}
+  .tt-consent{font-size:.78rem;color:var(--muted);margin-top:12px}
+  .tt-consent a{color:var(--brand)}
+  .tt-warn{font-size:.8rem;font-weight:600;color:#c0392b;margin-top:8px}
+  .tt-note{font-size:.76rem;color:var(--muted);margin-top:6px}
   .theme-live-note{display:none;margin-top:10px;font-size:.8rem;font-weight:600;color:var(--ink);background:var(--brand-soft);border-radius:8px;padding:8px 12px}
   .theme-live-note.show{display:block}
   .bg-thumb{width:120px;height:72px;border-radius:10px;border:1.5px solid var(--line);background:var(--cream) center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-size:.72rem;color:var(--muted);flex-shrink:0}
@@ -292,12 +308,41 @@
               <div class="posting-as" id="posting-as"></div>
               <h3>Draft a post</h3>
               <textarea id="draft" placeholder="Write as this brand… the Bleed Check watches as you type." oninput="runBleedCheck(); checkBlueskyLimit()"></textarea>
-              <label style="margin-top:14px">Image URL <span style="font-weight:400;text-transform:none;font-size:.78rem">(required for Instagram — Facebook works without one)</span></label>
-              <input type="text" id="draft-image" placeholder="https://… link to an already-hosted image">
+              <label style="margin-top:14px">Image URL <span style="font-weight:400;text-transform:none;font-size:.78rem">(required for Instagram, TikTok &amp; Pinterest — Facebook works without one)</span></label>
+              <input type="text" id="draft-image" placeholder="https://… link to an already-hosted image" oninput="ttRenderPreview()">
+              <label style="margin-top:14px">Video URL <span style="font-weight:400;text-transform:none;font-size:.78rem">(optional — used by TikTok &amp; Bluesky instead of the image)</span></label>
+              <input type="text" id="draft-video" placeholder="https://… link to an already-hosted .mp4" oninput="ttRenderPreview()">
 
               <label style="margin-top:14px">Publish to</label>
               <div id="publish-targets" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center"></div>
               <div id="bsky-limit-warn" style="display:none;margin-top:8px;font-size:.8rem;font-weight:600;color:#c0392b"></div>
+
+              <div class="tt-panel" id="tt-panel" style="display:none">
+                <div class="tt-head"><span class="tt-badge">TikTok</span><span id="tt-creator">Loading your TikTok account…</span></div>
+                <div id="tt-body">
+                  <label>Who can see this post</label>
+                  <select id="tt-privacy" onchange="ttValidate()"></select>
+                  <label>Allow viewers to</label>
+                  <div class="tt-row">
+                    <label class="tt-check" id="tt-comment-wrap"><input type="checkbox" id="tt-comment" onchange="ttValidate()"> Comment</label>
+                    <label class="tt-check tt-vid-only" id="tt-duet-wrap"><input type="checkbox" id="tt-duet" onchange="ttValidate()"> Duet</label>
+                    <label class="tt-check tt-vid-only" id="tt-stitch-wrap"><input type="checkbox" id="tt-stitch" onchange="ttValidate()"> Stitch</label>
+                  </div>
+                  <div class="tt-note" id="tt-interact-note" style="display:none"></div>
+                  <label>Disclose post content</label>
+                  <label class="tt-check"><input type="checkbox" id="tt-disclose" onchange="ttValidate()"> This post promotes a brand, product or service</label>
+                  <div id="tt-disclose-opts" style="display:none;margin-left:4px">
+                    <label class="tt-check"><input type="checkbox" id="tt-yourbrand" onchange="ttValidate()"> Your brand</label>
+                    <div class="tt-sub">You are promoting yourself or your own business. Your post will be labeled "Promotional content".</div>
+                    <label class="tt-check"><input type="checkbox" id="tt-branded" onchange="ttValidate()"> Branded content</label>
+                    <div class="tt-sub">You are promoting another brand or a third party. Your post will be labeled "Paid partnership".</div>
+                  </div>
+                  <div class="tt-preview" id="tt-preview" style="display:none"></div>
+                  <div class="tt-consent" id="tt-consent"></div>
+                  <div class="tt-note">After you publish, it may take a few minutes for TikTok to process the post before it appears on your profile.</div>
+                  <div class="tt-warn" id="tt-warn" style="display:none"></div>
+                </div>
+              </div>
 
               <div class="comp-actions">
                 <button class="btn btn-brand" onclick="runBleedCheck(true)">Run Bleed Check</button>
@@ -501,7 +546,7 @@
           </div>
 
           <h3 style="margin-top:24px">Connect TikTok</h3>
-          <p style="font-size:.85rem;color:var(--muted);margin:6px 0 14px">Requires an image per post (TikTok's API is photo/video-first). Posts stay private (visible only to you) until this app passes TikTok's audit.</p>
+          <p style="font-size:.85rem;color:var(--muted);margin:6px 0 14px">Requires a photo or video per post. Before each post you choose who can see it and whether comments, duets and stitches are allowed.</p>
           <div class="comp-actions">
             <button class="btn btn-brand" onclick="connectTikTok()">Connect TikTok</button>
           </div>
@@ -900,7 +945,8 @@ async function setBrand(id) {
   if (active && document.getElementById('draft')) {
     draftCache[active.id] = {
       text: document.getElementById('draft').value,
-      image: document.getElementById('draft-image').value
+      image: document.getElementById('draft-image').value,
+      video: document.getElementById('draft-video').value
     };
   }
   active = next;
@@ -911,6 +957,7 @@ async function setBrand(id) {
   const cached = draftCache[active.id] || { text: '', image: '' };
   document.getElementById('draft').value = cached.text || '';
   document.getElementById('draft-image').value = cached.image || '';
+  document.getElementById('draft-video').value = cached.video || '';
   renderPostingAs();
   document.getElementById('optim-out').style.display = 'none';
   document.getElementById('publish-out').style.display = 'none';
@@ -1989,8 +2036,10 @@ async function schedulePost() {
   if (!raw) { alert('Nothing to schedule yet — write a draft first.'); return; }
   const dateVal = document.getElementById('sched-date').value;
   const imageUrl = document.getElementById('draft-image').value.trim();
+  const videoUrl = document.getElementById('draft-video').value.trim();
   const targets = getSelectedPlatforms();
   if (connections.length && !targets.length) { alert('Every platform is unchecked — check at least one under "Publish to" first.'); return; }
+  if (targets.includes('tiktok') && !ttValidate()) { alert('Finish the TikTok settings first: ' + ttLastProblem); return; }
 
   const schedLabel = (targets.length ? targets : connections.map(a => a.platform)).map(p => PLATFORM_LABEL[p] || p).join(', ') || 'every connected platform';
   if (!confirm(`Schedule this post as "${active.name}" to ${schedLabel}${dateVal ? ' on ' + dateVal : ''}?`)) return;
@@ -2000,14 +2049,17 @@ async function schedulePost() {
     cubicle_id: active.id,
     content: raw,
     image_url: imageUrl || null,
+    video_url: videoUrl || null,
     status: 'scheduled',
     scheduled_for: dateVal ? new Date(dateVal).toISOString() : null,
-    target_platforms: targets.length ? targets : null
+    target_platforms: targets.length ? targets : null,
+    platform_options: ttPlatformOptions(targets)
   });
 
   if (error) { alert('Error: ' + error.message); return; }
   playRewardTone();
-  draftCache[active.id] = { text: '', image: '' };
+  draftCache[active.id] = { text: '', image: '', video: '' };
+  ttResetAfterPost();
   await loadDrafts();
   alert('Scheduled to ' + active.name + '\'s calendar. It will auto-publish to ' + (targets.length ? targets.join(', ') : 'every connected platform') + ' within 5 minutes of the scheduled time — no need to come back and click publish.');
 }
@@ -2016,8 +2068,10 @@ async function publishNow() {
   const raw = document.getElementById('draft').value.trim();
   if (!raw) { alert('Nothing to publish yet — write a draft first.'); return; }
   const imageUrl = document.getElementById('draft-image').value.trim();
+  const videoUrl = document.getElementById('draft-video').value.trim();
   const targets = getSelectedPlatforms();
   if (connections.length && !targets.length) { alert('Every platform is unchecked — check at least one under "Publish to" first.'); return; }
+  if (targets.includes('tiktok') && !ttValidate()) { alert('Finish the TikTok settings first: ' + ttLastProblem); return; }
   const targetLabel = (targets.length ? targets : connections.map(a => a.platform)).map(p => PLATFORM_LABEL[p] || p).join(', ') || 'no connected accounts';
   if (!confirm(`Publish this post as "${active.name}" to ${targetLabel}?`)) return;
   const btn = document.getElementById('publish-btn');
@@ -2032,8 +2086,10 @@ async function publishNow() {
     cubicle_id: active.id,
     content: raw,
     image_url: imageUrl || null,
+    video_url: videoUrl || null,
     status: 'draft',
-    target_platforms: targets.length ? targets : null
+    target_platforms: targets.length ? targets : null,
+    platform_options: ttPlatformOptions(targets)
   }).select().single();
 
   if (insertErr) {
@@ -2047,7 +2103,10 @@ async function publishNow() {
     if (error) throw error;
 
     const lines = Object.entries(data.results || {}).map(([platform, r]) => {
-      return r.ok ? `✓ ${platform}: posted (${r.post_id})` : `✗ ${platform}: ${r.error}`;
+      const label = PLATFORM_LABEL[platform] || platform;
+      if (!r.ok) return `✗ ${label}: ${String(r.error || '').replace(/^Error:\s*/, '').replace(/^[a-z]+_[a-z_]+:\s*/, '')}`;
+      if (platform === 'tiktok') return `✓ ${label}: sent to TikTok` + (r.note ? ' — ' + r.note : ' — live on your profile.');
+      return `✓ ${label}: posted (${r.post_id})`;
     });
     const anyOk = Object.values(data.results || {}).some(r => r.ok);
     if (anyOk) playRewardTone();
@@ -2057,6 +2116,8 @@ async function publishNow() {
   }
 
   btn.disabled = false; btn.textContent = '🚀 Publish now';
+  if (!insertErr) { draftCache[active.id] = { text: '', image: '', video: '' }; }
+  ttValidate();
   await loadDrafts();
 }
 
@@ -2064,7 +2125,8 @@ async function publishNow() {
 // verified Company Page first). Not a secret; safe to expose client-side.
 const LINKEDIN_CLIENT_ID = '';
 // Set once the TikTok Developer App exists (developers.tiktok.com).
-const TIKTOK_CLIENT_KEY = 'awxiafyhdc1hunai';
+// Sandbox key while TikTok reviews the app; swap to the Production key (aw7pgz7kpl3v4201) after approval.
+const TIKTOK_CLIENT_KEY = 'sbaw4npehmref56r1s';
 // Set once the Pinterest Developer App exists (developers.pinterest.com).
 // Not a secret; safe to expose client-side.
 const PINTEREST_CLIENT_ID = '';
@@ -2130,15 +2192,184 @@ function renderPublishTargets() {
   if (!el) return;
   if (!connections.length) {
     el.innerHTML = '<span class="save-note">No accounts connected yet — connect one under the Connections tab.</span>';
+    ttSync(true);
     return;
   }
   el.innerHTML = connections.map(a => `
     <label style="display:flex;align-items:center;gap:6px;text-transform:none;font-weight:500;font-size:.85rem;color:var(--ink)">
-      <input type="checkbox" class="publish-target-cb" value="${a.platform}" checked onchange="checkBlueskyLimit()">
+      <input type="checkbox" class="publish-target-cb" value="${a.platform}" checked onchange="checkBlueskyLimit(); ttSync()">
       ${PLATFORM_LABEL[a.platform] || a.platform} <span style="color:var(--muted);font-size:.78rem">(${escapeHtml(a.external_account_name || '')})</span>
     </label>
   `).join('');
   checkBlueskyLimit();
+  ttSync(true);
+}
+
+// ================= TikTok post settings =================
+// TikTok requires, before every post: the creator's nickname shown, a privacy
+// choice with NO default, comment/duet/stitch off by default (and greyed out if
+// the creator turned them off), a commercial-content disclosure, a preview,
+// consent text, and Publish blocked until everything required is chosen.
+let ttInfo = null, ttInfoFor = null, ttLoading = false, ttLastProblem = '';
+const TT_PRIVACY_LABEL = { PUBLIC_TO_EVERYONE: 'Everyone', MUTUAL_FOLLOW_FRIENDS: 'Friends (followers you follow back)', FOLLOWER_OF_CREATOR: 'Followers', SELF_ONLY: 'Only me' };
+
+function ttSelected() { return !!document.querySelector('.publish-target-cb[value="tiktok"]:checked'); }
+function ttIsVideo() { return !!(document.getElementById('draft-video') && document.getElementById('draft-video').value.trim()); }
+
+async function ttSync(forceReload) {
+  const panel = document.getElementById('tt-panel');
+  if (!panel) return;
+  if (!ttSelected()) { panel.style.display = 'none'; ttValidate(); return; }
+  panel.style.display = 'block';
+  if (forceReload || !ttInfo || ttInfoFor !== active.id) await ttLoadCreator();
+  ttRenderPreview();
+  ttValidate();
+}
+
+async function ttLoadCreator() {
+  if (!active || ttLoading) return;
+  ttLoading = true;
+  const who = document.getElementById('tt-creator');
+  const forId = active.id;
+  who.textContent = 'Loading your TikTok account…';
+  ttInfo = null; ttInfoFor = null;
+  try {
+    const { data, error } = await sb.functions.invoke('tiktok-creator-info', { body: { cubicle_id: forId } });
+    if (error) throw error;
+    if (!active || active.id !== forId) return;
+    ttInfo = data; ttInfoFor = forId;
+    const name = data.creator_nickname || data.account_name || 'your TikTok account';
+    const handle = data.creator_username ? ' <span style="font-weight:500;color:var(--muted)">@' + escapeHtml(data.creator_username) + '</span>' : '';
+    who.innerHTML = (data.creator_avatar_url ? '<img src="' + escapeHtml(data.creator_avatar_url) + '" alt="">' : '') +
+      '<span>Posting to <b>' + escapeHtml(name) + '</b>' + handle + '</span>';
+    ttFillPrivacy();
+    ttApplyCreatorLimits();
+  } catch (e) {
+    const msg = await fnErrorMessage(e);
+    who.innerHTML = '<span class="tt-warn" style="margin:0">Couldn\'t load your TikTok account: ' + escapeHtml(msg) + '</span>';
+  } finally {
+    ttLoading = false;
+    ttValidate();
+  }
+}
+
+function ttFillPrivacy() {
+  const sel = document.getElementById('tt-privacy');
+  const prev = sel.value;
+  const opts = (ttInfo && ttInfo.privacy_level_options && ttInfo.privacy_level_options.length) ? ttInfo.privacy_level_options : [];
+  sel.innerHTML = '<option value="" disabled>Select who can see this post…</option>' +
+    opts.map(o => '<option value="' + o + '">' + escapeHtml(TT_PRIVACY_LABEL[o] || o) + '</option>').join('');
+  sel.value = opts.includes(prev) ? prev : '';
+  if (!sel.value) sel.selectedIndex = 0;
+}
+
+function ttApplyCreatorLimits() {
+  const map = [['comment', 'comment_disabled'], ['duet', 'duet_disabled'], ['stitch', 'stitch_disabled']];
+  const off = [];
+  for (const [k, flag] of map) {
+    const cb = document.getElementById('tt-' + k), wrap = document.getElementById('tt-' + k + '-wrap');
+    const disabled = !!(ttInfo && ttInfo[flag]);
+    cb.disabled = disabled;
+    if (disabled) { cb.checked = false; if (k === 'comment' || ttIsVideo()) off.push(k.charAt(0).toUpperCase() + k.slice(1)); }
+    wrap.classList.toggle('off', disabled);
+  }
+  const note = document.getElementById('tt-interact-note');
+  note.style.display = off.length ? 'block' : 'none';
+  note.textContent = off.length ? off.join(', ') + ' turned off in this account\'s TikTok privacy settings.' : '';
+}
+
+function ttRenderPreview() {
+  const box = document.getElementById('tt-preview');
+  if (!box) return;
+  const vid = document.getElementById('draft-video').value.trim();
+  const img = document.getElementById('draft-image').value.trim();
+  document.querySelectorAll('.tt-vid-only').forEach(el => el.style.display = vid ? '' : 'none');
+  if (ttInfo) ttApplyCreatorLimits();
+  if (!ttSelected() || (!vid && !img)) { box.style.display = 'none'; box.innerHTML = ''; box.dataset.src = ''; ttValidate(); return; }
+  const src = vid || img;
+  if (box.dataset.src === src) return;
+  box.dataset.src = src;
+  box.dataset.duration = '';
+  box.style.display = 'block';
+  if (vid) {
+    box.innerHTML = '<video src="' + escapeHtml(vid) + '" controls muted playsinline preload="metadata"></video>';
+    const v = box.querySelector('video');
+    v.addEventListener('loadedmetadata', () => { box.dataset.duration = String(v.duration || ''); ttValidate(); });
+  } else {
+    box.innerHTML = '<img src="' + escapeHtml(img) + '" alt="Post preview">';
+  }
+  ttValidate();
+}
+
+function ttValidate() {
+  const btn = document.getElementById('publish-btn');
+  const warn = document.getElementById('tt-warn');
+  const panel = document.getElementById('tt-panel');
+  if (!btn || !panel) return true;
+  const disclose = document.getElementById('tt-disclose').checked;
+  document.getElementById('tt-disclose-opts').style.display = disclose ? 'block' : 'none';
+  if (!disclose) { document.getElementById('tt-yourbrand').checked = false; document.getElementById('tt-branded').checked = false; }
+  const branded = disclose && document.getElementById('tt-branded').checked;
+  const yours = disclose && document.getElementById('tt-yourbrand').checked;
+
+  // Branded content can't be private.
+  const sel = document.getElementById('tt-privacy');
+  const selfOpt = sel.querySelector('option[value="SELF_ONLY"]');
+  if (selfOpt) {
+    selfOpt.disabled = branded;
+    selfOpt.textContent = branded ? 'Only me (not available for branded content)' : TT_PRIVACY_LABEL.SELF_ONLY;
+    if (branded && sel.value === 'SELF_ONLY') sel.selectedIndex = 0;
+  }
+
+  const consent = document.getElementById('tt-consent');
+  consent.innerHTML = branded
+    ? 'By posting, you agree to TikTok\'s <a href="https://www.tiktok.com/legal/page/global/bc-policy/en" target="_blank" rel="noopener">Branded Content Policy</a> and <a href="https://www.tiktok.com/legal/page/global/music-usage-confirmation/en" target="_blank" rel="noopener">Music Usage Confirmation</a>.'
+    : 'By posting, you agree to TikTok\'s <a href="https://www.tiktok.com/legal/page/global/music-usage-confirmation/en" target="_blank" rel="noopener">Music Usage Confirmation</a>.';
+  if (disclose && (yours || branded)) {
+    consent.innerHTML += ' Your post will be labeled "' + (branded ? 'Paid partnership' : 'Promotional content') + '".';
+  }
+
+  let problem = '';
+  if (ttSelected()) {
+    const vid = document.getElementById('draft-video').value.trim();
+    const img = document.getElementById('draft-image').value.trim();
+    const box = document.getElementById('tt-preview');
+    const dur = parseFloat(box.dataset.duration || '');
+    if (ttLoading) problem = 'still loading your TikTok account.';
+    else if (!ttInfo) problem = 'your TikTok account couldn\'t be loaded — reconnect TikTok under Connections.';
+    else if (!vid && !img) problem = 'TikTok needs a photo or video — add an Image URL or Video URL.';
+    else if (!sel.value) problem = 'choose who can see this post.';
+    else if (disclose && !yours && !branded) problem = 'you turned on "Disclose post content" — pick "Your brand", "Branded content", or both.';
+    else if (vid && dur && ttInfo.max_video_post_duration_sec && dur > ttInfo.max_video_post_duration_sec) problem = 'this video is ' + Math.round(dur) + 's — this account can post up to ' + ttInfo.max_video_post_duration_sec + 's.';
+  }
+  ttLastProblem = problem;
+  warn.style.display = problem ? 'block' : 'none';
+  warn.textContent = problem ? 'Before publishing to TikTok: ' + problem : '';
+  btn.disabled = !!problem;
+  btn.title = problem ? 'Finish the TikTok settings first' : '';
+  return !problem;
+}
+
+function ttPlatformOptions(targets) {
+  if (!targets || !targets.includes('tiktok')) return null;
+  const disclose = document.getElementById('tt-disclose').checked;
+  return { tiktok: {
+    privacy_level: document.getElementById('tt-privacy').value,
+    disable_comment: !document.getElementById('tt-comment').checked,
+    disable_duet: !document.getElementById('tt-duet').checked,
+    disable_stitch: !document.getElementById('tt-stitch').checked,
+    brand_organic_toggle: disclose && document.getElementById('tt-yourbrand').checked,
+    brand_content_toggle: disclose && document.getElementById('tt-branded').checked
+  } };
+}
+
+function ttResetAfterPost() {
+  const sel = document.getElementById('tt-privacy');
+  if (!sel) return;
+  sel.selectedIndex = 0;
+  ['tt-comment', 'tt-duet', 'tt-stitch', 'tt-disclose', 'tt-yourbrand', 'tt-branded'].forEach(id => { document.getElementById(id).checked = false; });
+  ttRenderPreview();
+  ttValidate();
 }
 
 function getSelectedPlatforms() {
