@@ -1,0 +1,2531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brandparent — Studio</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAIw0lEQVR4nOVXa2xc1RH+5pxzH3t3nbUdP2I7seM4T14FQiEUicbQ/kCkQQrKVkGJoEmLRCNcJQJVCNFdSxECoVKKErVpkSgC1NQGwa/+qcq6tOEVk5A0DwgKTZzEecevXe99nHOmPxy7xIQK+qM/2vl179Wc+b6ZOzNnBvh/F/qqesw88UDE/06RwTRhmCZe/1PJ5/OiWCwqZhaXMSFCsVhU+XxeXKabLyqiy/1hZlHMX677VYSmgy5dutTZvn17duvWrZlpAIRLHk/K+pXrqx5d/3QVADWdDK4QcTX9AwAmIt66dev18+fPzwVBsMzz/FYpRZYIur9/1xmA3tm1a9dWIjoIAI89/MxVNyy4/mFB6lbLdhaRwGvPvzWmrT4BZXYODB5/jYg+uqK3l3sD3HPPPZm1a9c+l0r5D6RSvhB0KRhEUEpBCkJTUwvGxsaGdx/es+S9l07Ku1d++4ArMtnB02dg2AAApJDwPRfpTACQtsOjQy++/uZvN93w3RvKhe4CEyZyaSoCvb29IpfLmd7e3l93dHTc19+/y2qttee5lA4CchyHXNeHUoJd14/b5s6tnj0yeOfChY7f3DA7++mRI+FYecxlME0m4EgJbM+eZVe5dOM3rtlw76ofevc/snLd1T1XS+RgpggwMxGR6erqakyn06uSJDFNTc1ULpeVEAK+7yEdBJiRzcJ1XfI8X1XGK2wSdGSqUiltEm5orFXpIBBxHKNcCWGsJQaDWCCd8W0UV0zGn7HqB6sf25zL5c5dwmQFAIVCgQBwTU2NU6mMo1z2ZTab5cbGRjiOA8/zIKUEwIjjBKWxMYqjmKIobJZSuePlhMIwJM9XcBwH2ZoMiATYWgghwcykjRZJoqk6Re7nMS/LASISr676yr6qqhlXAbDpdFqkUimkUikAgDEGcRwjDEPruZ44Pnj8b6VDvmqd07qsVC5Zx1VCEIFAYBBIALBAohOrhCuGSucOrn3k7uuY2U72k6ly6+vrkwBMFMV7iMBRFFmtNaIoQhiGMMbAGAMiwFGKKuE4kihezIQFURjD93xypQsiggXDGA2AQZJgLSxAHOtkNwDTV+iTX1qGWusjQkhKkhjj42UwM5RSsNYCzBgYOIHKeMW2zW2Rji96E3jKdb0ffXbqkHWkK5tntoKEgZSEKExABGidIHAzlCTmyHS8KQJ9fX0WAMbGxl67eOFCl+e7WUcpJgJZa+A4Eh98sAf9/XtARKg7VAc/kE50JvD2ni7h3PApsLW4edHtuK71FsS6AscBiBXriOT54XOjI5XRNwGgD8vtF/oAAPT09MhcLmeeffbnPZVKtBog3dzcqEZGRmG0wd/3f4IlSxZg8aIOvP32ezhz9jyIGLVuE25qvwOHz+zFsZED6Jh5LQI3jWq/CadHjmqSpAIn07v5qQdykxhfiACDCavBK1asCFpb25YlSYKhoRFRU1OLcmkcvpdCY0MdPj70KU6dOoOhoWFEUcTWWpjoNH0w8CcMlc+iIdMCz/UQJRG8ageB9kV9dSPIyltWLF0RrD6wOpxI/mmNqK/YJzupU+/YsePR1jlz5lg2ZvEiX1pmdHTMQxxHaGmZhYMHP0YYxjhx8gTmNiwgnTBOXDyC6tRMzMrORkfjVaitrQERwNBoEY0iiRNDQrWuXLV2Mz1OW4r5ourshp76BcwsiMhu27btm4sWLdyZzVYLpZQwWhOIIARBJwmSWMPYGLv37MOHe/bizpvvgj4X4M8f9+D2JXehvXExQlsCgeB6CtYyjDFQSrKS0lbCyOze/9Ft3dse7uc8C+omK/L5vCgUCti0aUNte3v7H7LZaieOYwKBlONASgkiASkdkBSIE429ew+iqakBVenA1s+ss3Pq56H/s78ithVIKeAFDrS2gGX4KReOKykMEwpSGfeaJYt33Hf3QzUFFMDMpJYvXy46Ozv1K6+81F1XV9ueJLEOUilljYWSClLJifoXE/kahTHYMhYtWmDdjBRm1KKtfqE9deG4KFdGkQ6qYBKGcsREFAwjCjWklCKKKrqhprlj+bI7tjz4xOqNwHJFALBp06ba275169G6+roMMyPlpyiVCmCthZASRIQ4ipEkMeIoxvDocNLc3OIcOLj/HTNQTe1zOm49duofSbaqxlFSwnElQIC1DCkVBAGJ1oAFS6kwNDJU+uOet9pffvmpCwIAmpqabgzSQVWpVGK2lhKdIDExpJIgEJIkgTYJwqgCksK0tbU5AwPH3j01+MmK3R++/73Bsyfeb5/d4RCRNlZDawMiAUdJsLVgMKQQAIiiKOYZmWzVNbPmXz9VBY4j6uMostZaBhi+ZSg5Ac4MMANRFEGQ1EoJdejQ/m1r1qzbDCAGgG1vPnX7C0++/tzshraHKmGoiUjBMrS1cDwH0bgGWwtSBLaWwcoG3oz6KQKjo+XzpVJJKKW0tRZRGCGOImSqMgARjDFMIO25nnP02NEta9ase4KZqVAoCAAoFAoJEf14289+n7S3dHQlSRTHUeymAg/ReAxmwMLAhBYQgqM4lGPlkWEAUMxMGzdufLe+fuZAXW1ta2l0LPZSvpRS0vDQMIQgm85kKJUOnMOHD/9u3br7nygWiwqA6e7unmypopgvys7uzp/8Zktv44LWxd8vlUfNyFCJ/ZQrLBjEYK2tcYTnnh0ZHDxwdt87zEyUz+dFd3e3ffbpp2+aUZt9Y2Zd/WyjExAIQTqNIAgwNDyMCxeGntmwYcNPe3p6RC6Xs5g2cjMzoQCibqIXtrzxy1n1szYGQQpRGCGqJAAEvJSLi8MXzhw9+dm9jz/30M58nidqa5JEV1dX47x5cx/MpIPlSjlNIEQAPrp4ceSFzZs377w0M2A6+OeEmBlExM/nX/pO4GbXe8q9liR8Jj49cnHsL0fO7/vVL7Y/eXISc+rkFWb3L1xUXwJ6JRLTbV127X/pnsDMlM/npxYJIgJzj/wa4P8ivLpH9vTw1LkJ219vSfmqa9t/29b/mPwTH8NK0GF8IS4AAAAASUVORK5CYII=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c1b2e; --ink-soft:#2a2940; --cream:#faf7f2; --paper:#fff;
+    --brand:#9B7FC4; --silver:#c9c6d3; --muted:#6b6880; --line:#e8e4dc;
+    --brand-soft:rgba(155,127,196,.14); --brand-secondary:#c9c6d3;
+    --font-heading:'Fraunces',serif; --font-body:'Inter',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--font-body);color:var(--ink);background:var(--cream);height:100vh;display:flex;overflow:hidden}
+  h1,h2,h3{font-family:var(--font-heading)}
+  button{font-family:inherit;cursor:pointer}
+
+  aside{width:250px;background:var(--ink);color:#e8e5f2;display:flex;flex-direction:column;flex-shrink:0}
+  .side-head{padding:20px;display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:700;font-size:1.1rem;color:#fff;border-bottom:1px solid var(--ink-soft)}
+  .side-label{padding:18px 20px 8px;font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8c88a6;display:flex;justify-content:space-between;align-items:center}
+  .side-label .add{background:none;border:none;color:#8c88a6;font-size:1rem;line-height:1;padding:0 4px}
+  .side-label .add:hover{color:#fff}
+  .cub-btn{display:flex;align-items:center;gap:12px;width:100%;padding:11px 20px;background:none;border:none;color:#c9c5da;font-size:.92rem;font-weight:500;text-align:left;border-left:3px solid transparent}
+  .cub-btn:hover{background:var(--ink-soft);color:#fff}
+  .cub-btn.active{background:var(--ink-soft);color:#fff;border-left-color:var(--brand)}
+  .cub-dot{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden}
+  .cub-dot img{width:100%;height:100%;object-fit:cover;display:block}
+  .side-foot{margin-top:auto;padding:16px 20px;border-top:1px solid var(--ink-soft);font-size:.8rem;color:#8c88a6}
+  .side-foot b{color:#fff;display:block;font-size:.88rem}
+  .studio-badge{display:inline-block;margin-top:6px;background:var(--silver);color:#fff;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:999px}
+  .logout{margin-top:10px;background:none;border:1px solid var(--ink-soft);color:#c9c5da;font-size:.78rem;padding:6px 12px;border-radius:999px}
+  .logout:hover{color:#fff;border-color:#8c88a6}
+
+  main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+  .topbar{background:var(--paper);border-bottom:1px solid var(--line);padding:0 28px;display:flex;align-items:center;gap:6px;height:58px;flex-shrink:0}
+  .topbar .brand-name{font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem;margin-right:auto;display:flex;align-items:center;gap:10px}
+  .tab{background:none;border:none;padding:8px 16px;border-radius:999px;font-size:.88rem;font-weight:600;color:var(--muted)}
+  .tab:hover{color:var(--ink)}
+  .tab.active{background:var(--brand-soft);color:var(--brand);box-shadow:inset 0 -2px 0 var(--brand-secondary)}
+  .content{flex:1;overflow-y:auto;padding:28px}
+  .panel{display:none;max-width:880px;margin:0 auto}
+  .panel.show{display:block}
+
+  .composer-grid{display:grid;grid-template-columns:1fr 300px;gap:20px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .card h3{font-size:1rem;margin-bottom:12px}
+  textarea{width:100%;min-height:190px;border:1.5px solid var(--line);border-radius:10px;padding:14px;font-family:inherit;font-size:.95rem;line-height:1.6;resize:vertical;outline:none;background:var(--cream)}
+  textarea:focus{border-color:var(--brand)}
+  .comp-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;align-items:center}
+  .btn{padding:10px 20px;border-radius:999px;border:none;font-weight:600;font-size:.88rem}
+  .btn-brand{background:var(--brand);color:#fff}
+  .btn-ghost{background:none;border:1.5px solid var(--line);color:var(--ink)}
+  .btn-coral{background:var(--silver);color:#fff}
+  .btn:disabled{opacity:.55;cursor:default}
+  .sched-date{border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:.85rem;background:var(--cream)}
+
+  .bleed-status{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;font-weight:600;font-size:.9rem;margin-bottom:14px}
+  .bleed-clean{background:rgba(155,127,196,.12);color:#5B4A7E}
+  .bleed-dirty{background:rgba(155,150,170,.14);color:#c0392b}
+  .bleed-item{padding:10px 12px;border-radius:10px;background:var(--cream);margin-bottom:8px;font-size:.85rem}
+  .bleed-item b{font-family:'Fraunces',serif}
+  .bleed-item .from{display:inline-block;font-size:.7rem;font-weight:700;padding:2px 9px;border-radius:999px;color:#fff;margin-left:6px}
+  .bleed-empty{font-size:.85rem;color:var(--muted)}
+  mark{background:rgba(155,150,170,.3);border-radius:3px;padding:0 2px}
+  .preview{margin-top:14px;font-size:.9rem;line-height:1.6;color:var(--ink-soft);white-space:pre-wrap}
+
+  .optim-out{margin-top:14px;background:var(--cream);border-radius:10px;padding:14px;font-size:.9rem;line-height:1.6;display:none;white-space:pre-wrap}
+  .optim-note{font-size:.72rem;color:var(--muted);margin-top:8px}
+
+  .voice-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .voice-grid .card.full{grid-column:1/-1}
+  label{display:block;font-size:.78rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:12px 0 6px}
+  input[type=text]{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;font-family:inherit;font-size:.92rem;background:var(--cream);outline:none}
+  input[type=text]:focus{border-color:var(--brand)}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:var(--brand-soft);color:var(--brand);font-size:.8rem;font-weight:600;padding:5px 8px 5px 12px;border-radius:999px;margin:3px 4px 3px 0}
+  .chip.never{background:rgba(155,150,170,.12);color:#c0392b}
+  .chip button{background:none;border:none;color:inherit;opacity:.6;font-size:.9rem;line-height:1;padding:0}
+  .chip button:hover{opacity:1}
+  .chip-add{display:flex;gap:8px;margin-top:10px}
+  .chip-add input{flex:1}
+  .chip-add button{flex-shrink:0}
+  .save-row{margin-top:18px;display:flex;align-items:center;gap:12px}
+  .save-note{font-size:.8rem;color:var(--muted)}
+
+  .logo-preview-wrap{width:64px;height:64px;border-radius:14px;overflow:hidden;background:var(--cream);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .logo-preview-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+  .logo-preview-fallback{font-family:'Fraunces',serif;font-weight:700;font-size:1.3rem;color:var(--muted)}
+
+  .theme-select{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;font-family:inherit;font-size:.92rem;background:var(--cream);outline:none}
+  .theme-select:focus{border-color:var(--brand)}
+  .theme-preview{border:1.5px solid var(--line);border-radius:12px;padding:20px;margin-top:18px;background:var(--paper)}
+  .theme-preview-swatch{width:22px;height:22px;border-radius:6px;display:inline-block}
+  .detect-box{background:var(--cream);border-radius:12px;padding:16px;margin-bottom:18px}
+  .detect-chip{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:999px;padding:4px 10px;margin:3px 6px 3px 0;font-size:.78rem;cursor:pointer;background:var(--paper)}
+  .detect-chip:hover{border-color:var(--brand)}
+  .detect-chip .cw{width:13px;height:13px;border-radius:4px;display:inline-block;flex-shrink:0}
+
+  .interview-bubble{max-width:80%;padding:10px 14px;border-radius:14px;margin-bottom:10px;font-size:.88rem;line-height:1.5}
+  .interview-bubble.assistant{background:var(--brand-soft);color:var(--ink);margin-right:auto;border-bottom-left-radius:4px}
+  .interview-bubble.user{background:var(--paper);border:1.5px solid var(--line);color:var(--ink);margin-left:auto;border-bottom-right-radius:4px;text-align:right}
+
+  .sound-toggle{background:none;border:1.5px solid var(--line);color:var(--muted);width:36px;height:36px;border-radius:999px;font-size:1rem;display:flex;align-items:center;justify-content:center;margin-left:8px;flex-shrink:0}
+  .sound-toggle:hover{border-color:var(--brand);color:var(--brand)}
+
+  .cal-day{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-bottom:12px;display:flex;gap:18px;align-items:baseline}
+  .cal-day .d{font-family:'Fraunces',serif;font-weight:700;min-width:110px}
+  .cal-day .t{font-size:.9rem;color:var(--ink-soft)}
+  .cal-day .tag{margin-left:auto;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:999px;color:#fff;flex-shrink:0}
+  .cal-empty{color:var(--muted);font-size:.9rem;padding:8px 2px}
+
+  .demo-note{max-width:880px;margin:0 auto 20px;font-size:.8rem;color:var(--muted);background:var(--paper);border:1px dashed var(--line);border-radius:10px;padding:10px 16px}
+  .empty-state{max-width:520px;margin:60px auto;text-align:center}
+  .empty-state h2{margin-bottom:10px}
+  .empty-state p{color:var(--muted);margin-bottom:24px}
+  .paywall-tier-toggle{display:inline-flex;gap:4px;margin:18px 0;background:var(--cream);border:1.5px solid var(--line);border-radius:999px;padding:4px}
+  .paywall-tier-btn{border:none;background:none;cursor:pointer;padding:9px 18px;border-radius:999px;font-size:.82rem;font-weight:700;color:var(--ink);font-family:inherit;transition:all .15s}
+  .paywall-tier-btn.active{background:var(--ink);color:#fff}
+
+  .modal-bg{display:none;position:fixed;inset:0;background:rgba(28,27,46,.45);align-items:center;justify-content:center;z-index:100}
+  .modal-bg.show{display:flex}
+  .modal{background:var(--paper);border-radius:18px;padding:30px;width:100%;max-width:420px}
+  .modal h3{margin-bottom:4px}
+  .modal .sub{font-size:.85rem;color:var(--muted);margin-bottom:18px}
+  .color-row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .swatch{width:28px;height:28px;border-radius:8px;cursor:pointer;border:2px solid transparent;position:relative;box-sizing:border-box}
+  .swatch.sel{border-color:transparent;box-shadow:0 0 0 2px #fff,0 0 0 4px var(--ink)}
+  .swatch.sel::after{content:'\2713';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:900;text-shadow:0 0 3px rgba(0,0,0,.9),0 1px 2px rgba(0,0,0,.9),0 0 6px rgba(0,0,0,.65)}
+  .modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
+  .modal-wide{max-width:640px;max-height:88vh;overflow-y:auto}
+  .field-help{font-size:.76rem;color:var(--muted);margin-top:6px;line-height:1.4}
+  .contrast-warn{display:none;margin-top:10px;font-size:.8rem;font-weight:600;color:#c0392b;background:rgba(192,57,43,.08);border-radius:8px;padding:8px 12px}
+  .contrast-warn.show{display:block}
+  .mini-preview{border:1.5px solid var(--line);border-radius:12px;padding:18px;margin-top:16px}
+  .mini-preview .h{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:700;margin-bottom:5px}
+  .mini-preview .b{font-size:.85rem}
+  .color-field{margin-bottom:16px}
+  .color-field > label{display:block;font-size:.78rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+
+  .tour-overlay{display:none;position:fixed;inset:0;z-index:200}
+  .tour-overlay.show{display:block}
+  .tour-dim{position:fixed;inset:0;background:rgba(28,27,46,.55)}
+  .tour-spot{position:fixed;border-radius:12px;box-shadow:0 0 0 4px var(--brand),0 0 0 9999px rgba(28,27,46,.55);transition:all .25s ease;pointer-events:none}
+  .tour-box{position:fixed;background:var(--paper);border-radius:14px;padding:20px;width:300px;box-shadow:0 20px 50px rgba(28,27,46,.25);transition:top .25s ease,left .25s ease}
+  .tour-box h4{font-family:'Fraunces',serif;margin-bottom:6px}
+  .tour-box p{font-size:.85rem;color:var(--ink-soft);line-height:1.5;margin-bottom:14px}
+  .tour-box .tour-actions{display:flex;align-items:center;justify-content:space-between}
+  .tour-box .tour-step-count{font-size:.75rem;color:var(--muted)}
+  .tour-box .tour-btns{display:flex;gap:8px}
+  .tour-btn{border:1.5px solid var(--line);background:none;color:var(--ink);font-size:.82rem;font-weight:600;padding:6px 14px;border-radius:999px;cursor:pointer}
+  .tour-btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+  .tutorial-toggle{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#c9c5da;margin-top:10px}
+  .tswitch{position:relative;width:32px;height:18px;flex-shrink:0}
+  .tswitch input{opacity:0;width:0;height:0}
+  .tswitch .slider{position:absolute;cursor:pointer;inset:0;background:#4a4863;border-radius:999px;transition:.2s}
+  .tswitch .slider:before{content:"";position:absolute;height:14px;width:14px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.2s}
+  .tswitch input:checked + .slider{background:var(--brand)}
+  .tswitch input:checked + .slider:before{transform:translateX(14px)}
+  .tour-link{background:none;border:none;color:#c9c5da;font-size:.78rem;text-decoration:underline;cursor:pointer;padding:0;text-align:left}
+  .tour-link:hover{color:#fff}
+
+  /* --- Bloom Break: colorful floating destress tool --------------------- */
+  .bloom-fab{position:fixed;right:24px;bottom:24px;width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;z-index:200;
+    background:conic-gradient(from 0deg,#ff6b6b,#ffd93d,#4ade80,#6bcffb,#a78bfa,#f472b6,#ff6b6b);
+    box-shadow:0 6px 20px rgba(167,139,250,.45);
+    display:flex;align-items:center;justify-content:center;font-size:1.5rem;
+    animation:bloom-pulse 3s ease-in-out infinite;}
+  .bloom-fab:hover{animation-play-state:paused;transform:scale(1.08)}
+  @keyframes bloom-pulse{0%,100%{box-shadow:0 6px 20px rgba(167,139,250,.45)}50%{box-shadow:0 6px 32px rgba(255,107,107,.55)}}
+
+  @media(max-width:900px){.composer-grid,.voice-grid{grid-template-columns:1fr}aside{width:200px}}
+
+  /* --- Brand-immersive workspace (2026-09-22) ------------------------------
+     Every surface reads from these variables. applyThemeVars() rewrites them
+     on <html> whenever a cubicle is selected (or while a theme is being
+     edited), so the WHOLE workspace — sidebar, top bar, cards, composer,
+     fonts, background image — becomes that brand. */
+  :root{
+    --side-bg:#1c1b2e; --side-fg:#e8e5f2; --side-muted:#8c88a6; --side-hover:#2a2940;
+    --on-brand:#fff; --paper-a:#fff; --content-bg-image:none; --brand-text:#9B7FC4;
+  }
+  body{transition:background-color .25s ease,color .25s ease}
+  input,textarea,select{color:var(--ink)}
+  aside{background:var(--side-bg);color:var(--side-fg);transition:background-color .25s ease}
+  .side-head{color:var(--side-fg);border-bottom-color:var(--side-hover)}
+  .side-label,.side-label .add,.side-foot,.tutorial-toggle,.tour-link{color:var(--side-muted)}
+  .side-label .add:hover,.tour-link:hover{color:var(--side-fg)}
+  .cub-btn{color:var(--side-fg);opacity:.78}
+  .cub-btn:hover{background:var(--side-hover);color:var(--side-fg);opacity:1}
+  .cub-btn.active{background:var(--side-hover);color:var(--side-fg);opacity:1;font-weight:700}
+  .side-foot{border-top-color:var(--side-hover)}
+  .side-foot b{color:var(--side-fg)}
+  .logout{border-color:var(--side-hover);color:var(--side-muted)}
+  .logout:hover{color:var(--side-fg);border-color:var(--side-muted)}
+  .cub-dot.has-logo{background:#fff !important;padding:2px}
+  .cub-dot img{object-fit:contain}
+  .topbar{border-bottom:3px solid var(--brand);height:66px}
+  .topbar .brand-name{font-family:var(--font-heading);font-size:1.25rem;color:var(--ink)}
+  .topbar .brand-name .cub-dot{width:42px;height:42px;border-radius:11px;font-size:.9rem}
+  .tab.active{color:var(--brand-text)}
+  .btn-brand,.tour-btn.primary{color:var(--on-brand)}
+  .btn-coral,.studio-badge{color:var(--on-secondary,#fff)}
+  .chip{color:var(--brand-text)}
+  .bleed-clean{background:var(--brand-soft);color:var(--ink)}
+  .bleed-item b,.cal-day .d,.logo-preview-fallback,.mini-preview .h,.tour-box h4{font-family:var(--font-heading)}
+  .logo-preview-wrap{background:#fff}
+  .logo-preview-wrap img{object-fit:contain}
+  .content{background-color:var(--cream);background-image:var(--content-bg-image);background-size:cover;background-position:center;background-repeat:no-repeat;transition:background-color .25s ease}
+  .has-bg-image .card,.has-bg-image .demo-note{background:var(--paper-a);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  .posting-as{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:var(--brand);color:var(--on-brand);font-weight:600;font-size:.9rem;margin-bottom:14px;flex-wrap:wrap}
+  .posting-as b{font-family:var(--font-heading);font-size:1.02rem}
+  .posting-as .to{font-weight:500;opacity:.9;font-size:.82rem}
+  .posting-as .cub-dot{width:28px;height:28px}
+  /* TikTok post settings (TikTok Content Posting API UX requirements) */
+  .tt-panel{margin-top:16px;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;background:var(--cream)}
+  .tt-head{display:flex;align-items:center;gap:10px;font-weight:700;font-size:.92rem;color:var(--ink);flex-wrap:wrap}
+  .tt-head img{width:32px;height:32px;border-radius:50%;object-fit:cover;border:1.5px solid var(--line)}
+  .tt-head .tt-badge{background:#111;color:#fff;border-radius:6px;padding:3px 8px;font-size:.72rem;letter-spacing:.04em}
+  .tt-panel select{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-family:inherit;font-size:.9rem;background:#fff;color:#222}
+  .tt-row{display:flex;gap:18px;flex-wrap:wrap}
+  .tt-check{display:flex;align-items:center;gap:6px;text-transform:none;font-weight:500;font-size:.86rem;color:var(--ink);margin:4px 0;letter-spacing:0}
+  .tt-check.off{opacity:.45}
+  .tt-sub{font-size:.76rem;color:var(--muted);margin:2px 0 0 24px;text-transform:none;letter-spacing:0;font-weight:400}
+  .tt-preview{margin-top:10px;max-width:220px;border-radius:10px;overflow:hidden;border:1.5px solid var(--line);background:#000}
+  .tt-preview img,.tt-preview video{display:block;width:100%;max-height:320px;object-fit:contain}
+  .tt-consent{font-size:.78rem;color:var(--muted);margin-top:12px}
+  .tt-consent a{color:var(--brand)}
+  .tt-warn{font-size:.8rem;font-weight:600;color:#c0392b;margin-top:8px}
+  .tt-note{font-size:.76rem;color:var(--muted);margin-top:6px}
+  .theme-live-note{display:none;margin-top:10px;font-size:.8rem;font-weight:600;color:var(--ink);background:var(--brand-soft);border-radius:8px;padding:8px 12px}
+  .theme-live-note.show{display:block}
+  .bg-thumb{width:120px;height:72px;border-radius:10px;border:1.5px solid var(--line);background:var(--cream) center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-size:.72rem;color:var(--muted);flex-shrink:0}
+  .suggest-box{border:1.5px solid var(--line);border-radius:12px;padding:14px;margin-top:12px;background:var(--paper)}
+  .suggest-row{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 12px}
+  .suggest-sw{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.7rem;color:var(--muted);min-width:64px}
+  .suggest-sw span.sq{width:44px;height:44px;border-radius:10px;border:1.5px solid var(--line);display:block}
+  .role-btn{border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font-size:.7rem;font-weight:700;border-radius:999px;padding:2px 8px;margin-left:3px;cursor:pointer}
+  .role-btn:hover{border-color:var(--brand)}
+  .pick-color{display:inline-flex;align-items:center;gap:4px;margin:4px 10px 4px 0;font-size:.75rem}
+  .pick-color .cw{width:18px;height:18px;border-radius:5px;border:1px solid var(--line);display:inline-block}
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="side-head">
+    <img src="brandparent-logo.png" alt="" width="26" style="height:26px;width:auto;display:inline-block;vertical-align:middle" onerror="this.style.display='none'">
+    Brandparent
+  </div>
+  <div class="side-label"><span>Your Cubicles</span> <button class="add" onclick="openCubicleModal()" title="New cubicle">+</button></div>
+  <div id="cubicle-list"></div>
+  <div class="side-foot">
+    <b id="parent-name-el">—</b>
+    parent identity
+    <span class="studio-badge">Studio</span>
+    <br>
+    <button class="tour-link" onclick="startTour()" style="margin-top:10px">🎓 Take the tour</button>
+    <div class="tutorial-toggle">
+      <label class="tswitch">
+        <input type="checkbox" id="tutorial-toggle-input" checked onchange="toggleTutorials()">
+        <span class="slider"></span>
+      </label>
+      <span>Tutorials</span>
+    </div>
+    <button class="logout" onclick="logout()">Log out</button>
+  </div>
+</aside>
+
+<main>
+  <div class="topbar">
+    <span class="brand-name" id="active-name"></span>
+    <button class="tab active" data-panel="compose" onclick="showPanel('compose',this)">Composer</button>
+    <button class="tab" data-panel="voice" onclick="showPanel('voice',this)">Voice Profile</button>
+    <button class="tab" data-panel="calendar" onclick="showPanel('calendar',this)">Calendar</button>
+    <button class="tab" data-panel="connections" onclick="showPanel('connections',this)">Connections</button>
+    <a class='tab' href='/help' rel='noopener' style='text-decoration:none;display:inline-flex;align-items:center;' target='_blank'>Help</a>
+    <button class="sound-toggle" onclick="toggleSound()" id="sound-toggle-btn" title="Toggle sound alerts"></button>
+  </div>
+
+  <div class="content" id="content-root">
+    <div class="demo-note" id="claude-note">✨ Caption optimization is live — running on Claude.</div>
+
+    <div id="no-cubicles" class="empty-state" style="display:none">
+      <h2>Set up your first cubicle</h2>
+      <p>Give one of your brands its own room — voice, audience, and vocabulary. Bleed Check learns as you go.</p>
+      <button class="btn btn-brand" onclick="openCubicleModal()">+ Create a cubicle</button>
+    </div>
+
+    <div id="paywall" class="empty-state" style="display:none">
+      <h2>Finish setting up your account</h2>
+      <div class="paywall-tier-toggle" id="paywall-tier-toggle">
+        <button type="button" class="paywall-tier-btn" id="paywall-tier-founding" onclick="setPaywallTier('founding_member')">Founding — $97</button>
+        <button type="button" class="paywall-tier-btn" id="paywall-tier-studio" onclick="setPaywallTier('studio')">Studio — trial</button>
+      </div>
+      <p id="paywall-msg">Brandparent is $97 one-time — lifetime access to every cubicle you create.</p>
+      <button class="btn btn-brand" onclick="startCheckout()" id="paywall-btn">Complete your $97 purchase</button>
+    </div>
+
+    <div id="app-panels" style="display:none">
+      <div class="panel show" id="panel-compose">
+        <div class="composer-grid">
+          <div>
+            <div class="card">
+              <div class="posting-as" id="posting-as"></div>
+              <h3>Draft a post</h3>
+              <textarea id="draft" placeholder="Write as this brand… the Bleed Check watches as you type." oninput="runBleedCheck(); checkBlueskyLimit()"></textarea>
+              <label style="margin-top:14px">Image URL <span style="font-weight:400;text-transform:none;font-size:.78rem">(required for Instagram, TikTok &amp; Pinterest — Facebook works without one)</span></label>
+              <input type="text" id="draft-image" placeholder="https://… link to an already-hosted image" oninput="ttRenderPreview()">
+              <label style="margin-top:14px">Video URL <span style="font-weight:400;text-transform:none;font-size:.78rem">(optional — used by TikTok &amp; Bluesky instead of the image)</span></label>
+              <input type="text" id="draft-video" placeholder="https://… link to an already-hosted .mp4" oninput="ttRenderPreview()">
+
+              <label style="margin-top:14px">Publish to</label>
+              <div id="publish-targets" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center"></div>
+              <div id="bsky-limit-warn" style="display:none;margin-top:8px;font-size:.8rem;font-weight:600;color:#c0392b"></div>
+
+              <div class="tt-panel" id="tt-panel" style="display:none">
+                <div class="tt-head"><span class="tt-badge">TikTok</span><span id="tt-creator">Loading your TikTok account…</span></div>
+                <div id="tt-body">
+                  <label>Who can see this post</label>
+                  <select id="tt-privacy" onchange="ttValidate()"></select>
+                  <label>Allow viewers to</label>
+                  <div class="tt-row">
+                    <label class="tt-check" id="tt-comment-wrap"><input type="checkbox" id="tt-comment" onchange="ttValidate()"> Comment</label>
+                    <label class="tt-check tt-vid-only" id="tt-duet-wrap"><input type="checkbox" id="tt-duet" onchange="ttValidate()"> Duet</label>
+                    <label class="tt-check tt-vid-only" id="tt-stitch-wrap"><input type="checkbox" id="tt-stitch" onchange="ttValidate()"> Stitch</label>
+                  </div>
+                  <div class="tt-note" id="tt-interact-note" style="display:none"></div>
+                  <label>Disclose post content</label>
+                  <label class="tt-check"><input type="checkbox" id="tt-disclose" onchange="ttValidate()"> This post promotes a brand, product or service</label>
+                  <div id="tt-disclose-opts" style="display:none;margin-left:4px">
+                    <label class="tt-check"><input type="checkbox" id="tt-yourbrand" onchange="ttValidate()"> Your brand</label>
+                    <div class="tt-sub">You are promoting yourself or your own business. Your post will be labeled "Promotional content".</div>
+                    <label class="tt-check"><input type="checkbox" id="tt-branded" onchange="ttValidate()"> Branded content</label>
+                    <div class="tt-sub">You are promoting another brand or a third party. Your post will be labeled "Paid partnership".</div>
+                  </div>
+                  <div class="tt-preview" id="tt-preview" style="display:none"></div>
+                  <div class="tt-consent" id="tt-consent"></div>
+                  <div class="tt-note">After you publish, it may take a few minutes for TikTok to process the post before it appears on your profile.</div>
+                  <div class="tt-warn" id="tt-warn" style="display:none"></div>
+                </div>
+              </div>
+
+              <div class="comp-actions">
+                <button class="btn btn-brand" onclick="runBleedCheck(true)">Run Bleed Check</button>
+                <button class="btn btn-coral" onclick="optimize()">✨ Optimize caption</button>
+                <input type="date" class="sched-date" id="sched-date">
+                <button class="btn btn-ghost" onclick="schedulePost()">Schedule</button>
+                <button class="btn btn-brand" onclick="publishNow()" id="publish-btn">🚀 Publish now</button>
+              </div>
+              <div class="optim-out" id="optim-out"></div>
+              <div class="optim-out" id="publish-out"></div>
+            </div>
+            <div class="card" style="margin-top:20px">
+              <h3>Draft preview <span style="font-weight:400;font-size:.8rem;color:var(--muted)">(leaks highlighted)</span></h3>
+              <div class="preview" id="preview">Nothing yet.</div>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <h3>Bleed Check™</h3>
+              <div class="bleed-status bleed-clean" id="bleed-status">✓ Clean — no contamination</div>
+              <div id="bleed-list"><p class="bleed-empty">Flagged terms from other cubicles will appear here.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-voice">
+        <div class="voice-grid">
+          <div class="card full" id="interview-card">
+            <h3>Getting to know you</h3>
+            <p style="font-size:.85rem;color:var(--muted);margin-bottom:14px">A short guided interview that fills out this cubicle's tone, audience, signature phrases, lexicon, and never-says for you — nothing is saved until you review and apply it below.</p>
+            <div id="interview-start-row">
+              <button class="btn btn-brand" onclick="startInterview()" id="interview-start-btn">Start interview</button>
+            </div>
+            <div id="interview-chat" style="display:none">
+              <div id="interview-log" style="max-height:320px;overflow-y:auto;border:1.5px solid var(--line);border-radius:12px;padding:16px;background:var(--cream);margin-bottom:12px"></div>
+              <div id="interview-input-row" style="display:flex;gap:10px">
+                <input type="text" id="interview-answer" placeholder="Type your answer…" style="flex:1" onkeydown="if(event.key==='Enter'){sendInterviewAnswer();}">
+                <button class="btn btn-brand" onclick="sendInterviewAnswer()" id="interview-send-btn">Send</button>
+              </div>
+              <div id="interview-done-row" style="display:none;margin-top:14px">
+                <button class="btn btn-brand" onclick="applyInterviewProfile()">Apply these answers to the Voice Profile below</button>
+                <button class="btn btn-ghost" onclick="resetInterview()">Start over</button>
+              </div>
+            </div>
+          </div>
+          <div class="card full" id="brand-mark-card">
+            <h3>Brand mark</h3>
+            <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+              <div class="logo-preview-wrap" id="logo-preview-wrap">
+                <span class="logo-preview-fallback" id="logo-preview-fallback"></span>
+                <img id="logo-preview-img" style="display:none">
+              </div>
+              <div style="flex:1;min-width:220px">
+                <p style="font-size:.85rem;color:var(--muted);margin-bottom:10px">Upload a logo for this cubicle — it replaces the initials badge in the sidebar and header everywhere this brand shows up. PNG, JPG, WEBP, or SVG, up to 5MB.</p>
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                  <input type="file" id="logo-file" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="max-width:220px">
+                  <button class="btn btn-brand" onclick="uploadLogo()" id="logo-upload-btn">Upload</button>
+                  <button class="btn btn-ghost" onclick="removeLogo()" id="logo-remove-btn">Remove logo</button>
+                </div>
+                <div class="save-note" id="logo-note" style="margin-top:8px"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card full" id="theme-card">
+            <h3>Cubicle theme</h3>
+            <p style="font-size:.85rem;color:var(--muted);margin-bottom:14px">Make this room feel like your brand's own place — pull your look straight from your website, or pick colors, fonts, and a background by hand. The whole workspace changes live as you pick.</p>
+
+            <div class="detect-box">
+              <label style="margin-top:0">Import from your site</label>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <input type="text" id="t-site-url" placeholder="e.g. yourbrand.com" style="flex:1;min-width:200px">
+                <button class="btn btn-brand" onclick="detectSiteTheme()" id="t-detect-btn">Detect theme from my site</button>
+              </div>
+              <div id="t-detect-out"></div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+              <div>
+                <label>Background</label>
+                <div class="field-help" style="margin-top:0;margin-bottom:6px">The page/card color behind your content.</div>
+                <div class="color-row" id="t-background-colors"></div>
+                <input type="text" id="t-background-hex" placeholder="#faf7f2" style="margin-top:8px;max-width:140px" onchange="setThemeColorFromHexInput('background')">
+              </div>
+              <div>
+                <label>Text color</label>
+                <div class="field-help" style="margin-top:0;margin-bottom:6px">Body copy — needs to read clearly on Background.</div>
+                <div class="color-row" id="t-text-colors"></div>
+                <input type="text" id="t-text-hex" placeholder="#1c1b2e" style="margin-top:8px;max-width:140px" onchange="setThemeColorFromHexInput('text')">
+              </div>
+              <div>
+                <label>Headline</label>
+                <div class="field-help" style="margin-top:0;margin-bottom:6px">Titles and your main accent color — badges, buttons.</div>
+                <div class="color-row" id="t-headline-colors"></div>
+                <input type="text" id="t-headline-hex" placeholder="#9B7FC4" style="margin-top:8px;max-width:140px" onchange="setThemeColorFromHexInput('headline')">
+              </div>
+              <div>
+                <label>Secondary</label>
+                <div class="field-help" style="margin-top:0;margin-bottom:6px">A supporting accent for smaller details.</div>
+                <div class="color-row" id="t-secondary-colors"></div>
+                <input type="text" id="t-secondary-hex" placeholder="#c9c6d3" style="margin-top:8px;max-width:140px" onchange="setThemeColorFromHexInput('secondary')">
+              </div>
+              <div>
+                <label>Heading font</label>
+                <select class="theme-select" id="t-heading-font" onchange="onFontSelectChange('t-heading-font','headingFont')"></select>
+                <input type="text" id="t-heading-font-custom" placeholder="Type any Google Fonts name…" style="margin-top:8px;display:none" oninput="onFontCustomInput('t-heading-font','headingFont')">
+              </div>
+              <div>
+                <label>Body font</label>
+                <select class="theme-select" id="t-body-font" onchange="onFontSelectChange('t-body-font','bodyFont')"></select>
+                <input type="text" id="t-body-font-custom" placeholder="Type any Google Fonts name…" style="margin-top:8px;display:none" oninput="onFontCustomInput('t-body-font','bodyFont')">
+              </div>
+            </div>
+
+            <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line)">
+              <label style="margin-top:0">Background image or texture <span style="font-weight:400;text-transform:none;font-size:.78rem">(optional)</span></label>
+              <div class="field-help" style="margin-top:0">A photo, texture, or artwork that sits behind this brand's whole workspace. JPG, PNG, or WEBP — large images are shrunk automatically.</div>
+              <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px">
+                <div class="bg-thumb" id="bg-thumb">None</div>
+                <input type="file" id="bg-file" accept="image/png,image/jpeg,image/webp" style="max-width:220px">
+                <button class="btn btn-brand" onclick="uploadBackground()" id="bg-upload-btn">Upload</button>
+                <button class="btn btn-ghost" onclick="removeBackground()" id="bg-remove-btn">Remove</button>
+              </div>
+              <div class="save-note" id="bg-note" style="margin-top:8px"></div>
+              <label>Image strength</label>
+              <div style="display:flex;align-items:center;gap:12px">
+                <input type="range" id="t-overlay" min="5" max="95" step="5" style="flex:1;max-width:320px" oninput="onOverlayInput()">
+                <span class="save-note" id="t-overlay-val"></span>
+              </div>
+              <div class="field-help">Lower = softer image so text stays easy to read. Save theme to keep it.</div>
+            </div>
+
+            <div class="theme-preview" id="theme-preview">
+              <div style="display:flex;gap:8px;margin-bottom:10px">
+                <span class="theme-preview-swatch" id="theme-preview-swatch1"></span>
+                <span class="theme-preview-swatch" id="theme-preview-swatch2"></span>
+              </div>
+              <div id="theme-preview-heading" style="font-size:1.4rem;font-weight:700;margin-bottom:6px">This is how it feels</div>
+              <div id="theme-preview-body" style="font-size:.92rem">Sample caption text in this cubicle's body font — roughly what your composer and preview will look like once saved.</div>
+            </div>
+            <div class="contrast-warn" id="t-contrast-warn"></div>
+
+            <div class="save-row">
+              <button class="btn btn-brand" onclick="saveTheme()" id="save-theme-btn">Save theme</button>
+              <button class="btn btn-ghost" onclick="revertTheme()" id="revert-theme-btn">Undo changes</button>
+              <span class="save-note" id="theme-note"></span>
+            </div>
+            <div class="theme-live-note" id="theme-live-note">👀 You're previewing this look across the whole workspace. Click <b>Save theme</b> to keep it, or <b>Undo changes</b>.</div>
+          </div>
+
+          <div class="card">
+            <h3>Voice</h3>
+            <label>Tone</label>
+            <input type="text" id="v-tone">
+            <label>Audience</label>
+            <input type="text" id="v-aud">
+          </div>
+          <div class="card">
+            <h3>Signature phrases</h3>
+            <div id="v-loves"></div>
+            <div class="chip-add"><input type="text" id="add-loves" placeholder="Add a phrase…"><button class="btn btn-ghost" onclick="addChip('signature_phrases','add-loves')">Add</button></div>
+          </div>
+          <div class="card full">
+            <h3>Lexicon — words this brand owns <span style="font-weight:400;font-size:.8rem;color:var(--muted)">(other cubicles get flagged for using them)</span></h3>
+            <div id="v-lex"></div>
+            <div class="chip-add"><input type="text" id="add-lex" placeholder="Add a word…"><button class="btn btn-ghost" onclick="addChip('lexicon','add-lex')">Add</button></div>
+            <h3 style="margin-top:18px">Never says</h3>
+            <div id="v-never"></div>
+            <div class="chip-add"><input type="text" id="add-never" placeholder="Add a blocked word…"><button class="btn btn-ghost" onclick="addChip('never_says','add-never')">Add</button></div>
+            <div class="save-row">
+              <button class="btn btn-brand" onclick="saveVoice()" id="save-voice-btn">Save voice profile</button>
+              <button class="btn btn-ghost" onclick="deleteCubicle()">Delete this cubicle</button>
+              <span class="save-note" id="save-note"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-calendar">
+        <div class="card">
+          <h3 style="margin-bottom:16px">Scheduled — <span id="cal-brand"></span></h3>
+          <div id="cal-list"></div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-connections">
+        <div class="card">
+          <h3>Connected accounts for <span id="conn-brand"></span></h3>
+          <p style="font-size:.85rem;color:var(--muted);margin-bottom:16px">Each cubicle connects to its own separate Facebook Page and Instagram account — never shared, so there's no way for one brand's posts to leak into another's account.</p>
+          <div id="conn-list"></div>
+          <div class="comp-actions" style="margin-top:16px">
+            <button class="btn btn-brand" onclick="connectMeta()">Connect Facebook &amp; Instagram</button>
+          </div>
+          <p style="font-size:.78rem;color:var(--muted);margin-top:12px" id="conn-dev-note">Note: this app is still in Meta's development mode, so only accounts with a role on the Brandparent Meta app (currently just you) can complete this connection until it passes App Review.</p>
+
+          <h3 style="margin-top:24px">Connect LinkedIn</h3>
+          <p style="font-size:.85rem;color:var(--muted);margin:6px 0 14px">Posts as your personal LinkedIn profile for now — a separate Company Page per brand needs LinkedIn's Community Management API, which requires a registered business entity, and is a later upgrade.</p>
+          <div class="comp-actions">
+            <button class="btn btn-brand" onclick="connectLinkedIn()">Connect LinkedIn</button>
+          </div>
+
+          <h3 style="margin-top:24px">Connect TikTok</h3>
+          <p style="font-size:.85rem;color:var(--muted);margin:6px 0 14px">Requires a photo or video per post. Before each post you choose who can see it and whether comments, duets and stitches are allowed.</p>
+          <div class="comp-actions">
+            <button class="btn btn-brand" onclick="connectTikTok()">Connect TikTok</button>
+          </div>
+
+          <h3 style="margin-top:24px">Connect Pinterest</h3>
+          <p style="font-size:.85rem;color:var(--muted);margin:6px 0 14px">Pins go to the first board on your Pinterest account (the one it finds when you connect). Requires an image per post.</p>
+          <div class="comp-actions">
+            <button class="btn btn-brand" onclick="connectPinterest()">Connect Pinterest</button>
+          </div>
+
+          <h3 style="margin-top:24px">Connect Bluesky</h3>
+          <p style="font-size:.85rem;color:var(--muted);margin:6px 0 14px">No developer approval needed — generate a free <b>App Password</b> at bsky.app → Settings → App Passwords (not your main login password), then enter it here for this cubicle only.</p>
+          <label>Handle</label>
+          <input type="text" id="bsky-handle" placeholder="e.g. djgreensatyr.bsky.social">
+          <label>App Password</label>
+          <input type="text" id="bsky-password" placeholder="xxxx-xxxx-xxxx-xxxx">
+          <div class="comp-actions" style="margin-top:14px">
+            <button class="btn btn-brand" onclick="connectBluesky()" id="bsky-connect-btn">Connect Bluesky</button>
+          </div>
+          <div class="optim-out" id="bsky-out"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<button class="bloom-fab" onclick="openBloomBreak()" id="bloom-fab-btn" title="Bloom Break — breathing, meditation room, singing bowls &amp; more (opens in a new window)">🌸</button>
+
+<div class="modal-bg" id="cubicle-modal">
+  <div class="modal modal-wide" id="cubicle-modal-inner">
+    <h3>New cubicle</h3>
+    <div class="sub">One room, one voice. Set its name, logo, and brand colors now — you can fine-tune fonts and run the voice interview after.</div>
+    <label>Brand name</label>
+    <input type="text" id="m-name" placeholder="e.g. Satyr Arcana">
+    <label>Initials (shows on the badge until you add a logo)</label>
+    <input type="text" id="m-initials" maxlength="3" placeholder="e.g. SA">
+
+    <label style="margin-top:14px">Logo <span style="font-weight:400;text-transform:none;font-size:.78rem">(optional — add it now or later)</span></label>
+    <div style="display:flex;align-items:center;gap:14px;margin-top:6px">
+      <div class="logo-preview-wrap" id="m-logo-preview-wrap">
+        <span class="logo-preview-fallback" id="m-logo-preview-fallback">?</span>
+        <img id="m-logo-preview-img" style="display:none">
+      </div>
+      <input type="file" id="m-logo-file" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="flex:1" onchange="onNewCubicleLogoChange(event)">
+    </div>
+    <div class="field-help" id="m-logo-note">PNG, JPG, WEBP, or SVG, up to 5MB.</div>
+
+    <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--line)">
+      <label style="margin-bottom:2px">Brand colors</label>
+      <div class="field-help" style="margin-top:0;margin-bottom:12px">These four colors are what set this cubicle apart — pick them for real contrast, not just to fill in the boxes.</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 20px">
+        <div class="color-field">
+          <label>Background</label>
+          <div class="field-help" style="margin-top:0;margin-bottom:6px">The page/card color behind your content.</div>
+          <div class="color-row" id="m-background-colors"></div>
+          <input type="text" id="m-background-hex" placeholder="#faf7f2" style="margin-top:8px;max-width:140px" onchange="setNewCubicleColorFromHexInput('background')">
+        </div>
+        <div class="color-field">
+          <label>Text color</label>
+          <div class="field-help" style="margin-top:0;margin-bottom:6px">Body copy — needs to read clearly on Background.</div>
+          <div class="color-row" id="m-text-colors"></div>
+          <input type="text" id="m-text-hex" placeholder="#1c1b2e" style="margin-top:8px;max-width:140px" onchange="setNewCubicleColorFromHexInput('text')">
+        </div>
+        <div class="color-field">
+          <label>Headline</label>
+          <div class="field-help" style="margin-top:0;margin-bottom:6px">Titles and your main accent color — badges, buttons.</div>
+          <div class="color-row" id="m-headline-colors"></div>
+          <input type="text" id="m-headline-hex" placeholder="#9B7FC4" style="margin-top:8px;max-width:140px" onchange="setNewCubicleColorFromHexInput('headline')">
+        </div>
+        <div class="color-field">
+          <label>Secondary</label>
+          <div class="field-help" style="margin-top:0;margin-bottom:6px">A supporting accent for smaller details.</div>
+          <div class="color-row" id="m-secondary-colors"></div>
+          <input type="text" id="m-secondary-hex" placeholder="#c9c6d3" style="margin-top:8px;max-width:140px" onchange="setNewCubicleColorFromHexInput('secondary')">
+        </div>
+      </div>
+
+      <div class="mini-preview" id="m-mini-preview">
+        <div class="h" id="m-preview-heading">This is how it feels</div>
+        <div class="b" id="m-preview-body">Sample caption text — roughly how your composer and preview will look.</div>
+      </div>
+      <div class="contrast-warn" id="m-contrast-warn"></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeCubicleModal()">Cancel</button>
+      <button class="btn btn-brand" onclick="createCubicle()" id="create-cubicle-btn">Create</button>
+    </div>
+  </div>
+</div>
+
+<div class="tour-overlay" id="tour-overlay">
+  <div class="tour-dim" onclick="endTour()"></div>
+  <div class="tour-spot" id="tour-spot"></div>
+  <div class="tour-box" id="tour-box">
+    <h4 id="tour-title"></h4>
+    <p id="tour-text"></p>
+    <div class="tour-actions">
+      <span class="tour-step-count" id="tour-count"></span>
+      <div class="tour-btns">
+        <button class="tour-btn" onclick="endTour()">Skip</button>
+        <button class="tour-btn" id="tour-prev-btn" onclick="prevTourStep()">Back</button>
+        <button class="tour-btn primary" id="tour-next-btn" onclick="nextTourStep()">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/supabase-client.js"></script>
+<script>
+const COLORS = ['#1b5e20','#4a148c','#1565c0','#26374a','#5f7d54','#6b1620','#9B7FC4','#c0392b','#b8860b','#006d77'];
+const BG_COLORS = ['#faf7f2','#ffffff','#1c1b2e','#26374a','#0f1720','#f4ede2'];
+const TEXT_COLORS = ['#1c1b2e','#2a2940','#ffffff','#faf7f2','#6b6880','#26374a'];
+let cubicles = [];
+let drafts = [];
+let active = null;
+let session = null;
+let connections = [];
+let tutorialsEnabled = true;
+let paywallTier = 'founding_member';
+
+// --- Color contrast (WCAG relative luminance) -----------------------------
+// Used to warn when a picked text/background (or headline/background) pair
+// won't actually be readable, instead of letting it silently ship invisible.
+function relLuminance(hex) {
+  const n = parseInt(String(hex).replace('#',''), 16);
+  const [r,g,b] = [(n>>16)&255,(n>>8)&255,n&255].map(v => {
+    v /= 255;
+    return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
+  });
+  return 0.2126*r + 0.7152*g + 0.0722*b;
+}
+function contrastRatio(hexA, hexB) {
+  const L1 = relLuminance(hexA), L2 = relLuminance(hexB);
+  const [lighter, darker] = L1 > L2 ? [L1, L2] : [L2, L1];
+  return (lighter + 0.05) / (darker + 0.05);
+}
+function isHex(v) { return /^#[0-9a-fA-F]{6}$/.test(String(v || '')); }
+function checkContrast(warnElId, textHex, bgHex, label) {
+  const el = document.getElementById(warnElId);
+  if (!el) return;
+  if (!isHex(textHex) || !isHex(bgHex)) { el.classList.remove('show'); return; }
+  const ratio = contrastRatio(textHex, bgHex);
+  if (ratio < 3) {
+    el.classList.add('show');
+    el.textContent = `⚠ ${label || 'Text'} and Background are too close (contrast ${ratio.toFixed(1)}:1) — this will be hard or impossible to read. Pick colors further apart.`;
+  } else if (ratio < 4.5) {
+    el.classList.add('show');
+    el.textContent = `⚠ Low contrast (${ratio.toFixed(1)}:1) between ${label || 'Text'} and Background — readable, but pick further apart colors if you can.`;
+  } else {
+    el.classList.remove('show');
+  }
+}
+
+// --- Sound alerts ---------------------------------------------------------
+// Synthesized with the Web Audio API (no external files/CDN — instant,
+// reliable, nothing to host). Two tones: a warning for off-brand content
+// (Bleed Check catching a leak) and a bright reward chime for productive
+// moments (publishing, saving, finishing the interview, etc).
+let audioCtx = null;
+let soundEnabled = localStorage.getItem('bp_sound_enabled') !== 'off';
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function playTone(freqs, durations, type, gainPeak) {
+  if (!soundEnabled) return;
+  try {
+    const ctx = getAudioCtx();
+    let t = ctx.currentTime;
+    freqs.forEach((freq, i) => {
+      const dur = durations[i] || 0.12;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type || 'sine';
+      osc.frequency.setValueAtTime(freq, t);
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(gainPeak || 0.13, t + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + dur + 0.02);
+      t += dur * 0.85;
+    });
+  } catch (e) { /* Web Audio unavailable — fail silently, never block the UI */ }
+}
+
+function playWarningTone() { playTone([392, 311], [0.14, 0.18], 'triangle', 0.12); }
+function playRewardTone() { playTone([659, 988], [0.11, 0.22], 'sine', 0.13); }
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  localStorage.setItem('bp_sound_enabled', soundEnabled ? 'on' : 'off');
+  renderSoundToggle();
+  if (soundEnabled) playRewardTone();
+}
+
+function renderSoundToggle() {
+  const btn = document.getElementById('sound-toggle-btn');
+  if (!btn) return;
+  btn.textContent = soundEnabled ? '🔊' : '🔇';
+  btn.title = soundEnabled ? 'Sound on — click to mute' : 'Sound muted — click to enable';
+}
+
+// --- Bloom Break: colorful destress tool ----------------------------------
+// Opens in its own popup window (not an in-page overlay) so it never covers
+// or interrupts a draft in progress. Self-contained page, no login needed.
+function openBloomBreak() {
+  const w = 480, h = 680;
+  const left = Math.max(0, (window.screen.width - w) / 2);
+  const top = Math.max(0, (window.screen.height - h) / 2);
+  window.open(
+    'bloom-break.html',
+    'bloomBreak',
+    `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=no`
+  );
+}
+
+function renderPaywallCopy() {
+  document.getElementById('paywall-msg').textContent = paywallTier === 'studio'
+    ? '$27/month · 14-day free trial · cancel anytime.'
+    : 'Brandparent is $97 one-time — lifetime access to every cubicle you create.';
+  document.getElementById('paywall-btn').textContent = paywallTier === 'studio'
+    ? 'Start your free trial'
+    : 'Complete your $97 purchase';
+}
+
+function setPaywallTier(tier) {
+  paywallTier = tier === 'studio' ? 'studio' : 'founding_member';
+  document.getElementById('paywall-tier-founding').classList.toggle('active', paywallTier === 'founding_member');
+  document.getElementById('paywall-tier-studio').classList.toggle('active', paywallTier === 'studio');
+  renderPaywallCopy();
+}
+
+async function init() {
+  renderSoundToggle();
+  session = await requireSession();
+  if (!session) return;
+
+  const { data: profile } = await sb.from('profiles').select('parent_name, subscription_status, tutorials_enabled').eq('id', session.user.id).single();
+  document.getElementById('parent-name-el').textContent = (profile && profile.parent_name) || 'My Identity';
+  tutorialsEnabled = !profile || profile.tutorials_enabled !== false;
+  document.getElementById('tutorial-toggle-input').checked = tutorialsEnabled;
+
+  // Which tier they intended, captured at signup (see signup.html) and stored on
+  // the auth user's metadata — otherwise lost once email confirmation routes them
+  // through a link instead of straight to checkout.
+  const metaTier = session.user.user_metadata && session.user.user_metadata.tier;
+  setPaywallTier(metaTier === 'studio' ? 'studio' : 'founding_member');
+
+  const params = new URLSearchParams(window.location.search);
+  const paidStatuses = ['active', 'trialing'];
+  let status = profile && profile.subscription_status;
+
+  if (params.get('checkout') === 'success' && !paidStatuses.includes(status)) {
+    // Stripe just redirected back — the webhook may take a couple seconds to land.
+    document.getElementById('no-cubicles').style.display = 'none';
+    document.getElementById('app-panels').style.display = 'none';
+    document.getElementById('paywall').style.display = 'block';
+    document.getElementById('paywall-tier-toggle').style.display = 'none';
+    document.getElementById('paywall-msg').textContent = 'Payment received — activating your account…';
+    document.getElementById('paywall-btn').style.display = 'none';
+    for (let i = 0; i < 8 && !paidStatuses.includes(status); i++) {
+      await new Promise(r => setTimeout(r, 2000));
+      const { data: p2 } = await sb.from('profiles').select('subscription_status').eq('id', session.user.id).single();
+      status = p2 && p2.subscription_status;
+    }
+    window.history.replaceState({}, '', 'app.html');
+    document.getElementById('paywall-btn').style.display = '';
+    document.getElementById('paywall-tier-toggle').style.display = '';
+  }
+
+  if (!paidStatuses.includes(status)) {
+    document.getElementById('no-cubicles').style.display = 'none';
+    document.getElementById('app-panels').style.display = 'none';
+    document.getElementById('paywall').style.display = 'block';
+    if (status === 'past_due') {
+      document.getElementById('paywall-tier-toggle').style.display = 'none';
+      document.getElementById('paywall-msg').textContent = "Your last payment didn't go through — update it to keep your cubicles active.";
+      document.getElementById('paywall-btn').textContent = 'Update payment';
+    } else {
+      document.getElementById('paywall-tier-toggle').style.display = '';
+      renderPaywallCopy();
+    }
+    return;
+  }
+  document.getElementById('paywall').style.display = 'none';
+
+  await loadCubicles();
+
+  if (tutorialsEnabled && cubicles.length === 0) {
+    // Give the empty-state screen a moment to actually render before
+    // spotlighting anything on it.
+    setTimeout(() => startTour(), 500);
+  }
+
+  if (params.get('connected')) {
+    alert('Connected: ' + params.get('connected'));
+    window.history.replaceState({}, '', 'app.html');
+    await renderConnections();
+  } else if (params.get('connect_error')) {
+    alert('Connection failed: ' + params.get('connect_error'));
+    window.history.replaceState({}, '', 'app.html');
+  }
+}
+
+async function startCheckout() {
+  const btn = document.getElementById('paywall-btn');
+  const msg = document.getElementById('paywall-msg');
+  btn.disabled = true;
+  btn.textContent = paywallTier === 'studio' ? 'Setting up your trial…' : 'Redirecting to payment…';
+
+  const { data, error } = await sb.functions.invoke('create-checkout-session', {
+    body: { tier: paywallTier }
+  });
+
+  if (error || !data || !data.url) {
+    msg.textContent = 'Could not start checkout: ' + (error ? error.message : 'no URL returned') + '. Try again in a moment.';
+    btn.disabled = false;
+    renderPaywallCopy();
+    return;
+  }
+  window.location.href = data.url;
+}
+
+async function loadCubicles() {
+  const { data, error } = await sb.from('cubicles').select('*').order('created_at', { ascending: true });
+  if (error) { console.error(error); return; }
+  cubicles = data || [];
+
+  if (cubicles.length === 0) {
+    document.getElementById('no-cubicles').style.display = 'block';
+    document.getElementById('app-panels').style.display = 'none';
+    document.getElementById('active-name').innerHTML = '';
+    return;
+  }
+  document.getElementById('no-cubicles').style.display = 'none';
+  document.getElementById('app-panels').style.display = 'block';
+
+  if (!active || !cubicles.find(c => c.id === active.id)) {
+    const urlPick = new URLSearchParams(window.location.search).get('cubicle');
+    const wanted = urlPick || recallActive();
+    active = cubicles.find(c => c.id === wanted) || cubicles[0];
+  } else {
+    active = cubicles.find(c => c.id === active.id);
+  }
+
+  renderSidebar();
+  await setBrand(active.id);
+}
+
+function cubDot(c) {
+  const initials = (c.icon_initials || c.name.slice(0,2)).toUpperCase();
+  if (c.logo_url) {
+    return `<span class="cub-dot has-logo"><img src="${escapeHtml(c.logo_url)}" alt=""></span>`;
+  }
+  return `<span class="cub-dot" style="background:${c.color}">${initials}</span>`;
+}
+
+function renderSidebar() {
+  const el = document.getElementById('cubicle-list');
+  el.innerHTML = cubicles.map(c => `
+    <button class="cub-btn ${active && c.id === active.id ? 'active' : ''}" onclick="setBrand('${c.id}')">
+      ${cubDot(c)} ${escapeHtml(c.name)}
+    </button>`).join('');
+}
+
+// --- Brand lock -------------------------------------------------------------
+// The selected cubicle is remembered per account, so a page reload, a login,
+// or coming back from connecting Facebook/Bluesky/etc. lands you back in the
+// SAME brand instead of silently jumping to the first one. Unsent drafts are
+// kept per brand while you switch around, so nothing is lost or posted to
+// the wrong place.
+const draftCache = {};
+function activeKey() { return session && session.user ? 'bp_active_cubicle_' + session.user.id : 'bp_active_cubicle'; }
+function rememberActive(id) { try { localStorage.setItem(activeKey(), id); } catch (e) {} }
+function recallActive() { try { return localStorage.getItem(activeKey()); } catch (e) { return null; } }
+
+function renderPostingAs() {
+  const el = document.getElementById('posting-as');
+  if (!el || !active) return;
+  const names = (connections || []).map(a => PLATFORM_LABEL[a.platform] || a.platform);
+  el.innerHTML = `${cubDot(active)} <span>Posting as <b>${escapeHtml(active.name)}</b></span>` +
+    `<span class="to">${names.length ? '→ ' + escapeHtml(names.join(', ')) : '→ no accounts connected yet'}</span>`;
+}
+
+async function setBrand(id) {
+  const next = cubicles.find(c => c.id === id);
+  if (!next) return;
+  if (active && document.getElementById('draft')) {
+    draftCache[active.id] = {
+      text: document.getElementById('draft').value,
+      image: document.getElementById('draft-image').value,
+      video: document.getElementById('draft-video').value
+    };
+  }
+  active = next;
+  rememberActive(active.id);
+  applyActiveTheme();
+  document.getElementById('active-name').innerHTML =
+    `${cubDot(active)} ${escapeHtml(active.name)}`;
+  const cached = draftCache[active.id] || { text: '', image: '' };
+  document.getElementById('draft').value = cached.text || '';
+  document.getElementById('draft-image').value = cached.image || '';
+  document.getElementById('draft-video').value = cached.video || '';
+  renderPostingAs();
+  document.getElementById('optim-out').style.display = 'none';
+  document.getElementById('publish-out').style.display = 'none';
+  renderSidebar();
+  renderVoice();
+  await loadDrafts();
+  await renderConnections();
+  runBleedCheck();
+}
+
+function hexSoft(hex) {
+  const n = parseInt(hex.replace('#',''), 16);
+  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},.10)`;
+}
+
+function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderVoice() {
+  document.getElementById('v-tone').value = active.tone || '';
+  document.getElementById('v-aud').value = active.audience || '';
+  renderChips('v-loves', active.signature_phrases || [], 'signature_phrases', false);
+  renderChips('v-lex', active.lexicon || [], 'lexicon', false);
+  renderChips('v-never', active.never_says || [], 'never_says', true);
+  renderLogoPreview();
+  renderThemeCard();
+  resetInterview();
+}
+
+function renderLogoPreview() {
+  const img = document.getElementById('logo-preview-img');
+  const fallback = document.getElementById('logo-preview-fallback');
+  if (!img || !fallback) return;
+  if (active.logo_url) {
+    img.src = active.logo_url;
+    img.style.display = 'block';
+    fallback.style.display = 'none';
+  } else {
+    img.style.display = 'none';
+    fallback.style.display = 'block';
+    fallback.textContent = (active.icon_initials || active.name.slice(0,2)).toUpperCase();
+  }
+  const note = document.getElementById('logo-note');
+  if (note) note.textContent = '';
+  const fileInput = document.getElementById('logo-file');
+  if (fileInput) fileInput.value = '';
+}
+
+let interviewMessages = [];
+let interviewDone = false;
+let interviewProfile = null;
+
+function resetInterview() {
+  interviewMessages = [];
+  interviewDone = false;
+  interviewProfile = null;
+  const log = document.getElementById('interview-log');
+  const chat = document.getElementById('interview-chat');
+  const startRow = document.getElementById('interview-start-row');
+  const doneRow = document.getElementById('interview-done-row');
+  const inputRow = document.getElementById('interview-input-row');
+  const answer = document.getElementById('interview-answer');
+  if (!log) return;
+  log.innerHTML = '';
+  chat.style.display = 'none';
+  startRow.style.display = 'block';
+  doneRow.style.display = 'none';
+  inputRow.style.display = 'flex';
+  answer.value = '';
+}
+
+function renderInterviewLog() {
+  const log = document.getElementById('interview-log');
+  log.innerHTML = interviewMessages.map(m =>
+    `<div class="interview-bubble ${m.role}">${escapeHtml(m.content)}</div>`
+  ).join('');
+  log.scrollTop = log.scrollHeight;
+}
+
+async function startInterview() {
+  document.getElementById('interview-start-row').style.display = 'none';
+  document.getElementById('interview-chat').style.display = 'block';
+  interviewMessages = [];
+  await sendInterviewTurn();
+}
+
+async function sendInterviewAnswer() {
+  const input = document.getElementById('interview-answer');
+  const val = input.value.trim();
+  if (!val) return;
+  interviewMessages.push({ role: 'user', content: val });
+  input.value = '';
+  renderInterviewLog();
+  await sendInterviewTurn();
+}
+
+async function sendInterviewTurn() {
+  const btn = document.getElementById('interview-send-btn');
+  const input = document.getElementById('interview-answer');
+  btn.disabled = true; input.disabled = true;
+
+  const log = document.getElementById('interview-log');
+  const typing = document.createElement('div');
+  typing.className = 'interview-bubble assistant';
+  typing.textContent = '…';
+  log.appendChild(typing);
+  log.scrollTop = log.scrollHeight;
+
+  try {
+    const { data, error } = await sb.functions.invoke('voice-interview', {
+      body: { brand_name: active.name, messages: interviewMessages.filter(m => !m.isError) }
+    });
+    if (error) throw new Error(await fnErrorMessage(error));
+    if (!data || !data.reply) throw new Error((data && data.message) || 'No reply came back — please try again.');
+    interviewMessages.push({ role: 'assistant', content: data.reply });
+    renderInterviewLog();
+
+    if (data.done && data.profile) {
+      interviewDone = true;
+      interviewProfile = data.profile;
+      playRewardTone();
+      document.getElementById('interview-input-row').style.display = 'none';
+      document.getElementById('interview-done-row').style.display = 'block';
+    }
+  } catch (e) {
+    // Error bubbles are shown but never sent back to the AI as conversation.
+    interviewMessages.push({ role: 'assistant', isError: true, content: "Hmm — " + (e.message || String(e)) + " Send your answer again to retry." });
+    renderInterviewLog();
+    // let them resend the last answer
+    const lastUser = [...interviewMessages].reverse().find(m => m.role === 'user');
+    if (lastUser) {
+      interviewMessages = interviewMessages.filter(m => m !== lastUser && !m.isError);
+      interviewMessages.push({ role: 'assistant', isError: true, content: "Hmm — " + (e.message || String(e)) + " Your answer is back in the box — press Send to retry." });
+      renderInterviewLog();
+      document.getElementById('interview-answer').value = lastUser.content;
+    }
+  }
+
+  btn.disabled = false; input.disabled = false;
+  if (!interviewDone) input.focus();
+}
+
+function applyInterviewProfile() {
+  if (!interviewProfile) return;
+  active.tone = interviewProfile.tone || active.tone;
+  active.audience = interviewProfile.audience || active.audience;
+  if (interviewProfile.signature_phrases.length) active.signature_phrases = interviewProfile.signature_phrases;
+  if (interviewProfile.lexicon.length) active.lexicon = interviewProfile.lexicon;
+  if (interviewProfile.never_says.length) active.never_says = interviewProfile.never_says;
+
+  document.getElementById('v-tone').value = active.tone || '';
+  document.getElementById('v-aud').value = active.audience || '';
+  renderChips('v-loves', active.signature_phrases || [], 'signature_phrases', false);
+  renderChips('v-lex', active.lexicon || [], 'lexicon', false);
+  renderChips('v-never', active.never_says || [], 'never_says', true);
+
+  const note = document.getElementById('save-note');
+  note.style.color = 'var(--muted)';
+  note.textContent = 'Applied — review below, then click "Save voice profile" to keep it.';
+}
+
+const CURATED_HEADING_FONTS = ['Fraunces','Playfair Display','Cormorant Garamond','DM Serif Display','Libre Baskerville','Bitter','Cinzel','Cinzel Decorative','Abril Fatface','Bebas Neue','Oswald','Anton','Archivo Black','Alfa Slab One','Righteous','Lobster','Pacifico','Permanent Marker','Special Elite','IM Fell English','UnifrakturMaguntia','Pirata One','Creepster','Metal Mania','Rye','Monoton','Montserrat','Josefin Sans','Space Grotesk'];
+const CURATED_BODY_FONTS = ['Inter','Poppins','Work Sans','Manrope','Nunito Sans','Space Grotesk','IBM Plex Sans','Lato','Open Sans','Source Sans 3','Raleway','Montserrat','Karla','Lora','Merriweather','EB Garamond','Crimson Text','Libre Baskerville','JetBrains Mono','Courier Prime'];
+const loadedFonts = new Set(['Fraunces','Inter']);
+let pendingTheme = null;
+
+function jsEsc(s) { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+function ensureFontLoaded(name) {
+  if (!name || loadedFonts.has(name)) return;
+  loadedFonts.add(name);
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  const fam = encodeURIComponent(name).replace(/%20/g,'+');
+  link.href = 'https://fonts.googleapis.com/css2?family=' + fam + ':wght@400;600;700&display=swap';
+  // Many display fonts (Bebas Neue, Abril Fatface, Lobster…) only ship one
+  // weight, and Google rejects the whole request if a listed weight is
+  // missing — retry with the font's default weight so it still loads.
+  link.onerror = () => {
+    if (link.dataset.retried) return;
+    link.dataset.retried = '1';
+    link.href = 'https://fonts.googleapis.com/css2?family=' + fam + '&display=swap';
+  };
+  document.head.appendChild(link);
+}
+
+// --- Brand theme engine ----------------------------------------------------
+// Turns a cubicle's saved (or in-progress) theme into CSS variables on <html>
+// so every surface of the workspace — not just a few buttons — becomes that
+// brand. Readability is protected automatically: if a text/background pair
+// is too close, the display quietly falls back to a readable color.
+function hexToRgbArr(hex) {
+  const n = parseInt(String(hex || '#000000').replace('#',''), 16);
+  return [(n>>16)&255,(n>>8)&255,n&255];
+}
+function mixHex(a, b, t) {
+  const x = hexToRgbArr(a), y = hexToRgbArr(b);
+  return '#' + x.map((v,i) => Math.round(v + (y[i]-v)*t).toString(16).padStart(2,'0')).join('');
+}
+function rgbaOf(hex, alpha) { const [r,g,b] = hexToRgbArr(hex); return `rgba(${r},${g},${b},${alpha})`; }
+function safeHex(v, fallback) { return isHex(v) ? v : fallback; }
+
+function themeFromCubicle(c) {
+  return {
+    background: safeHex(c.background_color, '#faf7f2'),
+    text: safeHex(c.text_color, '#1c1b2e'),
+    headline: safeHex(c.color, '#9B7FC4'),
+    secondary: safeHex(c.secondary_color, '#c9c6d3'),
+    headingFont: c.font_heading || 'Fraunces',
+    bodyFont: c.font_body || 'Inter',
+    bgImage: c.background_image_url || '',
+    overlay: (c.background_overlay === 0 || c.background_overlay) ? c.background_overlay : 55
+  };
+}
+
+function applyThemeVars(t) {
+  const root = document.documentElement;
+  const bg = t.background;
+  let text = t.text;
+  if (contrastRatio(text, bg) < 4.5) text = relLuminance(bg) > 0.35 ? '#141320' : '#ffffff';
+  const dark = relLuminance(bg) < 0.2;
+  const paper = dark ? mixHex(bg, '#ffffff', 0.07) : mixHex(bg, '#ffffff', 0.7);
+  const brand = t.headline;
+  const onBrand = contrastRatio('#ffffff', brand) >= 3 ? '#ffffff' : '#141320';
+  const brandText = contrastRatio(brand, paper) >= 3 ? brand : mixHex(brand, text, 0.55);
+  const sideBg = mixHex(brand, '#000000', dark ? 0.62 : 0.5);
+  const sideFg = relLuminance(sideBg) > 0.35 ? '#141320' : '#ffffff';
+  const vars = {
+    '--cream': bg,
+    '--paper': paper,
+    '--paper-a': rgbaOf(paper, 0.9),
+    '--ink': text,
+    '--ink-soft': mixHex(bg, text, 0.82),
+    '--muted': mixHex(bg, text, 0.6),
+    '--line': mixHex(bg, text, 0.16),
+    '--brand': brand,
+    '--brand-text': brandText,
+    '--brand-soft': rgbaOf(brand, dark ? 0.24 : 0.13),
+    '--brand-secondary': t.secondary,
+    '--silver': t.secondary,
+    '--on-brand': onBrand,
+    '--on-secondary': contrastRatio('#ffffff', t.secondary) >= 3 ? '#ffffff' : '#141320',
+    '--side-bg': sideBg,
+    '--side-fg': sideFg,
+    '--side-muted': mixHex(sideBg, sideFg, 0.62),
+    '--side-hover': mixHex(sideBg, sideFg, 0.12),
+    '--font-heading': `'${t.headingFont}', serif`,
+    '--font-body': `'${t.bodyFont}', system-ui, sans-serif`
+  };
+  if (t.bgImage) {
+    const fade = Math.max(0, Math.min(0.95, 1 - (Number(t.overlay) || 55) / 100));
+    vars['--content-bg-image'] = `linear-gradient(${rgbaOf(bg, fade)}, ${rgbaOf(bg, fade)}), url("${String(t.bgImage).replace(/"/g, '%22')}")`;
+  } else {
+    vars['--content-bg-image'] = 'none';
+  }
+  Object.entries(vars).forEach(([k, v]) => root.style.setProperty(k, v));
+  document.body.classList.toggle('has-bg-image', !!t.bgImage);
+  ensureFontLoaded(t.headingFont);
+  ensureFontLoaded(t.bodyFont);
+  // Older builds set these on #content-root directly — clear them so the
+  // root-level theme always wins.
+  const cr = document.getElementById('content-root');
+  if (cr) ['--brand','--brand-soft','--font-heading','--font-body','--brand-secondary'].forEach(k => cr.style.removeProperty(k));
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', brand);
+}
+
+function applyActiveTheme() {
+  if (!active) return;
+  applyThemeVars(themeFromCubicle(active));
+  const liveNote = document.getElementById('theme-live-note');
+  if (liveNote) liveNote.classList.remove('show');
+}
+
+function pendingThemeFull() {
+  return Object.assign(themeFromCubicle(active), {
+    background: pendingTheme.background, text: pendingTheme.text,
+    headline: pendingTheme.headline, secondary: pendingTheme.secondary,
+    headingFont: pendingTheme.headingFont, bodyFont: pendingTheme.bodyFont,
+    overlay: pendingTheme.overlay
+  });
+}
+
+function themeIsDirty() {
+  if (!active || !pendingTheme) return false;
+  const a = themeFromCubicle(active), p = pendingThemeFull();
+  return ['background','text','headline','secondary','headingFont','bodyFont','overlay']
+    .some(k => String(a[k]).toLowerCase() !== String(p[k]).toLowerCase());
+}
+
+function revertTheme() {
+  renderThemeCard();
+  applyActiveTheme();
+  const note = document.getElementById('theme-note');
+  if (note) { note.style.color = 'var(--muted)'; note.textContent = 'Changes undone.'; setTimeout(() => { if (note.textContent === 'Changes undone.') note.textContent = ''; }, 2000); }
+}
+
+const THEME_FIELDS = ['background','text','headline','secondary'];
+function themeFieldPalette(kind) {
+  if (kind === 'background') return BG_COLORS;
+  if (kind === 'text') return TEXT_COLORS;
+  return COLORS;
+}
+
+function renderThemeCard() {
+  if (!active) return;
+  pendingTheme = {
+    background: active.background_color || '#faf7f2',
+    text: active.text_color || '#1c1b2e',
+    headline: active.color,
+    secondary: active.secondary_color || '#c9c6d3',
+    headingFont: active.font_heading || 'Fraunces',
+    bodyFont: active.font_body || 'Inter',
+    overlay: (active.background_overlay === 0 || active.background_overlay) ? active.background_overlay : 55
+  };
+  const ov = document.getElementById('t-overlay');
+  if (ov) ov.value = pendingTheme.overlay;
+  renderBgControls();
+  ensureFontLoaded(pendingTheme.headingFont);
+  ensureFontLoaded(pendingTheme.bodyFont);
+  THEME_FIELDS.forEach(kind => {
+    renderThemeSwatches('t-' + kind + '-colors', pendingTheme[kind], kind);
+    const hexEl = document.getElementById('t-' + kind + '-hex');
+    if (hexEl) hexEl.value = pendingTheme[kind];
+  });
+  renderFontSelect('t-heading-font', CURATED_HEADING_FONTS, pendingTheme.headingFont);
+  renderFontSelect('t-body-font', CURATED_BODY_FONTS, pendingTheme.bodyFont);
+  const detectOut = document.getElementById('t-detect-out');
+  const siteUrl = document.getElementById('t-site-url');
+  if (detectOut) detectOut.innerHTML = '';
+  if (siteUrl) siteUrl.value = '';
+  const note = document.getElementById('theme-note');
+  if (note) note.textContent = '';
+  updateThemePreview();
+}
+
+function renderThemeSwatches(elId, selected, kind) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.innerHTML = themeFieldPalette(kind).map(c => `<div class="swatch ${c.toLowerCase()===String(selected).toLowerCase()?'sel':''}" style="background:${c}" onclick="setThemeColor('${kind}','${c}')"></div>`).join('');
+}
+
+function setThemeColor(kind, hex) {
+  pendingTheme[kind] = hex;
+  const hexInput = document.getElementById('t-' + kind + '-hex');
+  if (hexInput) hexInput.value = hex;
+  renderThemeSwatches('t-' + kind + '-colors', hex, kind);
+  updateThemePreview();
+}
+
+function setThemeColorFromHexInput(kind) {
+  const el = document.getElementById('t-' + kind + '-hex');
+  const val = el.value.trim();
+  if (!/^#[0-9a-fA-F]{6}$/.test(val)) { el.style.borderColor = '#c0392b'; return; }
+  el.style.borderColor = '';
+  setThemeColor(kind, val);
+}
+
+function renderFontSelect(elId, curated, selected) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const isCustom = !curated.includes(selected);
+  el.innerHTML = curated.map(f => `<option value="${escapeHtml(f)}" ${f===selected?'selected':''}>${escapeHtml(f)}</option>`).join('')
+    + `<option value="__custom__" ${isCustom?'selected':''}>Custom…</option>`;
+  const customInput = document.getElementById(elId + '-custom');
+  if (customInput) {
+    customInput.style.display = isCustom ? 'block' : 'none';
+    customInput.value = isCustom ? selected : '';
+  }
+}
+
+function onFontSelectChange(elId, kind) {
+  const sel = document.getElementById(elId);
+  const customInput = document.getElementById(elId + '-custom');
+  if (sel.value === '__custom__') {
+    customInput.style.display = 'block';
+    customInput.focus();
+    return;
+  }
+  customInput.style.display = 'none';
+  pendingTheme[kind] = sel.value;
+  ensureFontLoaded(sel.value);
+  updateThemePreview();
+}
+
+let fontTypeTimer = null;
+function onFontCustomInput(elId, kind) {
+  const val = document.getElementById(elId + '-custom').value.trim();
+  if (!val) return;
+  clearTimeout(fontTypeTimer);
+  // wait until they stop typing so we don't request "B", "Be", "Beb"…
+  fontTypeTimer = setTimeout(() => {
+    const name = val.replace(/\s+/g, ' ').replace(/\b\w/g, ch => ch.toUpperCase());
+    pendingTheme[kind] = name;
+    ensureFontLoaded(name);
+    updateThemePreview();
+  }, 600);
+}
+
+function updateThemePreview() {
+  const box = document.getElementById('theme-preview');
+  const h = document.getElementById('theme-preview-heading');
+  const p = document.getElementById('theme-preview-body');
+  const s1 = document.getElementById('theme-preview-swatch1');
+  const s2 = document.getElementById('theme-preview-swatch2');
+  if (!h || !pendingTheme) return;
+  box.style.background = pendingTheme.background;
+  h.style.fontFamily = `'${pendingTheme.headingFont}', serif`;
+  h.style.color = pendingTheme.headline;
+  p.style.fontFamily = `'${pendingTheme.bodyFont}', sans-serif`;
+  p.style.color = pendingTheme.text;
+  s1.style.background = pendingTheme.headline;
+  s2.style.background = pendingTheme.secondary;
+  checkContrast('t-contrast-warn', pendingTheme.text, pendingTheme.background, 'Text color');
+  // Live: the whole workspace previews the pending theme.
+  if (active) {
+    applyThemeVars(pendingThemeFull());
+    const liveNote = document.getElementById('theme-live-note');
+    if (liveNote) liveNote.classList.toggle('show', themeIsDirty());
+  }
+  const ovVal = document.getElementById('t-overlay-val');
+  if (ovVal) ovVal.textContent = (pendingTheme.overlay || 0) + '%';
+}
+
+function onOverlayInput() {
+  const ov = document.getElementById('t-overlay');
+  pendingTheme.overlay = parseInt(ov.value, 10);
+  updateThemePreview();
+}
+
+function renderBgControls() {
+  const thumb = document.getElementById('bg-thumb');
+  if (!thumb || !active) return;
+  if (active.background_image_url) {
+    thumb.style.backgroundImage = `url("${String(active.background_image_url).replace(/"/g, '%22')}")`;
+    thumb.textContent = '';
+  } else {
+    thumb.style.backgroundImage = 'none';
+    thumb.textContent = 'None';
+  }
+  const rm = document.getElementById('bg-remove-btn');
+  if (rm) rm.disabled = !active.background_image_url;
+  const note = document.getElementById('bg-note');
+  if (note) note.textContent = '';
+  const f = document.getElementById('bg-file');
+  if (f) f.value = '';
+}
+
+// Shrink big photos in the browser before upload (keeps them under the 5MB
+// cap and makes the workspace load fast). Returns a File.
+async function shrinkImage(file, maxDim, quality) {
+  if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return file;
+  let bmp;
+  try { bmp = await createImageBitmap(file); } catch (e) { return file; }
+  const scale = Math.min(1, maxDim / Math.max(bmp.width, bmp.height));
+  if (scale === 1 && file.size < 1.5 * 1024 * 1024) return file;
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(bmp.width * scale);
+  canvas.height = Math.round(bmp.height * scale);
+  canvas.getContext('2d').drawImage(bmp, 0, 0, canvas.width, canvas.height);
+  const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', quality));
+  if (!blob) return file;
+  return new File([blob], (file.name || 'image').replace(/\.[^.]+$/, '') + '.jpg', { type: 'image/jpeg' });
+}
+
+async function freshAccessToken() {
+  try {
+    const { data } = await sb.auth.getSession();
+    if (data && data.session) { session = data.session; return data.session.access_token; }
+  } catch (e) {}
+  return session ? session.access_token : '';
+}
+
+async function brandImageRequest(method, body, headers) {
+  const token = await freshAccessToken();
+  const resp = await fetch(`https://owxaolqikmgtlegtficq.supabase.co/functions/v1/upload-cubicle-logo`, {
+    method, body, headers: Object.assign({ Authorization: `Bearer ${token}` }, headers || {})
+  });
+  let result = {};
+  try { result = await resp.json(); } catch (e) {}
+  if (!resp.ok || !result.ok) throw new Error(result.message || result.error || ('error ' + resp.status));
+  return result;
+}
+
+async function uploadBackground() {
+  const fileInput = document.getElementById('bg-file');
+  const note = document.getElementById('bg-note');
+  const btn = document.getElementById('bg-upload-btn');
+  let file = fileInput.files[0];
+  if (!file) { note.style.color = '#c0392b'; note.textContent = 'Choose an image first.'; return; }
+  btn.disabled = true; btn.textContent = 'Uploading…';
+  note.style.color = 'var(--muted)'; note.textContent = 'Preparing image…';
+  try {
+    file = await shrinkImage(file, 2400, 0.85);
+    if (file.size > 5 * 1024 * 1024) throw new Error('That image is still over 5MB after shrinking — try a smaller one.');
+    note.textContent = 'Uploading…';
+    const fd = new FormData();
+    fd.append('cubicle_id', active.id);
+    fd.append('kind', 'background');
+    fd.append('file', file);
+    const result = await brandImageRequest('POST', fd);
+    active.background_image_url = result.url;
+    const idx = cubicles.findIndex(c => c.id === active.id);
+    if (idx > -1) cubicles[idx] = active;
+    renderBgControls();
+    updateThemePreview();
+    if (!themeIsDirty()) applyActiveTheme();
+    playRewardTone();
+    note.style.color = 'var(--muted)'; note.textContent = 'Background added ✓';
+  } catch (e) {
+    note.style.color = '#c0392b'; note.textContent = 'Upload failed: ' + (e.message || String(e));
+  }
+  btn.disabled = false; btn.textContent = 'Upload';
+}
+
+async function removeBackground() {
+  if (!active.background_image_url) return;
+  if (!confirm(`Remove the background image for "${active.name}"?`)) return;
+  const note = document.getElementById('bg-note');
+  try {
+    await brandImageRequest('DELETE', JSON.stringify({ cubicle_id: active.id, kind: 'background' }), { 'Content-Type': 'application/json' });
+    active.background_image_url = null;
+    const idx = cubicles.findIndex(c => c.id === active.id);
+    if (idx > -1) cubicles[idx] = active;
+    renderBgControls();
+    updateThemePreview();
+    if (!themeIsDirty()) applyActiveTheme();
+    note.style.color = 'var(--muted)'; note.textContent = 'Background removed.';
+  } catch (e) {
+    note.style.color = '#c0392b'; note.textContent = 'Error: ' + (e.message || String(e));
+  }
+}
+
+// Supabase's background token-refresh timer can lag if this browser tab sat
+// inactive/backgrounded for a while (browsers throttle timers in background
+// tabs), so a customer who steps away and comes back can hit a stale access
+// token on their very next save — surfacing as a confusing "row-level
+// security policy" error even though nothing they did was wrong. Calling
+// sb.auth.getSession() checks the stored token's expiry and transparently
+// refreshes it if needed, so calling this right before any write means the
+// customer never sees that error in the first place. Returns false (and
+// sends them to log back in) only if they're genuinely signed out.
+async function ensureFreshSession() {
+  try {
+    const { data, error } = await sb.auth.getSession();
+    if (error || !data.session) { window.location.href = 'login.html'; return false; }
+    return true;
+  } catch (e) { return true; } // a network hiccup here shouldn't block the save attempt
+}
+
+function looksLikeAuthError(msg) {
+  return /row-level security|rls|permission|not authorized|unauthorized|jwt/i.test(String(msg || ''));
+}
+
+async function saveTheme() {
+  const btn = document.getElementById('save-theme-btn');
+  const note = document.getElementById('theme-note');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  await ensureFreshSession();
+
+  const patch = {
+    color: pendingTheme.headline,
+    secondary_color: pendingTheme.secondary,
+    background_color: pendingTheme.background,
+    text_color: pendingTheme.text,
+    font_heading: pendingTheme.headingFont,
+    font_body: pendingTheme.bodyFont,
+    background_overlay: Math.max(0, Math.min(95, parseInt(pendingTheme.overlay, 10) || 55))
+  };
+  const { error } = await sb.from('cubicles').update(patch).eq('id', active.id);
+  btn.disabled = false; btn.textContent = 'Save theme';
+
+  if (error) { note.style.color = '#c0392b'; note.textContent = 'Error: ' + error.message; return; }
+  Object.assign(active, patch);
+  const idx = cubicles.findIndex(c => c.id === active.id);
+  if (idx > -1) cubicles[idx] = active;
+
+  applyActiveTheme();
+  renderSidebar();
+  document.getElementById('active-name').innerHTML = `${cubDot(active)} ${escapeHtml(active.name)}`;
+  renderPostingAs();
+
+  playRewardTone();
+  note.style.color = 'var(--muted)'; note.textContent = 'Theme saved ✓';
+  setTimeout(() => { if (note.textContent === 'Theme saved ✓') note.textContent = ''; }, 2500);
+}
+
+// Supabase wraps non-2xx function replies in a generic "Edge Function returned
+// a non-2xx status code" error — dig out the real message the function sent.
+async function fnErrorMessage(e) {
+  try {
+    if (e && e.context && typeof e.context.json === 'function') {
+      const j = await e.context.json();
+      if (j && (j.message || j.error)) return j.message || j.error;
+    }
+  } catch (_) {}
+  return (e && e.message) || String(e);
+}
+
+let lastDetect = null;
+function applySuggestedTheme() {
+  if (!lastDetect || !lastDetect.suggested) return;
+  const s = lastDetect.suggested;
+  ['background','text','headline','secondary'].forEach(k => { if (isHex(s[k])) pendingTheme[k] = s[k]; });
+  if (s.heading_font) { pendingTheme.headingFont = s.heading_font; ensureFontLoaded(s.heading_font); }
+  if (s.body_font) { pendingTheme.bodyFont = s.body_font; ensureFontLoaded(s.body_font); }
+  THEME_FIELDS.forEach(kind => {
+    renderThemeSwatches('t-' + kind + '-colors', pendingTheme[kind], kind);
+    const hexEl = document.getElementById('t-' + kind + '-hex');
+    if (hexEl) hexEl.value = pendingTheme[kind];
+  });
+  renderFontSelect('t-heading-font', CURATED_HEADING_FONTS, pendingTheme.headingFont);
+  renderFontSelect('t-body-font', CURATED_BODY_FONTS, pendingTheme.bodyFont);
+  updateThemePreview();
+}
+
+async function detectSiteTheme() {
+  const url = document.getElementById('t-site-url').value.trim();
+  const out = document.getElementById('t-detect-out');
+  const btn = document.getElementById('t-detect-btn');
+  if (!url) { out.innerHTML = '<p class="save-note" style="color:#c0392b">Enter a website URL first.</p>'; return; }
+
+  btn.disabled = true; btn.textContent = 'Scanning…';
+  out.innerHTML = '<p class="save-note">Fetching and scanning the page…</p>';
+
+  try {
+    const { data, error } = await sb.functions.invoke('detect-site-theme', { body: { url } });
+    if (error) throw new Error(await fnErrorMessage(error));
+    if (!data.ok) {
+      out.innerHTML = `<p class="save-note" style="color:#c0392b">${escapeHtml(data.error)}</p>`;
+      btn.disabled = false; btn.textContent = 'Detect theme from my site';
+      return;
+    }
+    lastDetect = data;
+
+    let html = '';
+    if (data.suggested) {
+      const s = data.suggested;
+      const sw = (hex, label) => `<div class="suggest-sw"><span class="sq" style="background:${hex}"></span>${label}<br>${hex}</div>`;
+      html += `<div class="suggest-box">
+        <b style="font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Your site's look</b>
+        <div class="suggest-row">${sw(s.background,'Background')}${sw(s.text,'Text')}${sw(s.headline,'Main accent')}${sw(s.secondary,'Second accent')}</div>
+        <div style="font-size:.85rem;margin-bottom:12px">Heading font: <b>${escapeHtml(s.heading_font || '—')}</b> &nbsp;·&nbsp; Body font: <b>${escapeHtml(s.body_font || '—')}</b></div>
+        <button class="btn btn-brand" onclick="applySuggestedTheme()">✨ Use this whole look</button>
+        <div class="field-help">Previews live across the whole workspace. Fine-tune anything below, then hit Save theme.</div>
+      </div>`;
+    }
+    if (data.colors && data.colors.length) {
+      html += '<div style="margin-top:12px"><b style="font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Or place colors one at a time</b><div style="margin-top:6px">';
+      html += data.colors.map(c => `<span class="pick-color"><span class="cw" style="background:${c.hex}"></span>${c.hex}
+        <button class="role-btn" onclick="setThemeColor('background','${c.hex}')">BG</button>
+        <button class="role-btn" onclick="setThemeColor('text','${c.hex}')">Text</button>
+        <button class="role-btn" onclick="setThemeColor('headline','${c.hex}')">Accent</button>
+        <button class="role-btn" onclick="setThemeColor('secondary','${c.hex}')">2nd</button></span>`).join('');
+      html += '</div></div>';
+    }
+    if (false && data.colors && data.colors.length) {
+      html += '<div style="margin-top:10px"><b style="font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Colors found — click to use</b><div style="margin-top:6px">';
+      html += data.colors.map(c => `
+        <span class="detect-chip" onclick="setThemeColor('headline','${c.hex}')" title="Use as headline"><span class="cw" style="background:${c.hex}"></span>${c.hex} → headline</span>
+        <span class="detect-chip" onclick="setThemeColor('secondary','${c.hex}')" title="Use as secondary"><span class="cw" style="background:${c.hex}"></span>${c.hex} → secondary</span>
+        <span class="detect-chip" onclick="setThemeColor('background','${c.hex}')" title="Use as background"><span class="cw" style="background:${c.hex}"></span>${c.hex} → background</span>
+        <span class="detect-chip" onclick="setThemeColor('text','${c.hex}')" title="Use as text color"><span class="cw" style="background:${c.hex}"></span>${c.hex} → text</span>`).join('');
+      html += '</div></div>';
+    }
+    if (data.fonts && data.fonts.length) {
+      html += '<div style="margin-top:12px"><b style="font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Fonts found — click to use</b><div style="margin-top:6px">';
+      html += data.fonts.map(f => `
+        <span class="detect-chip" onclick="applyDetectedFont('${jsEsc(f.name)}','heading')">${escapeHtml(f.name)} → heading</span>
+        <span class="detect-chip" onclick="applyDetectedFont('${jsEsc(f.name)}','body')">${escapeHtml(f.name)} → body</span>`).join('');
+      html += '</div></div>';
+    }
+    html += '<p class="save-note" style="margin-top:10px">Nothing is saved yet — pick what you like above, check the preview, then hit Save theme below.</p>';
+    out.innerHTML = html;
+  } catch (e) {
+    out.innerHTML = `<p class="save-note" style="color:#c0392b">Detection failed: ${escapeHtml(e.message || String(e))}</p>`;
+  }
+  btn.disabled = false; btn.textContent = 'Detect theme from my site';
+  return;
+
+  btn.disabled = false; btn.textContent = 'Detect theme from my site';
+}
+
+function applyDetectedFont(name, kind) {
+  pendingTheme[kind === 'heading' ? 'headingFont' : 'bodyFont'] = name;
+  ensureFontLoaded(name);
+  renderFontSelect(kind === 'heading' ? 't-heading-font' : 't-body-font', kind === 'heading' ? CURATED_HEADING_FONTS : CURATED_BODY_FONTS, name);
+  updateThemePreview();
+}
+
+async function uploadLogo() {
+  const fileInput = document.getElementById('logo-file');
+  const note = document.getElementById('logo-note');
+  const btn = document.getElementById('logo-upload-btn');
+  const file = fileInput.files[0];
+
+  if (!file) { note.style.color = '#c0392b'; note.textContent = 'Choose a file first.'; return; }
+  if (file.size > 5 * 1024 * 1024) { note.style.color = '#c0392b'; note.textContent = 'File is over 5MB — pick a smaller image.'; return; }
+
+  btn.disabled = true; btn.textContent = 'Uploading…';
+  note.style.color = 'var(--muted)'; note.textContent = 'Uploading…';
+
+  await ensureFreshSession();
+
+  // Uploaded through the upload-cubicle-logo edge function (server-side,
+  // service-role write) instead of the browser writing to Storage directly —
+  // this removes the dependency on the browser's session/RLS handshake,
+  // which was the actual cause of persistent "row-level security" failures.
+  const fd = new FormData();
+  fd.append('cubicle_id', active.id);
+  fd.append('file', file);
+
+  let resp, result;
+  try {
+    resp = await fetch(`https://owxaolqikmgtlegtficq.supabase.co/functions/v1/upload-cubicle-logo`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${await freshAccessToken()}` },
+      body: fd,
+    });
+    result = await resp.json();
+  } catch (e) {
+    btn.disabled = false; btn.textContent = 'Upload';
+    note.style.color = '#c0392b'; note.textContent = 'Upload failed: network error, please try again.';
+    return;
+  }
+
+  btn.disabled = false; btn.textContent = 'Upload';
+
+  if (!resp.ok || !result.ok) {
+    note.style.color = '#c0392b'; note.textContent = 'Upload failed: ' + (result.message || result.error || 'unknown error');
+    return;
+  }
+
+  const publicUrl = result.url;
+  active.logo_url = publicUrl;
+  const idx = cubicles.findIndex(c => c.id === active.id);
+  if (idx > -1) cubicles[idx] = active;
+
+  renderLogoPreview();
+  renderSidebar();
+  document.getElementById('active-name').innerHTML = `${cubDot(active)} ${escapeHtml(active.name)}`;
+  renderPostingAs();
+
+  playRewardTone();
+  note.style.color = 'var(--muted)'; note.textContent = 'Logo updated ✓';
+  setTimeout(() => { if (note.textContent === 'Logo updated ✓') note.textContent = ''; }, 2500);
+}
+
+async function removeLogo() {
+  if (!active.logo_url) return;
+  if (!confirm(`Remove the logo for "${active.name}"? It'll fall back to the initials badge.`)) return;
+  const note = document.getElementById('logo-note');
+  await ensureFreshSession();
+
+  let resp, result;
+  try {
+    resp = await fetch(`https://owxaolqikmgtlegtficq.supabase.co/functions/v1/upload-cubicle-logo`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${await freshAccessToken()}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cubicle_id: active.id }),
+    });
+    result = await resp.json();
+  } catch (e) {
+    note.style.color = '#c0392b'; note.textContent = 'Error: network error, please try again.';
+    return;
+  }
+  if (!resp.ok || !result.ok) { note.style.color = '#c0392b'; note.textContent = 'Error: ' + (result.message || result.error || 'unknown error'); return; }
+
+  active.logo_url = null;
+  const idx = cubicles.findIndex(c => c.id === active.id);
+  if (idx > -1) cubicles[idx] = active;
+
+  renderLogoPreview();
+  renderSidebar();
+  document.getElementById('active-name').innerHTML = `${cubDot(active)} ${escapeHtml(active.name)}`;
+
+  note.style.color = 'var(--muted)'; note.textContent = 'Logo removed.';
+  setTimeout(() => { if (note.textContent === 'Logo removed.') note.textContent = ''; }, 2500);
+}
+
+function renderChips(elId, arr, field, isNever) {
+  const el = document.getElementById(elId);
+  el.innerHTML = arr.map((w, i) => `
+    <span class="chip ${isNever ? 'never' : ''}">${escapeHtml(w)} <button onclick="removeChip('${field}',${i})">&times;</button></span>
+  `).join('') || '<span class="save-note">Nothing yet.</span>';
+}
+
+function addChip(field, inputId) {
+  const input = document.getElementById(inputId);
+  const val = input.value.trim();
+  if (!val) return;
+  active[field] = [...(active[field] || []), val];
+  input.value = '';
+  renderVoice();
+}
+
+function removeChip(field, idx) {
+  active[field] = (active[field] || []).filter((_, i) => i !== idx);
+  renderVoice();
+}
+
+async function saveVoice() {
+  const btn = document.getElementById('save-voice-btn');
+  const note = document.getElementById('save-note');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  await ensureFreshSession();
+
+  const patch = {
+    tone: document.getElementById('v-tone').value,
+    audience: document.getElementById('v-aud').value,
+    signature_phrases: active.signature_phrases || [],
+    lexicon: active.lexicon || [],
+    never_says: active.never_says || []
+  };
+
+  const { error } = await sb.from('cubicles').update(patch).eq('id', active.id);
+  btn.disabled = false; btn.textContent = 'Save voice profile';
+
+  if (error) { note.textContent = 'Error: ' + error.message; note.style.color = '#c0392b'; return; }
+  Object.assign(active, patch);
+  const idx = cubicles.findIndex(c => c.id === active.id);
+  if (idx > -1) cubicles[idx] = active;
+  playRewardTone();
+  note.style.color = 'var(--muted)';
+  note.textContent = 'Saved ✓';
+  setTimeout(() => note.textContent = '', 2500);
+  runBleedCheck();
+}
+
+async function deleteCubicle() {
+  if (!confirm(`Delete "${active.name}" and all its drafts? This can't be undone.`)) return;
+  await ensureFreshSession();
+  const { error } = await sb.from('cubicles').delete().eq('id', active.id);
+  if (error) { alert('Error: ' + error.message); return; }
+  active = null;
+  await loadCubicles();
+}
+
+let newCubicleTheme = { background: '#faf7f2', text: '#1c1b2e', headline: COLORS[0], secondary: '#c9c6d3' };
+let newCubicleLogoFile = null;
+
+function openCubicleModal() {
+  document.getElementById('m-name').value = '';
+  document.getElementById('m-initials').value = '';
+  newCubicleLogoFile = null;
+  document.getElementById('m-logo-file').value = '';
+  document.getElementById('m-logo-preview-img').style.display = 'none';
+  document.getElementById('m-logo-preview-fallback').style.display = 'block';
+  document.getElementById('m-logo-preview-fallback').textContent = '?';
+  document.getElementById('m-logo-note').style.color = 'var(--muted)';
+  document.getElementById('m-logo-note').textContent = 'PNG, JPG, WEBP, or SVG, up to 5MB.';
+
+  newCubicleTheme = {
+    background: '#faf7f2',
+    text: '#1c1b2e',
+    headline: COLORS[cubicles.length % COLORS.length],
+    secondary: '#c9c6d3'
+  };
+  THEME_FIELDS.forEach(kind => {
+    renderNewCubicleSwatches(kind);
+    document.getElementById('m-' + kind + '-hex').value = newCubicleTheme[kind];
+  });
+  updateNewCubiclePreview();
+  document.getElementById('cubicle-modal').classList.add('show');
+}
+function closeCubicleModal() { document.getElementById('cubicle-modal').classList.remove('show'); }
+
+function renderNewCubicleSwatches(kind) {
+  const el = document.getElementById('m-' + kind + '-colors');
+  if (!el) return;
+  const selected = newCubicleTheme[kind];
+  el.innerHTML = themeFieldPalette(kind).map(c => `<div class="swatch ${c.toLowerCase()===String(selected).toLowerCase()?'sel':''}" style="background:${c}" onclick="setNewCubicleColor('${kind}','${c}')"></div>`).join('');
+}
+function setNewCubicleColor(kind, hex) {
+  newCubicleTheme[kind] = hex;
+  const hexInput = document.getElementById('m-' + kind + '-hex');
+  if (hexInput) hexInput.value = hex;
+  renderNewCubicleSwatches(kind);
+  updateNewCubiclePreview();
+}
+function setNewCubicleColorFromHexInput(kind) {
+  const el = document.getElementById('m-' + kind + '-hex');
+  const val = el.value.trim();
+  if (!/^#[0-9a-fA-F]{6}$/.test(val)) { el.style.borderColor = '#c0392b'; return; }
+  el.style.borderColor = '';
+  setNewCubicleColor(kind, val);
+}
+function updateNewCubiclePreview() {
+  const box = document.getElementById('m-mini-preview');
+  const h = document.getElementById('m-preview-heading');
+  const p = document.getElementById('m-preview-body');
+  if (!box) return;
+  box.style.background = newCubicleTheme.background;
+  h.style.color = newCubicleTheme.headline;
+  p.style.color = newCubicleTheme.text;
+  checkContrast('m-contrast-warn', newCubicleTheme.text, newCubicleTheme.background, 'Text color');
+}
+
+function onNewCubicleLogoChange(event) {
+  const file = event.target.files[0];
+  const note = document.getElementById('m-logo-note');
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    note.style.color = '#c0392b'; note.textContent = 'File is over 5MB — pick a smaller image.';
+    event.target.value = ''; newCubicleLogoFile = null;
+    return;
+  }
+  newCubicleLogoFile = file;
+  note.style.color = 'var(--muted)'; note.textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('m-logo-preview-img');
+    img.src = e.target.result;
+    img.style.display = 'block';
+    document.getElementById('m-logo-preview-fallback').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function createCubicle() {
+  const name = document.getElementById('m-name').value.trim();
+  const initials = document.getElementById('m-initials').value.trim() || name.slice(0,2).toUpperCase();
+  if (!name) { alert('Give the cubicle a name.'); return; }
+
+  const btn = document.getElementById('create-cubicle-btn');
+  btn.disabled = true; btn.textContent = 'Creating…';
+  await ensureFreshSession();
+
+  const { data, error } = await sb.from('cubicles').insert({
+    user_id: session.user.id,
+    name, icon_initials: initials,
+    color: newCubicleTheme.headline,
+    secondary_color: newCubicleTheme.secondary,
+    background_color: newCubicleTheme.background,
+    text_color: newCubicleTheme.text,
+    role: '', audience: '', tone: '',
+    signature_phrases: [], lexicon: [], never_says: []
+  }).select().single();
+
+  if (error) { btn.disabled = false; btn.textContent = 'Create'; alert('Error: ' + error.message); return; }
+
+  // Logo upload needs the new row's id for its storage path, so it happens
+  // right after insert — from Dustin's/the user's side it's still one step.
+  if (newCubicleLogoFile) {
+    btn.textContent = 'Uploading logo…';
+    const fd = new FormData();
+    fd.append('cubicle_id', data.id);
+    fd.append('file', newCubicleLogoFile);
+    try {
+      const resp = await fetch(`https://owxaolqikmgtlegtficq.supabase.co/functions/v1/upload-cubicle-logo`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: fd,
+      });
+      const result = await resp.json();
+      if (resp.ok && result.ok) data.logo_url = result.url;
+    } catch (e) { /* fall through — see note below */ }
+    // A logo upload hiccup here shouldn't block the cubicle from being created —
+    // it can always be added from the Voice tab afterward.
+  }
+
+  btn.disabled = false; btn.textContent = 'Create';
+  playRewardTone();
+  closeCubicleModal();
+  active = data;
+  await loadCubicles();
+}
+
+async function loadDrafts() {
+  const { data, error } = await sb.from('drafts').select('*').eq('cubicle_id', active.id).order('scheduled_for', { ascending: true, nullsFirst: false }).order('created_at', { ascending: false });
+  if (error) { console.error(error); drafts = []; } else { drafts = data || []; }
+  renderCal();
+}
+
+function renderCal() {
+  document.getElementById('cal-brand').textContent = active.name;
+  const list = document.getElementById('cal-list');
+  const scheduled = drafts.filter(d => d.status === 'scheduled');
+  if (!scheduled.length) { list.innerHTML = '<p class="cal-empty">Nothing scheduled.</p>'; return; }
+  list.innerHTML = scheduled.map(d => `
+    <div class="cal-day">
+      <span class="d">${d.scheduled_for ? new Date(d.scheduled_for).toLocaleDateString(undefined,{month:'short',day:'numeric'}) : 'No date'}</span>
+      <span class="t">${escapeHtml(d.content.length > 70 ? d.content.slice(0,70)+'…' : d.content)}</span>
+      <span class="tag" style="background:${active.color}">${(active.icon_initials||'').toUpperCase()}</span>
+    </div>`).join('');
+}
+
+function runBleedCheck(manual) {
+  if (!active) return;
+  const raw = document.getElementById('draft').value;
+  const text = raw.toLowerCase();
+  const words = text.match(/[a-z']+/g) || [];
+  const leaks = [];
+
+  for (const c of cubicles) {
+    if (c.id === active.id) continue;
+    for (const term of (c.lexicon || [])) {
+      if ((active.lexicon || []).includes(term)) continue;
+      if ((active.signature_phrases || []).some(p => p.toLowerCase().split(/[^a-z']+/).includes(term))) continue;
+      if (words.includes(term)) leaks.push({ term, brand: c });
+    }
+    for (const phrase of (c.signature_phrases || [])) {
+      if (phrase && text.includes(phrase.toLowerCase())) leaks.push({ term: '"' + phrase + '"', brand: c, phrase: true });
+    }
+  }
+  for (const term of (active.never_says || [])) {
+    if (term && text.includes(term.toLowerCase())) leaks.push({ term, brand: null });
+  }
+
+  const status = document.getElementById('bleed-status');
+  const wasDirty = status.classList.contains('bleed-dirty');
+  const list = document.getElementById('bleed-list');
+  if (!raw.trim()) {
+    status.className = 'bleed-status bleed-clean';
+    status.textContent = '✓ Clean — no contamination';
+    list.innerHTML = '<p class="bleed-empty">Flagged terms from other cubicles will appear here.</p>';
+    document.getElementById('preview').textContent = 'Nothing yet.';
+    return;
+  }
+  if (leaks.length) {
+    status.className = 'bleed-status bleed-dirty';
+    status.textContent = '⚠ Contamination detected — ' + leaks.length + ' leak' + (leaks.length > 1 ? 's' : '');
+    list.innerHTML = leaks.map(l => l.brand
+      ? `<div class="bleed-item"><b>${escapeHtml(l.term)}</b> belongs to <span class="from" style="background:${l.brand.color}">${escapeHtml(l.brand.name)}</span></div>`
+      : `<div class="bleed-item"><b>${escapeHtml(l.term)}</b> is on <b>${escapeHtml(active.name)}</b>'s never-say list <span class="from" style="background:#c0392b">blocked term</span></div>`
+    ).join('');
+    if (!wasDirty) playWarningTone();
+  } else {
+    status.className = 'bleed-status bleed-clean';
+    status.textContent = '✓ Clean — this reads as ' + active.name;
+    list.innerHTML = '<p class="bleed-empty">No leaks. Ship it.</p>';
+    if (manual) playRewardTone();
+  }
+
+  let html = escapeHtml(raw);
+  const flagged = [...new Set(leaks.filter(l => !l.phrase).map(l => l.term.replace(/["]/g,'')))];
+  for (const t of flagged) {
+    try { html = html.replace(new RegExp('\\b(' + t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')\\b', 'gi'), '<mark>$1</mark>'); } catch(e) {}
+  }
+  for (const l of leaks.filter(l => l.phrase)) {
+    const p = l.term.replace(/["]/g,'');
+    try { html = html.replace(new RegExp('(' + p.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi'), '<mark>$1</mark>'); } catch(e) {}
+  }
+  document.getElementById('preview').innerHTML = html;
+}
+
+async function optimize() {
+  const raw = document.getElementById('draft').value.trim();
+  const out = document.getElementById('optim-out');
+  if (!raw) { out.style.display = 'block'; out.textContent = 'Write a draft first — then I\'ll tune it to ' + active.name + '\'s voice.'; return; }
+
+  out.style.display = 'block';
+  out.textContent = 'Optimizing…';
+
+  try {
+    const targets = getSelectedPlatforms();
+    const { data, error } = await sb.functions.invoke('optimize-caption', {
+      body: { draft: raw, tone: active.tone, audience: active.audience, signature_phrases: active.signature_phrases, lexicon: active.lexicon, never_says: active.never_says, brand_name: active.name, target_platforms: targets }
+    });
+    if (error) throw error;
+    const providerLabel = data.provider === 'gemini' ? 'AI (free tier)' : 'Claude';
+    playRewardTone();
+    let note = '✨ Optimized via ' + providerLabel + ' for ' + escapeHtml(active.name) + '.';
+    if (data.limit) {
+      note += ' ' + data.char_count + '/' + data.limit + ' characters' + (data.trimmed ? ' (trimmed to fit)' : '') + '.';
+    }
+    out.innerHTML = escapeHtml(data.caption) + '<div class="optim-note">' + note + '</div>';
+  } catch (e) {
+    const msg = await fnErrorMessage(e);
+    out.innerHTML = 'Caption optimization hit an error.' +
+      '<div class="optim-note">(' + escapeHtml(msg) + ')</div>';
+  }
+}
+
+async function schedulePost() {
+  const raw = document.getElementById('draft').value.trim();
+  if (!raw) { alert('Nothing to schedule yet — write a draft first.'); return; }
+  const dateVal = document.getElementById('sched-date').value;
+  const imageUrl = document.getElementById('draft-image').value.trim();
+  const videoUrl = document.getElementById('draft-video').value.trim();
+  const targets = getSelectedPlatforms();
+  if (connections.length && !targets.length) { alert('Every platform is unchecked — check at least one under "Publish to" first.'); return; }
+  if (targets.includes('tiktok') && !ttValidate()) { alert('Finish the TikTok settings first: ' + ttLastProblem); return; }
+
+  const schedLabel = (targets.length ? targets : connections.map(a => a.platform)).map(p => PLATFORM_LABEL[p] || p).join(', ') || 'every connected platform';
+  if (!confirm(`Schedule this post as "${active.name}" to ${schedLabel}${dateVal ? ' on ' + dateVal : ''}?`)) return;
+
+  const { error } = await sb.from('drafts').insert({
+    user_id: session.user.id,
+    cubicle_id: active.id,
+    content: raw,
+    image_url: imageUrl || null,
+    video_url: videoUrl || null,
+    status: 'scheduled',
+    scheduled_for: dateVal ? new Date(dateVal).toISOString() : null,
+    target_platforms: targets.length ? targets : null,
+    platform_options: ttPlatformOptions(targets)
+  });
+
+  if (error) { alert('Error: ' + error.message); return; }
+  playRewardTone();
+  draftCache[active.id] = { text: '', image: '', video: '' };
+  ttResetAfterPost();
+  await loadDrafts();
+  alert('Scheduled to ' + active.name + '\'s calendar. It will auto-publish to ' + (targets.length ? targets.join(', ') : 'every connected platform') + ' within 5 minutes of the scheduled time — no need to come back and click publish.');
+}
+
+async function publishNow() {
+  const raw = document.getElementById('draft').value.trim();
+  if (!raw) { alert('Nothing to publish yet — write a draft first.'); return; }
+  const imageUrl = document.getElementById('draft-image').value.trim();
+  const videoUrl = document.getElementById('draft-video').value.trim();
+  const targets = getSelectedPlatforms();
+  if (connections.length && !targets.length) { alert('Every platform is unchecked — check at least one under "Publish to" first.'); return; }
+  if (targets.includes('tiktok') && !ttValidate()) { alert('Finish the TikTok settings first: ' + ttLastProblem); return; }
+  const targetLabel = (targets.length ? targets : connections.map(a => a.platform)).map(p => PLATFORM_LABEL[p] || p).join(', ') || 'no connected accounts';
+  if (!confirm(`Publish this post as "${active.name}" to ${targetLabel}?`)) return;
+  const btn = document.getElementById('publish-btn');
+  const out = document.getElementById('publish-out');
+
+  btn.disabled = true; btn.textContent = 'Publishing…';
+  out.style.display = 'block';
+  out.textContent = 'Saving draft, then publishing…';
+
+  const { data: draftRow, error: insertErr } = await sb.from('drafts').insert({
+    user_id: session.user.id,
+    cubicle_id: active.id,
+    content: raw,
+    image_url: imageUrl || null,
+    video_url: videoUrl || null,
+    status: 'draft',
+    target_platforms: targets.length ? targets : null,
+    platform_options: ttPlatformOptions(targets)
+  }).select().single();
+
+  if (insertErr) {
+    btn.disabled = false; btn.textContent = '🚀 Publish now';
+    out.innerHTML = 'Error saving draft: ' + escapeHtml(insertErr.message);
+    return;
+  }
+
+  try {
+    const { data, error } = await sb.functions.invoke('publish-post', { body: { draft_id: draftRow.id } });
+    if (error) throw error;
+
+    const lines = Object.entries(data.results || {}).map(([platform, r]) => {
+      const label = PLATFORM_LABEL[platform] || platform;
+      if (!r.ok) return `✗ ${label}: ${String(r.error || '').replace(/^Error:\s*/, '').replace(/^[a-z]+_[a-z_]+:\s*/, '')}`;
+      if (platform === 'tiktok') return `✓ ${label}: sent to TikTok` + (r.note ? ' — ' + r.note : ' — live on your profile.');
+      return `✓ ${label}: posted (${r.post_id})`;
+    });
+    const anyOk = Object.values(data.results || {}).some(r => r.ok);
+    if (anyOk) playRewardTone();
+    out.innerHTML = lines.map(l => escapeHtml(l)).join('<br>') || 'No connected accounts to publish to for this cubicle — connect one under the Connections tab.';
+  } catch (e) {
+    out.innerHTML = 'Publish failed: ' + escapeHtml(e.message || String(e));
+  }
+
+  btn.disabled = false; btn.textContent = '🚀 Publish now';
+  if (!insertErr) { draftCache[active.id] = { text: '', image: '', video: '' }; }
+  ttValidate();
+  await loadDrafts();
+}
+
+// Set once the LinkedIn Developer App exists (developer.linkedin.com — needs a
+// verified Company Page first). Not a secret; safe to expose client-side.
+const LINKEDIN_CLIENT_ID = '';
+// Set once the TikTok Developer App exists (developers.tiktok.com).
+// Sandbox key while TikTok reviews the app; swap to the Production key (aw7pgz7kpl3v4201) after approval.
+const TIKTOK_CLIENT_KEY = 'sbaw4npehmref56r1s';
+// Set once the Pinterest Developer App exists (developers.pinterest.com).
+// Not a secret; safe to expose client-side.
+const PINTEREST_CLIENT_ID = '';
+
+function connectLinkedIn() {
+  if (!LINKEDIN_CLIENT_ID) { alert('LinkedIn isn\'t connected yet — the developer app still needs to be created. Ask to get this set up.'); return; }
+  const REDIRECT_URI = 'https://owxaolqikmgtlegtficq.supabase.co/functions/v1/linkedin-oauth-callback';
+  const scopes = ['openid', 'profile', 'w_member_social'].join(' ');
+  const url = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(scopes)}&state=${encodeURIComponent(active.id)}`;
+  window.location.href = url;
+}
+
+function connectTikTok() {
+  if (!TIKTOK_CLIENT_KEY) { alert('TikTok isn\'t connected yet — the developer app still needs to be created. Ask to get this set up.'); return; }
+  const REDIRECT_URI = 'https://owxaolqikmgtlegtficq.supabase.co/functions/v1/tiktok-oauth-callback';
+  const scopes = ['user.info.basic', 'video.publish'].join(',');
+  const url = `https://www.tiktok.com/v2/auth/authorize/?client_key=${TIKTOK_CLIENT_KEY}&scope=${encodeURIComponent(scopes)}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&state=${encodeURIComponent(active.id)}`;
+  window.location.href = url;
+}
+
+function connectPinterest() {
+  if (!PINTEREST_CLIENT_ID) { alert('Pinterest isn\'t connected yet — the developer app still needs to be created. Ask to get this set up.'); return; }
+  const REDIRECT_URI = 'https://owxaolqikmgtlegtficq.supabase.co/functions/v1/pinterest-oauth-callback';
+  const scopes = ['boards:read', 'pins:write', 'user_accounts:read'].join(',');
+  const url = `https://www.pinterest.com/oauth/?client_id=${PINTEREST_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(scopes)}&state=${encodeURIComponent(active.id)}`;
+  window.location.href = url;
+}
+
+function connectMeta() {
+  const APP_ID = '1536478337966065';
+  const REDIRECT_URI = 'https://owxaolqikmgtlegtficq.supabase.co/functions/v1/meta-oauth-callback';
+  const scopes = ['pages_show_list', 'pages_read_engagement', 'pages_manage_posts', 'instagram_basic', 'instagram_content_publish'].join(',');
+  const state = active.id;
+  const url = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${APP_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(scopes)}&state=${encodeURIComponent(state)}&response_type=code`;
+  alert('You\'ll be sent to Facebook — please grant access to ONLY the one Page that belongs to "' + active.name + '" when it asks which Pages to connect. That keeps this cubicle\'s connection separate from your other brands.');
+  window.location.href = url;
+}
+
+const PLATFORM_LABEL = { facebook: 'Facebook Page', instagram: 'Instagram', bluesky: 'Bluesky', linkedin: 'LinkedIn', tiktok: 'TikTok', pinterest: 'Pinterest' };
+
+async function renderConnections() {
+  document.getElementById('conn-brand').textContent = active.name;
+  const { data, error } = await sb.from('social_accounts').select('*').eq('cubicle_id', active.id);
+  const list = document.getElementById('conn-list');
+  connections = (!error && data) ? data : [];
+
+  if (error) { list.innerHTML = '<p class="save-note">Error loading connections.</p>'; renderPublishTargets(); return; }
+  if (!data || data.length === 0) {
+    list.innerHTML = '<p class="save-note">No accounts connected yet for ' + escapeHtml(active.name) + '.</p>';
+    renderPublishTargets();
+    return;
+  }
+  list.innerHTML = data.map(a => `
+    <div class="bleed-item"><b>${PLATFORM_LABEL[a.platform] || a.platform}</b>: ${escapeHtml(a.external_account_name || a.external_account_id)}
+      <span class="from" style="background:#2E6B4A">connected</span></div>
+  `).join('');
+  renderPublishTargets();
+}
+
+function renderPublishTargets() {
+  renderPostingAs();
+  const el = document.getElementById('publish-targets');
+  if (!el) return;
+  if (!connections.length) {
+    el.innerHTML = '<span class="save-note">No accounts connected yet — connect one under the Connections tab.</span>';
+    ttSync(true);
+    return;
+  }
+  el.innerHTML = connections.map(a => `
+    <label style="display:flex;align-items:center;gap:6px;text-transform:none;font-weight:500;font-size:.85rem;color:var(--ink)">
+      <input type="checkbox" class="publish-target-cb" value="${a.platform}" checked onchange="checkBlueskyLimit(); ttSync()">
+      ${PLATFORM_LABEL[a.platform] || a.platform} <span style="color:var(--muted);font-size:.78rem">(${escapeHtml(a.external_account_name || '')})</span>
+    </label>
+  `).join('');
+  checkBlueskyLimit();
+  ttSync(true);
+}
+
+// ================= TikTok post settings =================
+// TikTok requires, before every post: the creator's nickname shown, a privacy
+// choice with NO default, comment/duet/stitch off by default (and greyed out if
+// the creator turned them off), a commercial-content disclosure, a preview,
+// consent text, and Publish blocked until everything required is chosen.
+let ttInfo = null, ttInfoFor = null, ttLoading = false, ttLastProblem = '';
+const TT_PRIVACY_LABEL = { PUBLIC_TO_EVERYONE: 'Everyone', MUTUAL_FOLLOW_FRIENDS: 'Friends (followers you follow back)', FOLLOWER_OF_CREATOR: 'Followers', SELF_ONLY: 'Only me' };
+
+function ttSelected() { return !!document.querySelector('.publish-target-cb[value="tiktok"]:checked'); }
+function ttIsVideo() { return !!(document.getElementById('draft-video') && document.getElementById('draft-video').value.trim()); }
+
+async function ttSync(forceReload) {
+  const panel = document.getElementById('tt-panel');
+  if (!panel) return;
+  if (!ttSelected()) { panel.style.display = 'none'; ttValidate(); return; }
+  panel.style.display = 'block';
+  if (forceReload || !ttInfo || ttInfoFor !== active.id) await ttLoadCreator();
+  ttRenderPreview();
+  ttValidate();
+}
+
+async function ttLoadCreator() {
+  if (!active || ttLoading) return;
+  ttLoading = true;
+  const who = document.getElementById('tt-creator');
+  const forId = active.id;
+  who.textContent = 'Loading your TikTok account…';
+  ttInfo = null; ttInfoFor = null;
+  try {
+    const { data, error } = await sb.functions.invoke('tiktok-creator-info', { body: { cubicle_id: forId } });
+    if (error) throw error;
+    if (!active || active.id !== forId) return;
+    ttInfo = data; ttInfoFor = forId;
+    const name = data.creator_nickname || data.account_name || 'your TikTok account';
+    const handle = data.creator_username ? ' <span style="font-weight:500;color:var(--muted)">@' + escapeHtml(data.creator_username) + '</span>' : '';
+    who.innerHTML = (data.creator_avatar_url ? '<img src="' + escapeHtml(data.creator_avatar_url) + '" alt="">' : '') +
+      '<span>Posting to <b>' + escapeHtml(name) + '</b>' + handle + '</span>';
+    ttFillPrivacy();
+    ttApplyCreatorLimits();
+  } catch (e) {
+    const msg = await fnErrorMessage(e);
+    who.innerHTML = '<span class="tt-warn" style="margin:0">Couldn\'t load your TikTok account: ' + escapeHtml(msg) + '</span>';
+  } finally {
+    ttLoading = false;
+    ttValidate();
+  }
+}
+
+function ttFillPrivacy() {
+  const sel = document.getElementById('tt-privacy');
+  const prev = sel.value;
+  const opts = (ttInfo && ttInfo.privacy_level_options && ttInfo.privacy_level_options.length) ? ttInfo.privacy_level_options : [];
+  sel.innerHTML = '<option value="" disabled>Select who can see this post…</option>' +
+    opts.map(o => '<option value="' + o + '">' + escapeHtml(TT_PRIVACY_LABEL[o] || o) + '</option>').join('');
+  sel.value = opts.includes(prev) ? prev : '';
+  if (!sel.value) sel.selectedIndex = 0;
+}
+
+function ttApplyCreatorLimits() {
+  const map = [['comment', 'comment_disabled'], ['duet', 'duet_disabled'], ['stitch', 'stitch_disabled']];
+  const off = [];
+  for (const [k, flag] of map) {
+    const cb = document.getElementById('tt-' + k), wrap = document.getElementById('tt-' + k + '-wrap');
+    const disabled = !!(ttInfo && ttInfo[flag]);
+    cb.disabled = disabled;
+    if (disabled) { cb.checked = false; if (k === 'comment' || ttIsVideo()) off.push(k.charAt(0).toUpperCase() + k.slice(1)); }
+    wrap.classList.toggle('off', disabled);
+  }
+  const note = document.getElementById('tt-interact-note');
+  note.style.display = off.length ? 'block' : 'none';
+  note.textContent = off.length ? off.join(', ') + ' turned off in this account\'s TikTok privacy settings.' : '';
+}
+
+function ttRenderPreview() {
+  const box = document.getElementById('tt-preview');
+  if (!box) return;
+  const vid = document.getElementById('draft-video').value.trim();
+  const img = document.getElementById('draft-image').value.trim();
+  document.querySelectorAll('.tt-vid-only').forEach(el => el.style.display = vid ? '' : 'none');
+  if (ttInfo) ttApplyCreatorLimits();
+  if (!ttSelected() || (!vid && !img)) { box.style.display = 'none'; box.innerHTML = ''; box.dataset.src = ''; ttValidate(); return; }
+  const src = vid || img;
+  if (box.dataset.src === src) return;
+  box.dataset.src = src;
+  box.dataset.duration = '';
+  box.style.display = 'block';
+  if (vid) {
+    box.innerHTML = '<video src="' + escapeHtml(vid) + '" controls muted playsinline preload="metadata"></video>';
+    const v = box.querySelector('video');
+    v.addEventListener('loadedmetadata', () => { box.dataset.duration = String(v.duration || ''); ttValidate(); });
+  } else {
+    box.innerHTML = '<img src="' + escapeHtml(img) + '" alt="Post preview">';
+  }
+  ttValidate();
+}
+
+function ttValidate() {
+  const btn = document.getElementById('publish-btn');
+  const warn = document.getElementById('tt-warn');
+  const panel = document.getElementById('tt-panel');
+  if (!btn || !panel) return true;
+  const disclose = document.getElementById('tt-disclose').checked;
+  document.getElementById('tt-disclose-opts').style.display = disclose ? 'block' : 'none';
+  if (!disclose) { document.getElementById('tt-yourbrand').checked = false; document.getElementById('tt-branded').checked = false; }
+  const branded = disclose && document.getElementById('tt-branded').checked;
+  const yours = disclose && document.getElementById('tt-yourbrand').checked;
+
+  // Branded content can't be private.
+  const sel = document.getElementById('tt-privacy');
+  const selfOpt = sel.querySelector('option[value="SELF_ONLY"]');
+  if (selfOpt) {
+    selfOpt.disabled = branded;
+    selfOpt.textContent = branded ? 'Only me (not available for branded content)' : TT_PRIVACY_LABEL.SELF_ONLY;
+    if (branded && sel.value === 'SELF_ONLY') sel.selectedIndex = 0;
+  }
+
+  const consent = document.getElementById('tt-consent');
+  consent.innerHTML = branded
+    ? 'By posting, you agree to TikTok\'s <a href="https://www.tiktok.com/legal/page/global/bc-policy/en" target="_blank" rel="noopener">Branded Content Policy</a> and <a href="https://www.tiktok.com/legal/page/global/music-usage-confirmation/en" target="_blank" rel="noopener">Music Usage Confirmation</a>.'
+    : 'By posting, you agree to TikTok\'s <a href="https://www.tiktok.com/legal/page/global/music-usage-confirmation/en" target="_blank" rel="noopener">Music Usage Confirmation</a>.';
+  if (disclose && (yours || branded)) {
+    consent.innerHTML += ' Your post will be labeled "' + (branded ? 'Paid partnership' : 'Promotional content') + '".';
+  }
+
+  let problem = '';
+  if (ttSelected()) {
+    const vid = document.getElementById('draft-video').value.trim();
+    const img = document.getElementById('draft-image').value.trim();
+    const box = document.getElementById('tt-preview');
+    const dur = parseFloat(box.dataset.duration || '');
+    if (ttLoading) problem = 'still loading your TikTok account.';
+    else if (!ttInfo) problem = 'your TikTok account couldn\'t be loaded — reconnect TikTok under Connections.';
+    else if (!vid && !img) problem = 'TikTok needs a photo or video — add an Image URL or Video URL.';
+    else if (!sel.value) problem = 'choose who can see this post.';
+    else if (disclose && !yours && !branded) problem = 'you turned on "Disclose post content" — pick "Your brand", "Branded content", or both.';
+    else if (vid && dur && ttInfo.max_video_post_duration_sec && dur > ttInfo.max_video_post_duration_sec) problem = 'this video is ' + Math.round(dur) + 's — this account can post up to ' + ttInfo.max_video_post_duration_sec + 's.';
+  }
+  ttLastProblem = problem;
+  warn.style.display = problem ? 'block' : 'none';
+  warn.textContent = problem ? 'Before publishing to TikTok: ' + problem : '';
+  btn.disabled = !!problem;
+  btn.title = problem ? 'Finish the TikTok settings first' : '';
+  return !problem;
+}
+
+function ttPlatformOptions(targets) {
+  if (!targets || !targets.includes('tiktok')) return null;
+  const disclose = document.getElementById('tt-disclose').checked;
+  return { tiktok: {
+    privacy_level: document.getElementById('tt-privacy').value,
+    disable_comment: !document.getElementById('tt-comment').checked,
+    disable_duet: !document.getElementById('tt-duet').checked,
+    disable_stitch: !document.getElementById('tt-stitch').checked,
+    brand_organic_toggle: disclose && document.getElementById('tt-yourbrand').checked,
+    brand_content_toggle: disclose && document.getElementById('tt-branded').checked
+  } };
+}
+
+function ttResetAfterPost() {
+  const sel = document.getElementById('tt-privacy');
+  if (!sel) return;
+  sel.selectedIndex = 0;
+  ['tt-comment', 'tt-duet', 'tt-stitch', 'tt-disclose', 'tt-yourbrand', 'tt-branded'].forEach(id => { document.getElementById(id).checked = false; });
+  ttRenderPreview();
+  ttValidate();
+}
+
+function getSelectedPlatforms() {
+  return Array.from(document.querySelectorAll('.publish-target-cb:checked')).map(cb => cb.value);
+}
+
+function checkBlueskyLimit() {
+  const warn = document.getElementById('bsky-limit-warn');
+  if (!warn) return;
+  const blueskyChecked = document.querySelector('.publish-target-cb[value="bluesky"]:checked');
+  const len = document.getElementById('draft').value.length;
+  if (blueskyChecked && len > 300) {
+    warn.style.display = 'block';
+    warn.textContent = `⚠ ${len}/300 characters — too long for Bluesky. It'll get cut to fit. Uncheck Bluesky above, or shorten the post, if you'd rather post it there untrimmed.`;
+  } else if (blueskyChecked && len > 260) {
+    warn.style.display = 'block';
+    warn.style.color = 'var(--muted)';
+    warn.textContent = `${len}/300 characters for Bluesky — getting close to the limit.`;
+  } else {
+    warn.style.display = 'none';
+    warn.style.color = '#c0392b';
+  }
+}
+
+async function connectBluesky() {
+  const handle = document.getElementById('bsky-handle').value.trim();
+  const appPassword = document.getElementById('bsky-password').value.trim();
+  const btn = document.getElementById('bsky-connect-btn');
+  const out = document.getElementById('bsky-out');
+
+  if (!handle || !appPassword) {
+    out.style.display = 'block';
+    out.textContent = 'Enter both a handle and an app password first.';
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Connecting…';
+  out.style.display = 'block';
+  out.textContent = 'Verifying with Bluesky…';
+
+  try {
+    const { data, error } = await sb.functions.invoke('bluesky-connect', {
+      body: { cubicle_id: active.id, handle, app_password: appPassword }
+    });
+    if (error) throw error;
+    out.textContent = 'Connected as @' + data.handle + ' for ' + active.name + '.';
+    document.getElementById('bsky-handle').value = '';
+    document.getElementById('bsky-password').value = '';
+    await renderConnections();
+  } catch (e) {
+    out.textContent = 'Connection failed: ' + (e.message || String(e));
+  }
+
+  btn.disabled = false; btn.textContent = 'Connect Bluesky';
+}
+
+// --- Guided tour -----------------------------------------------------------
+// Two scripts: a short one for a brand-new account (nothing to spotlight yet
+// but the Create button), and the full walkthrough once at least one
+// cubicle exists. Re-checked live each time startTour() runs so it always
+// matches what's actually on screen instead of a stale step list.
+function firstRunTourSteps() {
+  return [
+    { selector: '#no-cubicles .btn-brand', title: 'Start here', text: "Name, initials, logo, and all four brand colors are on this one screen now — no more hunting through tabs to finish setting up a cubicle." },
+    { selector: '.tutorial-toggle', title: 'Turning this off', text: "Flip this off anytime to stop tutorials from popping up. \"Take the tour\" right above it always brings this back on demand, even with tutorials off." }
+  ];
+}
+function fullTourSteps() {
+  return [
+    { selector: '.side-label', title: 'Your cubicles', text: "Every brand gets its own cubicle — its own voice, colors, and content — so nothing bleeds between brands you run." },
+    { before: () => showPanel('compose', document.querySelector('.tab[data-panel="compose"]')), selector: '.tab[data-panel="compose"]', title: 'Composer', text: "Write a post here for whichever cubicle is active. Bleed Check watches as you type." },
+    { selector: '#bleed-status', title: 'Bleed Check™', text: "Flags wording that actually belongs to a different one of your brands before it goes out under the wrong name." },
+    { before: () => showPanel('voice', document.querySelector('.tab[data-panel="voice"]')), selector: '.tab[data-panel="voice"]', title: 'Voice Profile', text: "Logo, the four brand colors, fonts, and the guided interview all live here — this is where you'd come back to rebrand a cubicle later." },
+    { selector: '#interview-card', title: 'Getting to know you', text: "A short guided interview that fills out this cubicle's tone, audience, and vocabulary for you — nothing saves until you review and apply it." },
+    { before: () => showPanel('calendar', document.querySelector('.tab[data-panel="calendar"]')), selector: '.tab[data-panel="calendar"]', title: 'Calendar', text: "See what's scheduled across all your cubicles at a glance." },
+    { selector: '.tutorial-toggle', title: 'Turning this off', text: "Flip this off anytime to stop tutorials from popping up automatically. \"Take the tour\" above it always brings this back on demand." }
+  ];
+}
+
+let tourSteps = [];
+let tourIndex = 0;
+
+function startTour() {
+  tourSteps = cubicles.length === 0 ? firstRunTourSteps() : fullTourSteps();
+  tourIndex = 0;
+  document.getElementById('tour-overlay').classList.add('show');
+  showTourStep();
+}
+
+function showTourStep() {
+  const step = tourSteps[tourIndex];
+  if (!step) { endTour(); return; }
+  if (step.before) { try { step.before(); } catch (e) { console.error(e); } }
+
+  // Let a panel switch from `before` finish rendering before we measure it.
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const el = document.querySelector(step.selector);
+    if (!el) { tourIndex++; showTourStep(); return; }
+    el.scrollIntoView({ block: 'center', behavior: 'instant' in document.documentElement.style ? 'instant' : 'auto' });
+    const r = el.getBoundingClientRect();
+    const pad = 8;
+    const spot = document.getElementById('tour-spot');
+    spot.style.top = (r.top - pad) + 'px';
+    spot.style.left = (r.left - pad) + 'px';
+    spot.style.width = (r.width + pad*2) + 'px';
+    spot.style.height = (r.height + pad*2) + 'px';
+
+    const box = document.getElementById('tour-box');
+    document.getElementById('tour-title').textContent = step.title;
+    document.getElementById('tour-text').textContent = step.text;
+    document.getElementById('tour-count').textContent = `${tourIndex+1} of ${tourSteps.length}`;
+    document.getElementById('tour-prev-btn').style.visibility = tourIndex === 0 ? 'hidden' : 'visible';
+    document.getElementById('tour-next-btn').textContent = tourIndex === tourSteps.length - 1 ? 'Done' : 'Next';
+
+    const boxW = 300, boxH = box.offsetHeight || 160;
+    let top = r.bottom + pad + 14;
+    if (top + boxH > window.innerHeight - 16) top = Math.max(16, r.top - boxH - 14);
+    let left = Math.min(Math.max(16, r.left), window.innerWidth - boxW - 16);
+    box.style.top = top + 'px';
+    box.style.left = left + 'px';
+  }));
+}
+
+function nextTourStep() {
+  if (tourIndex >= tourSteps.length - 1) { endTour(); return; }
+  tourIndex++;
+  showTourStep();
+}
+function prevTourStep() {
+  if (tourIndex === 0) return;
+  tourIndex--;
+  showTourStep();
+}
+function endTour() {
+  document.getElementById('tour-overlay').classList.remove('show');
+}
+
+async function toggleTutorials() {
+  tutorialsEnabled = document.getElementById('tutorial-toggle-input').checked;
+  if (!session) return;
+  await sb.from('profiles').update({ tutorials_enabled: tutorialsEnabled }).eq('id', session.user.id);
+}
+
+function showPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('show'));
+  document.getElementById('panel-' + name).classList.add('show');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+async function logout() {
+  await sb.auth.signOut();
+  window.location.href = 'login.html';
+}
+
+init();
+</script>
+</body>
+</html>
