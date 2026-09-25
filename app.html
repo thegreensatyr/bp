@@ -2181,9 +2181,24 @@ async function renderConnections() {
   }
   list.innerHTML = data.map(a => `
     <div class="bleed-item"><b>${PLATFORM_LABEL[a.platform] || a.platform}</b>: ${escapeHtml(a.external_account_name || a.external_account_id)}
-      <span class="from" style="background:#2E6B4A">connected</span></div>
+      <span class="from" style="background:#2E6B4A">connected</span>
+      <button class="btn" style="float:right;padding:4px 12px;font-size:.75rem;background:#7a1f1f;color:#fff;border:none;border-radius:999px;cursor:pointer" onclick="disconnectAccount('${a.id}', '${escapeHtml(PLATFORM_LABEL[a.platform] || a.platform)}', this)">Disconnect</button></div>
   `).join('');
   renderPublishTargets();
+}
+
+async function disconnectAccount(accountId, label, btn) {
+  if (!confirm('Disconnect ' + label + ' from "' + active.name + '"?\n\nBrandParent will no longer be able to post there for this brand. You can reconnect any time.')) return;
+  if (btn) { btn.disabled = true; btn.textContent = 'Disconnecting…'; }
+  try {
+    const { data, error } = await sb.functions.invoke('disconnect-account', { body: { account_id: accountId } });
+    if (error || !data || !data.ok) throw new Error((data && (data.message || data.error)) || (error && error.message) || 'unknown error');
+    await renderConnections();
+    if (typeof toast === 'function') toast(label + ' disconnected.');
+  } catch (e) {
+    alert('Couldn\'t disconnect ' + label + ': ' + e.message);
+    if (btn) { btn.disabled = false; btn.textContent = 'Disconnect'; }
+  }
 }
 
 function renderPublishTargets() {
