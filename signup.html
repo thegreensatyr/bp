@@ -42,6 +42,7 @@
     <div class="logo"><img src="brandparent-logo.png" alt="" onerror="this.style.display='none'"> Brandparent</div>
     <h1 id="signup-h1">Become a founding member</h1>
     <p class="sub" id="signup-sub">$97 one-time · lifetime access · your cubicles start here.</p>
+    <p class="license-note" id="founding-license-note" style="font-size:.8rem;line-height:1.4;opacity:.8;margin:6px 0 10px">Founding lifetime access is for one person managing their own brands. Client and agency use requires a separate plan.</p>
     <p class="trust">Secure checkout via Stripe.</p>
 
     <form id="signup-form">
@@ -70,6 +71,7 @@
     if (TIER === 'studio') {
       document.getElementById('signup-h1').textContent = 'Start your Studio trial';
       document.getElementById('signup-sub').textContent = '$27/month · 14-day free trial · cancel anytime.';
+      var fln=document.getElementById('founding-license-note'); if(fln) fln.style.display='none';
     }
 
     // Have I Been Pwned — k-anonymity password check. We only ever send the
