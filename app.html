@@ -173,6 +173,29 @@
   @keyframes bloom-pulse{0%,100%{box-shadow:0 6px 20px rgba(167,139,250,.45)}50%{box-shadow:0 6px 32px rgba(255,107,107,.55)}}
 
   @media(max-width:900px){.composer-grid,.voice-grid{grid-template-columns:1fr}aside{width:200px}}
+  /* ===== Phone layout (2026-09-25): sidebar becomes a top strip, tabs scroll sideways, everything reachable ===== */
+  @media(max-width:700px){
+    body{display:block;height:auto;min-height:100vh;overflow:auto}
+    aside{width:100%;flex-direction:column}
+    .side-head{padding:12px 16px}
+    .side-label{padding:10px 16px 4px}
+    #cubicle-list{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+    #cubicle-list .cub-btn{width:auto;flex-shrink:0;padding:8px 14px;border-left:none;border-bottom:3px solid transparent;white-space:nowrap}
+    #cubicle-list .cub-btn.active{border-bottom-color:var(--brand)}
+    .side-foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 16px}
+    .side-foot br{display:none}
+    .side-foot .logout,.side-foot .tour-link{margin-top:0}
+    main{display:block;overflow:visible}
+    .topbar{height:auto !important;flex-wrap:wrap;padding:10px 12px;gap:4px;position:sticky;top:0;z-index:50}
+    .topbar .brand-name{width:100%;margin:0 0 4px}
+    .tab{padding:7px 12px;font-size:.82rem}
+    .content{overflow:visible;padding:14px}
+    .panel [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important}
+    .modal-bg .modal,.modal-wide{max-width:94vw}
+    .tour-box{width:calc(100vw - 32px);left:16px !important}
+    .bloom-fab{right:14px;bottom:14px;width:48px;height:48px}
+    input,select,textarea{font-size:16px}
+  }
 
   /* --- Brand-immersive workspace (2026-09-22) ------------------------------
      Every surface reads from these variables. applyThemeVars() rewrites them
