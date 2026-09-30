@@ -688,6 +688,7 @@ const TEXT_COLORS = ['#1c1b2e','#2a2940','#ffffff','#faf7f2','#6b6880','#26374a'
 let cubicles = [];
 let drafts = [];
 let active = null;
+let lastOptimizedCaption = '';
 let session = null;
 let connections = [];
 let tutorialsEnabled = true;
@@ -983,6 +984,7 @@ async function setBrand(id) {
   document.getElementById('draft-video').value = cached.video || '';
   renderPostingAs();
   document.getElementById('optim-out').style.display = 'none';
+  lastOptimizedCaption = '';
   document.getElementById('publish-out').style.display = 'none';
   renderSidebar();
   renderVoice();
@@ -1967,24 +1969,52 @@ function renderCal() {
     </div>`).join('');
 }
 
+// ---- Bleed Check matcher ----
+// Case-insensitive, whole-word / whole-phrase matching. Checks every OTHER cubicle's
+// name, lexicon and signature phrases. The active brand's own terms are masked out
+// first, so a shared word inside one of your own phrases never false-flags.
+function bleedNorm(t) {
+  return String(t || '').replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"')
+    .trim().replace(/^["'\s]+/, '').replace(/["'\s,.;:!?]+$/, '');
+}
+function bleedRegex(term, flags) {
+  const t = bleedNorm(term);
+  if (!t) return null;
+  const pat = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+  try { return new RegExp('(^|[^A-Za-z0-9])(' + pat + ')(?=[^A-Za-z0-9]|$)', flags || 'i'); } catch (e) { return null; }
+}
+function findCrossBrandLeaks(raw) {
+  const leaks = [];
+  if (!active || !raw) return leaks;
+  let text = String(raw).replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
+  const own = [active.name, ...(active.lexicon || []), ...(active.signature_phrases || [])]
+    .map(bleedNorm).filter(t => t.length >= 2)
+    .sort((a, b) => b.length - a.length);
+  const ownKeys = new Set(own.map(t => t.toLowerCase()));
+  for (const t of own) {
+    const re = bleedRegex(t, 'gi');
+    if (re) text = text.replace(re, (m, pre, hit) => pre + ' '.repeat(hit.length));
+  }
+  const seen = new Set();
+  for (const c of cubicles) {
+    if (!c || c.id === active.id) continue;
+    const terms = [c.name, ...(c.lexicon || []), ...(c.signature_phrases || [])];
+    for (const term of terms) {
+      const t = bleedNorm(term);
+      const key = t.toLowerCase();
+      if (t.length < 3 || ownKeys.has(key) || seen.has(key)) continue;
+      const re = bleedRegex(t);
+      if (re && re.test(text)) { seen.add(key); leaks.push({ term: t, brand: c }); }
+    }
+  }
+  return leaks;
+}
+
 function runBleedCheck(manual) {
   if (!active) return;
   const raw = document.getElementById('draft').value;
   const text = raw.toLowerCase();
-  const words = text.match(/[a-z']+/g) || [];
-  const leaks = [];
-
-  for (const c of cubicles) {
-    if (c.id === active.id) continue;
-    for (const term of (c.lexicon || [])) {
-      if ((active.lexicon || []).includes(term)) continue;
-      if ((active.signature_phrases || []).some(p => p.toLowerCase().split(/[^a-z']+/).includes(term))) continue;
-      if (words.includes(term)) leaks.push({ term, brand: c });
-    }
-    for (const phrase of (c.signature_phrases || [])) {
-      if (phrase && text.includes(phrase.toLowerCase())) leaks.push({ term: '"' + phrase + '"', brand: c, phrase: true });
-    }
-  }
+  const leaks = findCrossBrandLeaks(raw);
   for (const term of (active.never_says || [])) {
     if (term && text.includes(term.toLowerCase())) leaks.push({ term, brand: null });
   }
@@ -2015,15 +2045,34 @@ function runBleedCheck(manual) {
   }
 
   let html = escapeHtml(raw);
-  const flagged = [...new Set(leaks.filter(l => !l.phrase).map(l => l.term.replace(/["]/g,'')))];
-  for (const t of flagged) {
-    try { html = html.replace(new RegExp('\\b(' + t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')\\b', 'gi'), '<mark>$1</mark>'); } catch(e) {}
-  }
-  for (const l of leaks.filter(l => l.phrase)) {
-    const p = l.term.replace(/["]/g,'');
-    try { html = html.replace(new RegExp('(' + p.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi'), '<mark>$1</mark>'); } catch(e) {}
+  const hl = [...new Set(leaks.map(l => escapeHtml(bleedNorm(l.term))).filter(Boolean))]
+    .sort((a, b) => b.length - a.length)
+    .map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+'));
+  if (hl.length) {
+    try {
+      const re = new RegExp('(^|[^A-Za-z0-9])(' + hl.join('|') + ')(?=[^A-Za-z0-9]|$)', 'gi');
+      html = html.replace(re, (m, pre, hit) => pre + '<mark>' + hit + '</mark>');
+    } catch (e) {}
   }
   document.getElementById('preview').innerHTML = html;
+}
+
+function useOptimizedCaption() {
+  if (!lastOptimizedCaption) return;
+  document.getElementById('draft').value = lastOptimizedCaption;
+  runBleedCheck(true);
+  if (typeof checkBlueskyLimit === 'function') checkBlueskyLimit();
+}
+
+// Final gate before anything leaves the building: re-run Bleed Check on the exact
+// text being posted and make the user confirm if another brand's terms are in it.
+function bleedGateOk(raw) {
+  const leaks = findCrossBrandLeaks(raw);
+  if (!leaks.length) return true;
+  runBleedCheck();
+  const list = leaks.map(l => '• "' + l.term + '" (' + l.brand.name + ')').join('\n');
+  return confirm('Bleed Check: this post contains terms from your other brands:\n\n' + list +
+    '\n\nPost it as "' + active.name + '" anyway?');
 }
 
 async function optimize() {
@@ -2036,17 +2085,31 @@ async function optimize() {
 
   try {
     const targets = getSelectedPlatforms();
+    const forBrandId = active.id;
     const { data, error } = await sb.functions.invoke('optimize-caption', {
       body: { draft: raw, tone: active.tone, audience: active.audience, signature_phrases: active.signature_phrases, lexicon: active.lexicon, never_says: active.never_says, brand_name: active.name, target_platforms: targets }
     });
     if (error) throw error;
+    if (!active || active.id !== forBrandId) return; // brand switched mid-request — drop the stale result
     const providerLabel = data.provider === 'gemini' ? 'AI (free tier)' : 'Claude';
     playRewardTone();
     let note = '✨ Optimized via ' + providerLabel + ' for ' + escapeHtml(active.name) + '.';
     if (data.limit) {
       note += ' ' + data.char_count + '/' + data.limit + ' characters' + (data.trimmed ? ' (trimmed to fit)' : '') + '.';
     }
-    out.innerHTML = escapeHtml(data.caption) + '<div class="optim-note">' + note + '</div>';
+    lastOptimizedCaption = data.caption || '';
+    const optLeaks = findCrossBrandLeaks(lastOptimizedCaption).map(l => l.term);
+    for (const t of (Array.isArray(data.leaks) ? data.leaks : [])) {
+      if (!optLeaks.some(x => x.toLowerCase() === String(t).toLowerCase())) optLeaks.push(String(t));
+    }
+    let warn = '';
+    if (optLeaks.length) {
+      playWarningTone();
+      warn = '<div class="optim-note" style="color:#c0392b;font-weight:600">⚠ This rewrite mentions another brand: ' +
+        optLeaks.map(escapeHtml).join(', ') + '. Edit it before using, or run Optimize again.</div>';
+    }
+    out.innerHTML = escapeHtml(lastOptimizedCaption) + '<div class="optim-note">' + note + '</div>' + warn +
+      '<div style="margin-top:10px"><button type="button" class="btn btn-ghost" onclick="useOptimizedCaption()">Use this caption</button></div>';
   } catch (e) {
     const msg = await fnErrorMessage(e);
     out.innerHTML = 'Caption optimization hit an error.' +
@@ -2064,6 +2127,7 @@ async function schedulePost() {
   if (connections.length && !targets.length) { alert('Every platform is unchecked — check at least one under "Publish to" first.'); return; }
   if (targets.includes('tiktok') && !ttValidate()) { alert('Finish the TikTok settings first: ' + ttLastProblem); return; }
 
+  if (!bleedGateOk(raw)) return;
   const schedLabel = (targets.length ? targets : connections.map(a => a.platform)).map(p => PLATFORM_LABEL[p] || p).join(', ') || 'every connected platform';
   if (!confirm(`Schedule this post as "${active.name}" to ${schedLabel}${dateVal ? ' on ' + dateVal : ''}?`)) return;
 
@@ -2095,6 +2159,7 @@ async function publishNow() {
   const targets = getSelectedPlatforms();
   if (connections.length && !targets.length) { alert('Every platform is unchecked — check at least one under "Publish to" first.'); return; }
   if (targets.includes('tiktok') && !ttValidate()) { alert('Finish the TikTok settings first: ' + ttLastProblem); return; }
+  if (!bleedGateOk(raw)) return;
   const targetLabel = (targets.length ? targets : connections.map(a => a.platform)).map(p => PLATFORM_LABEL[p] || p).join(', ') || 'no connected accounts';
   if (!confirm(`Publish this post as "${active.name}" to ${targetLabel}?`)) return;
   const btn = document.getElementById('publish-btn');
