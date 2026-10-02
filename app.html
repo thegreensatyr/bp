@@ -598,6 +598,18 @@
 
 <button class="bloom-fab" onclick="openBloomBreak()" id="bloom-fab-btn" title="Bloom Break — breathing, meditation room, singing bowls &amp; more (opens in a new window)">🌸</button>
 
+<div class="modal-bg" id="fbpick-modal">
+  <div class="modal">
+    <h3>Which Facebook Page is this brand?</h3>
+    <p class="sub" id="fbpick-sub">Choose the one Page this brand should post to.</p>
+    <div id="fbpick-list"></div>
+    <p class="save-note" id="fbpick-msg" style="margin-top:10px"></p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeFbPick()">Cancel</button>
+      <button class="btn btn-brand" id="fbpick-save" onclick="saveFbPick()">Connect this Page</button>
+    </div>
+  </div>
+</div>
 <div class="modal-bg" id="cubicle-modal">
   <div class="modal modal-wide" id="cubicle-modal-inner">
     <h3>New cubicle</h3>
@@ -873,7 +885,16 @@ async function init() {
     setTimeout(() => startTour(), 500);
   }
 
-  if (params.get('connected')) {
+  if (params.get('pick_facebook')) {
+    const pickId = params.get('pick_facebook');
+    window.history.replaceState({}, '', 'app.html');
+    if (cubicles.some(c => c.id === pickId)) {
+      await setBrand(pickId);
+      await openFbPick(pickId);
+    } else {
+      alert('Facebook connected, but that brand could not be found. Open the brand and connect Facebook again.');
+    }
+  } else if (params.get('connected')) {
     alert('Connected: ' + params.get('connected'));
     window.history.replaceState({}, '', 'app.html');
     await renderConnections();
@@ -2249,8 +2270,61 @@ function connectMeta() {
   const scopes = ['pages_show_list', 'pages_read_engagement', 'pages_manage_posts', 'instagram_basic', 'instagram_content_publish'].join(',');
   const state = active.id;
   const url = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${APP_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(scopes)}&state=${encodeURIComponent(state)}&response_type=code`;
-  alert('You\'ll be sent to Facebook — please grant access to ONLY the one Page that belongs to "' + active.name + '" when it asks which Pages to connect. That keeps this cubicle\'s connection separate from your other brands.');
+  alert('You\'ll be sent to Facebook. When it asks which Pages to allow, include the Page for "' + active.name + '". If you allow more than one Page, BrandParent will ask which one belongs to this brand.');
   window.location.href = url;
+}
+
+let fbPickCubicle = null;
+async function openFbPick(cubicleId) {
+  fbPickCubicle = cubicleId;
+  const list = document.getElementById('fbpick-list');
+  const msg = document.getElementById('fbpick-msg');
+  const save = document.getElementById('fbpick-save');
+  msg.textContent = '';
+  list.innerHTML = '<p class="save-note">Loading your Pages…</p>';
+  save.disabled = true;
+  document.getElementById('fbpick-modal').classList.add('show');
+  try {
+    const { data, error } = await sb.functions.invoke('meta-pages', { body: { action: 'list', cubicle_id: cubicleId } });
+    if (error || !data || data.error) throw new Error((data && (data.message || data.error)) || (error && error.message) || 'unknown error');
+    document.getElementById('fbpick-sub').textContent = 'Choose the one Page "' + (data.cubicle_name || active.name) + '" should post to.';
+    if (!data.pages || !data.pages.length) {
+      list.innerHTML = '<p class="save-note">That Page list expired. Close this and connect Facebook again.</p>';
+      return;
+    }
+    list.innerHTML = data.pages.map((p, i) => `
+      <label class="bleed-item" style="display:flex;align-items:center;gap:10px;cursor:pointer">
+        <input type="radio" name="fbpick" value="${escapeHtml(p.page_id)}" ${i === 0 && data.pages.length === 1 ? 'checked' : ''} onchange="document.getElementById('fbpick-save').disabled=false">
+        <span><b>${escapeHtml(p.page_name || p.page_id)}</b>${p.ig_username ? ' <span class="save-note">+ Instagram @' + escapeHtml(p.ig_username) + '</span>' : ''}</span>
+      </label>`).join('');
+    save.disabled = !list.querySelector('input:checked');
+  } catch (e) {
+    list.innerHTML = '';
+    msg.textContent = 'Could not load your Pages: ' + e.message;
+  }
+}
+function closeFbPick() {
+  document.getElementById('fbpick-modal').classList.remove('show');
+  fbPickCubicle = null;
+}
+async function saveFbPick() {
+  const picked = document.querySelector('#fbpick-list input[name="fbpick"]:checked');
+  const msg = document.getElementById('fbpick-msg');
+  const save = document.getElementById('fbpick-save');
+  if (!picked || !fbPickCubicle) { msg.textContent = 'Pick a Page first.'; return; }
+  save.disabled = true; save.textContent = 'Connecting…';
+  try {
+    const { data, error } = await sb.functions.invoke('meta-pages', { body: { action: 'select', cubicle_id: fbPickCubicle, page_id: picked.value } });
+    if (error || !data || !data.ok) throw new Error((data && (data.message || data.error)) || (error && error.message) || 'unknown error');
+    closeFbPick();
+    await renderConnections();
+    playRewardTone();
+    alert('Connected: "' + active.name + '" now posts to the Facebook Page "' + data.page_name + '"' + (data.instagram ? ' and Instagram @' + data.instagram : '') + '.');
+  } catch (e) {
+    msg.textContent = 'Could not connect that Page: ' + e.message;
+  } finally {
+    save.disabled = false; save.textContent = 'Connect this Page';
+  }
 }
 
 const PLATFORM_LABEL = { facebook: 'Facebook Page', instagram: 'Instagram', bluesky: 'Bluesky', linkedin: 'LinkedIn', tiktok: 'TikTok', pinterest: 'Pinterest' };
