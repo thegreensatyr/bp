@@ -521,7 +521,7 @@
               <div id="discord-limit-warn" style="display:none;margin-top:8px;font-size:.8rem;font-weight:600;color:var(--muted)"></div>
 
               <div class="step-label"><span class="step-n">2</span> Write it <span class="step-hint">Bleed Check watches as you type</span></div>
-              <textarea id="draft" placeholder="Write for this brand… the Bleed Check watches as you type." oninput="runBleedCheck(); checkBlueskyLimit()"></textarea>
+              <textarea id="draft" placeholder="Write for this brand… the Bleed Check watches as you type." oninput="runBleedCheck('typing'); checkBlueskyLimit()"></textarea>
 
               <!-- Bleed Check sits directly under the editor so results never land off-screen -->
               <div class="bleed-box" id="bleed-box">
@@ -1034,6 +1034,84 @@ function playTone(freqs, durations, type, gainPeak) {
 
 function playWarningTone() { playTone([392, 311], [0.14, 0.18], 'triangle', 0.12); }
 function playRewardTone() { playTone([659, 988], [0.11, 0.22], 'sine', 0.13); }
+
+// --- Bleed Check sounds ------------------------------------------------------
+// Original sounds, synthesized at runtime (no files to host). Each takes any BaseAudioContext, so the
+// same code renders them offline for export. alert = soft two-tone descending chime (F5 -> D5);
+// clean = airy "angelic" swell: formant-filtered choir pad + bell sparkle + reverb, about 1.4 s.
+function bleedRng(seed) { let x = seed >>> 0; return () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296 * 2 - 1; }; }
+const BLEED_SOUNDS = {
+  alert(ctx, out, t0) {
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2400; lp.Q.value = 0.4;
+    const bus = ctx.createGain(); bus.gain.value = 0.9; lp.connect(bus); bus.connect(out);
+    [[698.46, 0, 0.24], [587.33, 0.16, 0.42]].forEach(([f, dt, dur]) => {
+      const t = t0 + dt, g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.3, t + 0.014);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      g.connect(lp);
+      [[1, 'triangle', 1], [2, 'sine', 0.22], [3.01, 'sine', 0.05]].forEach(([m, type, a]) => {
+        const o = ctx.createOscillator(), ga = ctx.createGain();
+        o.type = type; o.frequency.value = f * m; ga.gain.value = a;
+        o.connect(ga); ga.connect(g); o.start(t); o.stop(t + dur + 0.05);
+      });
+    });
+  },
+  clean(ctx, out, t0) {
+    const END = t0 + 1.45, sr = ctx.sampleRate, rnd = bleedRng(20261005);
+    const dry = ctx.createGain(); dry.gain.value = 0.8; dry.connect(out);
+    const conv = ctx.createConvolver(), irLen = Math.floor(sr * 0.8), ir = ctx.createBuffer(2, irLen, sr);
+    for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = 0; i < irLen; i++) d[i] = rnd() * Math.pow(1 - i / irLen, 4); }
+    conv.buffer = ir; const wet = ctx.createGain(); wet.gain.value = 0.28; conv.connect(wet); wet.connect(out);
+    const bus = ctx.createGain(); bus.gain.setValueAtTime(1, t0); bus.gain.setValueAtTime(1, END - 0.25); bus.gain.linearRampToValueAtTime(0, END);
+    bus.connect(dry); bus.connect(conv);
+    // choir-ish pad: detuned saws through "ah" formants, gentle swell
+    const pad = ctx.createGain();
+    pad.gain.setValueAtTime(0.0001, t0); pad.gain.exponentialRampToValueAtTime(0.05, t0 + 0.32);
+    pad.gain.setValueAtTime(0.05, t0 + 0.5); pad.gain.exponentialRampToValueAtTime(0.0001, END - 0.05);
+    const padLp = ctx.createBiquadFilter(); padLp.type = 'lowpass'; padLp.frequency.value = 3200; padLp.connect(bus);
+    [[800, 5, 1], [1150, 7, 0.55], [2900, 10, 0.18]].forEach(([f, q, a]) => {
+      const bp = ctx.createBiquadFilter(), g = ctx.createGain(); bp.type = 'bandpass'; bp.frequency.value = f; bp.Q.value = q; g.gain.value = a * 3;
+      pad.connect(bp); bp.connect(g); g.connect(padLp);
+    });
+    const lfo = ctx.createOscillator(), lfoG = ctx.createGain(); lfo.frequency.value = 5.2; lfoG.gain.value = 6; lfo.connect(lfoG); lfo.start(t0); lfo.stop(END);
+    [523.25, 659.25, 783.99, 1046.5].forEach(f => [-8, 8].forEach(det => {
+      const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = det; lfoG.connect(o.detune);
+      o.connect(pad); o.start(t0); o.stop(END);
+    }));
+    // bell sparkle: rising C6 E6 G6 C7 E7
+    [1046.5, 1318.5, 1568, 2093, 2637].forEach((f, i) => {
+      const t = t0 + 0.04 + i * 0.07, g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.07 - i * 0.008, t + 0.006);
+      g.gain.exponentialRampToValueAtTime(0.0001, Math.min(END, t + 0.95)); g.connect(bus);
+      [[1, 1], [2.76, 0.18]].forEach(([m, a]) => {
+        const o = ctx.createOscillator(), ga = ctx.createGain(); o.type = 'sine'; o.frequency.value = f * m; ga.gain.value = a;
+        o.connect(ga); ga.connect(g); o.start(t); o.stop(END);
+      });
+    });
+    // air: soft high noise shimmer
+    const nLen = Math.floor(sr * 1.45), nb = ctx.createBuffer(1, nLen, sr), nd = nb.getChannelData(0);
+    for (let i = 0; i < nLen; i++) nd[i] = rnd();
+    const ns = ctx.createBufferSource(), hp = ctx.createBiquadFilter(), ng = ctx.createGain();
+    ns.buffer = nb; hp.type = 'highpass'; hp.frequency.value = 7000;
+    ng.gain.setValueAtTime(0.0001, t0); ng.gain.exponentialRampToValueAtTime(0.012, t0 + 0.4); ng.gain.exponentialRampToValueAtTime(0.0001, END - 0.1);
+    ns.connect(hp); hp.connect(ng); ng.connect(bus); ns.start(t0); ns.stop(END);
+  }
+};
+// Autoplay rules: never start audio before the user has interacted with the page.
+let audioUnlocked = false;
+['pointerdown', 'keydown', 'touchstart'].forEach(ev => window.addEventListener(ev, e => {
+  if (audioUnlocked || !e.isTrusted) return;
+  audioUnlocked = true;
+  if (soundEnabled) { try { getAudioCtx(); } catch (e) {} }
+}, { capture: true, passive: true }));
+function playBleedSound(name) {
+  if (!soundEnabled) return;
+  if (!audioUnlocked) return;
+  try { const ctx = getAudioCtx(); BLEED_SOUNDS[name](ctx, ctx.destination, ctx.currentTime + 0.01); } catch (e) { /* fail silently */ }
+}
+function playBleedAlert() { playBleedSound('alert'); }
+function playBleedClean() { playBleedSound('clean'); }
 
 function toggleSound() {
   soundEnabled = !soundEnabled;
@@ -2290,8 +2368,15 @@ function findCrossBrandLeaks(raw) {
   return leaks;
 }
 
-function runBleedCheck(manual) {
+// mode: true = the user clicked Run Bleed Check (always plays the result sound);
+// 'typing' = live check from the composer (plays only when the state flips clean <-> leak);
+// anything else (brand switch, load, save) stays silent.
+let bleedLastBrandId = null;
+function runBleedCheck(mode) {
   if (!active) return;
+  const manual = mode === true;
+  const sameBrand = bleedLastBrandId === active.id;
+  bleedLastBrandId = active.id;
   const raw = document.getElementById('draft').value;
   const text = raw.toLowerCase();
   const leaks = findCrossBrandLeaks(raw);
@@ -2316,12 +2401,12 @@ function runBleedCheck(manual) {
       ? `<div class="bleed-item"><b>${escapeHtml(l.term)}</b> belongs to <span class="from" style="background:${l.brand.color}">${escapeHtml(l.brand.name)}</span></div>`
       : `<div class="bleed-item"><b>${escapeHtml(l.term)}</b> is on <b>${escapeHtml(active.name)}</b>'s never-say list <span class="from" style="background:#c0392b">blocked term</span></div>`
     ).join('');
-    if (!wasDirty) playWarningTone();
+    if (manual || (mode === 'typing' && sameBrand && !wasDirty)) playBleedAlert();
   } else {
     status.className = 'bleed-status bleed-clean';
     status.textContent = '✓ Clean — this reads as ' + active.name;
     list.innerHTML = '<p class="bleed-empty">No leaks. Ship it.</p>';
-    if (manual) playRewardTone();
+    if (manual || (mode === 'typing' && sameBrand && wasDirty)) playBleedClean();
   }
 
   let html = escapeHtml(raw);
@@ -2383,7 +2468,7 @@ async function optimize() {
     }
     let warn = '';
     if (optLeaks.length) {
-      playWarningTone();
+      playBleedAlert();
       warn = '<div class="optim-note" style="color:#c0392b;font-weight:600">⚠ This rewrite mentions another brand: ' +
         optLeaks.map(escapeHtml).join(', ') + '. Edit it before using, or run Optimize again.</div>';
     }

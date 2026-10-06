@@ -71,6 +71,12 @@
 
   .optim-out{margin-top:14px;background:var(--cream);border-radius:10px;padding:14px;font-size:.9rem;line-height:1.6;display:none;white-space:pre-wrap}
   .optim-note{font-size:.72rem;color:var(--muted);margin-top:8px}
+  .spark{color:var(--teal-deep,#1E9C93);font-weight:700}
+  .sched-time{display:none}
+  .action-bar.has-date .sched-time{display:block}
+  .action-bar.has-date{gap:8px}
+  .action-bar.has-date .step-n{display:none}
+  .action-bar.has-date .sched-date{padding:8px 8px}
 
   .voice-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
   .voice-grid .card.full{grid-column:1/-1}
@@ -437,6 +443,9 @@
     .action-bar .sched-date{flex:0 1 128px;padding:8px 6px;font-size:14px}
     .action-bar .btn{flex:1 1 auto;padding:10px 8px;font-size:.82rem;white-space:nowrap}
     .action-bar #publish-btn{padding:10px 10px;font-size:.84rem}
+    .action-bar.has-date{flex-wrap:wrap}
+    .action-bar.has-date .sched-date{flex:1 1 40%}
+    .action-bar.has-date .btn{flex:1 1 40%}
     .bloom-fab{bottom:84px}
   }
 </style>
@@ -512,7 +521,7 @@
               <div id="discord-limit-warn" style="display:none;margin-top:8px;font-size:.8rem;font-weight:600;color:var(--muted)"></div>
 
               <div class="step-label"><span class="step-n">2</span> Write it <span class="step-hint">Bleed Check watches as you type</span></div>
-              <textarea id="draft" placeholder="Write for this brand… the Bleed Check watches as you type." oninput="runBleedCheck(); checkBlueskyLimit()"></textarea>
+              <textarea id="draft" placeholder="Write for this brand… the Bleed Check watches as you type." oninput="runBleedCheck('typing'); checkBlueskyLimit()"></textarea>
 
               <!-- Bleed Check sits directly under the editor so results never land off-screen -->
               <div class="bleed-box" id="bleed-box">
@@ -520,7 +529,7 @@
                   <div class="bleed-status bleed-clean" id="bleed-status">✓ Clean — no brand contamination</div>
                   <div class="bleed-actions">
                     <button class="btn btn-ghost btn-sm" onclick="runBleedCheck(true)">Run Bleed Check</button>
-                    <button class="btn btn-coral btn-sm" onclick="optimize()">✨ Optimize</button>
+                    <button class="btn btn-coral btn-sm" onclick="optimize()"><span class="spark" aria-hidden="true">✦</span> Optimize</button>
                   </div>
                 </div>
                 <div id="bleed-list"><p class="bleed-empty">Flagged terms from other cubicles will appear here.</p></div>
@@ -529,7 +538,7 @@
                   <div class="preview" id="preview">Nothing yet.</div>
                 </div>
                 <div class="optim-out" id="optim-out"></div>
-                <div class="demo-note" id="claude-note">✨ Caption optimization is live — running on Claude.</div>
+                <div class="demo-note" id="claude-note"><span class="spark" aria-hidden="true">✦</span> Optimize rewrites your draft in this brand's voice.</div>
               </div>
 
               <details class="fold media-fold" open>
@@ -582,7 +591,8 @@
               <!-- Send bar: sticks to the bottom of the screen while you're anywhere in the composer -->
               <div class="action-bar">
                 <span class="step-n">4</span>
-                <input type="date" class="sched-date" id="sched-date" aria-label="Schedule date">
+                <input type="date" class="sched-date" id="sched-date" aria-label="Schedule date" onchange="schedDateChanged()">
+                <input type="time" class="sched-date sched-time" id="sched-time" value="09:00" step="300" aria-label="Schedule time (your local time)" title="Your local time">
                 <button class="btn btn-ghost" onclick="schedulePost()">🗓 Schedule</button>
                 <button class="btn btn-brand" onclick="publishNow()" id="publish-btn">🚀 Publish now</button>
               </div>
@@ -1023,6 +1033,84 @@ function playTone(freqs, durations, type, gainPeak) {
 
 function playWarningTone() { playTone([392, 311], [0.14, 0.18], 'triangle', 0.12); }
 function playRewardTone() { playTone([659, 988], [0.11, 0.22], 'sine', 0.13); }
+
+// --- Bleed Check sounds ------------------------------------------------------
+// Original sounds, synthesized at runtime (no files to host). Each takes any BaseAudioContext, so the
+// same code renders them offline for export. alert = soft two-tone descending chime (F5 -> D5);
+// clean = airy "angelic" swell: formant-filtered choir pad + bell sparkle + reverb, about 1.4 s.
+function bleedRng(seed) { let x = seed >>> 0; return () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296 * 2 - 1; }; }
+const BLEED_SOUNDS = {
+  alert(ctx, out, t0) {
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2400; lp.Q.value = 0.4;
+    const bus = ctx.createGain(); bus.gain.value = 0.9; lp.connect(bus); bus.connect(out);
+    [[698.46, 0, 0.24], [587.33, 0.16, 0.42]].forEach(([f, dt, dur]) => {
+      const t = t0 + dt, g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.3, t + 0.014);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      g.connect(lp);
+      [[1, 'triangle', 1], [2, 'sine', 0.22], [3.01, 'sine', 0.05]].forEach(([m, type, a]) => {
+        const o = ctx.createOscillator(), ga = ctx.createGain();
+        o.type = type; o.frequency.value = f * m; ga.gain.value = a;
+        o.connect(ga); ga.connect(g); o.start(t); o.stop(t + dur + 0.05);
+      });
+    });
+  },
+  clean(ctx, out, t0) {
+    const END = t0 + 1.45, sr = ctx.sampleRate, rnd = bleedRng(20261005);
+    const dry = ctx.createGain(); dry.gain.value = 0.8; dry.connect(out);
+    const conv = ctx.createConvolver(), irLen = Math.floor(sr * 0.8), ir = ctx.createBuffer(2, irLen, sr);
+    for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = 0; i < irLen; i++) d[i] = rnd() * Math.pow(1 - i / irLen, 4); }
+    conv.buffer = ir; const wet = ctx.createGain(); wet.gain.value = 0.28; conv.connect(wet); wet.connect(out);
+    const bus = ctx.createGain(); bus.gain.setValueAtTime(1, t0); bus.gain.setValueAtTime(1, END - 0.25); bus.gain.linearRampToValueAtTime(0, END);
+    bus.connect(dry); bus.connect(conv);
+    // choir-ish pad: detuned saws through "ah" formants, gentle swell
+    const pad = ctx.createGain();
+    pad.gain.setValueAtTime(0.0001, t0); pad.gain.exponentialRampToValueAtTime(0.05, t0 + 0.32);
+    pad.gain.setValueAtTime(0.05, t0 + 0.5); pad.gain.exponentialRampToValueAtTime(0.0001, END - 0.05);
+    const padLp = ctx.createBiquadFilter(); padLp.type = 'lowpass'; padLp.frequency.value = 3200; padLp.connect(bus);
+    [[800, 5, 1], [1150, 7, 0.55], [2900, 10, 0.18]].forEach(([f, q, a]) => {
+      const bp = ctx.createBiquadFilter(), g = ctx.createGain(); bp.type = 'bandpass'; bp.frequency.value = f; bp.Q.value = q; g.gain.value = a * 3;
+      pad.connect(bp); bp.connect(g); g.connect(padLp);
+    });
+    const lfo = ctx.createOscillator(), lfoG = ctx.createGain(); lfo.frequency.value = 5.2; lfoG.gain.value = 6; lfo.connect(lfoG); lfo.start(t0); lfo.stop(END);
+    [523.25, 659.25, 783.99, 1046.5].forEach(f => [-8, 8].forEach(det => {
+      const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = det; lfoG.connect(o.detune);
+      o.connect(pad); o.start(t0); o.stop(END);
+    }));
+    // bell sparkle: rising C6 E6 G6 C7 E7
+    [1046.5, 1318.5, 1568, 2093, 2637].forEach((f, i) => {
+      const t = t0 + 0.04 + i * 0.07, g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.07 - i * 0.008, t + 0.006);
+      g.gain.exponentialRampToValueAtTime(0.0001, Math.min(END, t + 0.95)); g.connect(bus);
+      [[1, 1], [2.76, 0.18]].forEach(([m, a]) => {
+        const o = ctx.createOscillator(), ga = ctx.createGain(); o.type = 'sine'; o.frequency.value = f * m; ga.gain.value = a;
+        o.connect(ga); ga.connect(g); o.start(t); o.stop(END);
+      });
+    });
+    // air: soft high noise shimmer
+    const nLen = Math.floor(sr * 1.45), nb = ctx.createBuffer(1, nLen, sr), nd = nb.getChannelData(0);
+    for (let i = 0; i < nLen; i++) nd[i] = rnd();
+    const ns = ctx.createBufferSource(), hp = ctx.createBiquadFilter(), ng = ctx.createGain();
+    ns.buffer = nb; hp.type = 'highpass'; hp.frequency.value = 7000;
+    ng.gain.setValueAtTime(0.0001, t0); ng.gain.exponentialRampToValueAtTime(0.012, t0 + 0.4); ng.gain.exponentialRampToValueAtTime(0.0001, END - 0.1);
+    ns.connect(hp); hp.connect(ng); ng.connect(bus); ns.start(t0); ns.stop(END);
+  }
+};
+// Autoplay rules: never start audio before the user has interacted with the page.
+let audioUnlocked = false;
+['pointerdown', 'keydown', 'touchstart'].forEach(ev => window.addEventListener(ev, e => {
+  if (audioUnlocked || !e.isTrusted) return;
+  audioUnlocked = true;
+  if (soundEnabled) { try { getAudioCtx(); } catch (e) {} }
+}, { capture: true, passive: true }));
+function playBleedSound(name) {
+  if (!soundEnabled) return;
+  if (!audioUnlocked) return;
+  try { const ctx = getAudioCtx(); BLEED_SOUNDS[name](ctx, ctx.destination, ctx.currentTime + 0.01); } catch (e) { /* fail silently */ }
+}
+function playBleedAlert() { playBleedSound('alert'); }
+function playBleedClean() { playBleedSound('clean'); }
 
 function toggleSound() {
   soundEnabled = !soundEnabled;
@@ -2232,7 +2320,7 @@ function renderCal() {
   if (!scheduled.length) { list.innerHTML = '<p class="cal-empty">Nothing scheduled.</p>'; return; }
   list.innerHTML = scheduled.map(d => `
     <div class="cal-day">
-      <span class="d">${d.scheduled_for ? new Date(d.scheduled_for).toLocaleDateString(undefined,{month:'short',day:'numeric'}) : 'No date'}</span>
+      <span class="d">${d.scheduled_for ? new Date(d.scheduled_for).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : 'No date'}</span>
       <span class="t">${escapeHtml(d.content.length > 70 ? d.content.slice(0,70)+'…' : d.content)}</span>
       <span class="tag" style="background:${active.color}">${(active.icon_initials||'').toUpperCase()}</span>
     </div>`).join('');
@@ -2279,8 +2367,15 @@ function findCrossBrandLeaks(raw) {
   return leaks;
 }
 
-function runBleedCheck(manual) {
+// mode: true = the user clicked Run Bleed Check (always plays the result sound);
+// 'typing' = live check from the composer (plays only when the state flips clean <-> leak);
+// anything else (brand switch, load, save) stays silent.
+let bleedLastBrandId = null;
+function runBleedCheck(mode) {
   if (!active) return;
+  const manual = mode === true;
+  const sameBrand = bleedLastBrandId === active.id;
+  bleedLastBrandId = active.id;
   const raw = document.getElementById('draft').value;
   const text = raw.toLowerCase();
   const leaks = findCrossBrandLeaks(raw);
@@ -2305,12 +2400,12 @@ function runBleedCheck(manual) {
       ? `<div class="bleed-item"><b>${escapeHtml(l.term)}</b> belongs to <span class="from" style="background:${l.brand.color}">${escapeHtml(l.brand.name)}</span></div>`
       : `<div class="bleed-item"><b>${escapeHtml(l.term)}</b> is on <b>${escapeHtml(active.name)}</b>'s never-say list <span class="from" style="background:#c0392b">blocked term</span></div>`
     ).join('');
-    if (!wasDirty) playWarningTone();
+    if (manual || (mode === 'typing' && sameBrand && !wasDirty)) playBleedAlert();
   } else {
     status.className = 'bleed-status bleed-clean';
     status.textContent = '✓ Clean — this reads as ' + active.name;
     list.innerHTML = '<p class="bleed-empty">No leaks. Ship it.</p>';
-    if (manual) playRewardTone();
+    if (manual || (mode === 'typing' && sameBrand && wasDirty)) playBleedClean();
   }
 
   let html = escapeHtml(raw);
@@ -2360,9 +2455,8 @@ async function optimize() {
     });
     if (error) throw error;
     if (!active || active.id !== forBrandId) return; // brand switched mid-request — drop the stale result
-    const providerLabel = data.provider === 'gemini' ? 'AI (free tier)' : 'Claude';
     playRewardTone();
-    let note = '✨ Optimized via ' + providerLabel + ' for ' + escapeHtml(active.name) + '.';
+    let note = '<span class="spark" aria-hidden="true">✦</span> Optimized in ' + escapeHtml(active.name) + '\'s voice.';
     if (data.limit) {
       note += ' ' + data.char_count + '/' + data.limit + ' characters' + (data.trimmed ? ' (trimmed to fit)' : '') + '.';
     }
@@ -2373,7 +2467,7 @@ async function optimize() {
     }
     let warn = '';
     if (optLeaks.length) {
-      playWarningTone();
+      playBleedAlert();
       warn = '<div class="optim-note" style="color:#c0392b;font-weight:600">⚠ This rewrite mentions another brand: ' +
         optLeaks.map(escapeHtml).join(', ') + '. Edit it before using, or run Optimize again.</div>';
     }
@@ -2386,10 +2480,36 @@ async function optimize() {
   }
 }
 
+// The date picker gives "YYYY-MM-DD" and the time picker "HH:MM". new Date("YYYY-MM-DD") would read that as
+// midnight UTC (the evening before in US time zones), so build the Date from parts: that's the user's local time.
+// toISOString() then stores the right instant in the timestamptz column, which the cron compares against now().
+const SCHED_DEFAULT_TIME = '09:00';
+function schedWhen() {
+  const d = document.getElementById('sched-date').value;
+  if (!d) return null;
+  const t = document.getElementById('sched-time').value || SCHED_DEFAULT_TIME;
+  const [y, m, day] = d.split('-').map(Number);
+  const [hh, mm] = t.split(':').map(Number);
+  const when = new Date(y, m - 1, day, hh || 0, mm || 0, 0, 0);
+  return isNaN(when.getTime()) ? null : when;
+}
+function schedDateChanged() {
+  const dateEl = document.getElementById('sched-date');
+  const timeEl = document.getElementById('sched-time');
+  dateEl.closest('.action-bar').classList.toggle('has-date', !!dateEl.value);
+  // Picked today but the default time already passed? Suggest the next full hour instead.
+  const when = schedWhen();
+  if (when && when.getTime() < Date.now() && timeEl.value === SCHED_DEFAULT_TIME) {
+    const next = new Date(); next.setMinutes(0, 0, 0); next.setHours(next.getHours() + 1);
+    if (next.toDateString() === when.toDateString()) timeEl.value = String(next.getHours()).padStart(2, '0') + ':00';
+  }
+}
+
 async function schedulePost() {
   const raw = document.getElementById('draft').value.trim();
   if (!raw) { alert('Nothing to schedule yet — write a draft first.'); return; }
   const dateVal = document.getElementById('sched-date').value;
+  const when = schedWhen();
   const imageUrl = document.getElementById('draft-image').value.trim();
   const videoUrl = document.getElementById('draft-video').value.trim();
   const targets = getSelectedPlatforms();
@@ -2398,7 +2518,9 @@ async function schedulePost() {
 
   if (!bleedGateOk(raw)) return;
   const schedLabel = (targets.length ? targets : connections.map(a => a.platform)).map(p => PLATFORM_LABEL[p] || p).join(', ') || 'every connected platform';
-  if (!confirm(`Schedule this post as "${active.name}" to ${schedLabel}${dateVal ? ' on ' + dateVal : ''}?`)) return;
+  const whenLabel = when ? when.toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }) : '';
+  if (when && when.getTime() < Date.now() && !confirm(`${whenLabel} has already passed, so this would publish within 5 minutes. Schedule it anyway?`)) return;
+  if (!confirm(`Schedule this post as "${active.name}" to ${schedLabel}${when ? ' for ' + whenLabel : ''}?`)) return;
 
   const { error } = await sb.from('drafts').insert({
     user_id: session.user.id,
@@ -2407,7 +2529,7 @@ async function schedulePost() {
     image_url: imageUrl || null,
     video_url: videoUrl || null,
     status: 'scheduled',
-    scheduled_for: dateVal ? new Date(dateVal).toISOString() : null,
+    scheduled_for: when ? when.toISOString() : null,
     target_platforms: targets.length ? targets : null,
     platform_options: buildPlatformOptions(targets)
   });
