@@ -1,5 +1,15 @@
-// Shared TikTok Content Posting helpers (2026-09-23).
-// Used by publish-post, cron-publish-scheduled and tiktok-creator-info.
+// Shared TikTok Content Posting helpers (2026-09-23; media uploads 2026-10-06).
+// Used by publish-post and cron-publish-scheduled (tiktok-creator-info still has
+// its own copy of the token/creator-info helpers).
+//  - Refreshes the ~24h access token with the stored refresh token.
+//  - Queries creator_info before every post (TikTok audit requirement).
+//  - Photos: re-encoded to JPEG, copied into public bucket `tiktok-media`, and
+//    served to TikTok from the verified domain https://brandparent.app/tt-media/...
+//    (Netlify _redirects proxies that path to Supabase Storage).
+//  - Videos: pushed straight to TikTok with FILE_UPLOAD (no domain needed).
+//  - Media comes from DraftMedia (uploaded files in `post-media`, or the legacy
+//    image_url / video_url fields). Up to 4 photos become one photo post.
+//  - Uses the creator's choices saved on the draft (platform_options.tiktok).
 import { Image } from "https://deno.land/x/imagescript@1.3.0/mod.ts";
 
 const API = "https://open.tiktokapis.com/v2";
@@ -10,8 +20,8 @@ export type TikTokOptions = {
   disable_comment?: boolean;
   disable_duet?: boolean;
   disable_stitch?: boolean;
-  brand_content_toggle?: boolean;
-  brand_organic_toggle?: boolean;
+  brand_content_toggle?: boolean; // "Branded content" (paid partnership)
+  brand_organic_toggle?: boolean; // "Your brand"
 };
 
 const FRIENDLY: Record<string, string> = {
@@ -36,11 +46,12 @@ export function tiktokErr(code: string, raw: unknown): Error {
   return new Error(`tiktok_${code || "error"}: ${friendly || "TikTok rejected the post."} ${friendly ? "" : JSON.stringify(raw).slice(0, 300)}`.trim());
 }
 
+// ---------- token ----------
 export async function freshTikTokToken(svc: any, acct: any): Promise<string> {
   const exp = acct.token_expires_at ? Date.parse(acct.token_expires_at) : 0;
   if (exp && exp - Date.now() > 5 * 60 * 1000) return acct.access_token;
   if (!acct.refresh_token) {
-    if (!exp) return acct.access_token;
+    if (!exp) return acct.access_token; // unknown expiry, try it
     throw new Error("tiktok_access_token_invalid: " + FRIENDLY.access_token_invalid);
   }
   const body = new URLSearchParams({
@@ -72,6 +83,7 @@ export async function freshTikTokToken(svc: any, acct: any): Promise<string> {
   return data.access_token;
 }
 
+// ---------- creator info ----------
 export type CreatorInfo = {
   creator_avatar_url?: string;
   creator_username?: string;
@@ -105,10 +117,8 @@ export async function tiktokCreatorInfo(token: string): Promise<CreatorInfo> {
   };
 }
 
-async function stagePhoto(svc: any, imageUrl: string, key: string): Promise<string> {
-  const r = await fetch(imageUrl);
-  if (!r.ok) throw new Error("tiktok_image_fetch_error: couldn't download this draft's image (" + r.status + ").");
-  const bytes = new Uint8Array(await r.arrayBuffer());
+// ---------- media ----------
+export async function stagePhoto(svc: any, bytes: Uint8Array, contentType: string, key: string, idx = 0): Promise<string> {
   let out: Uint8Array;
   try {
     const img: any = await Image.decode(bytes);
@@ -116,13 +126,12 @@ async function stagePhoto(svc: any, imageUrl: string, key: string): Promise<stri
     if (img.height > 1920) img.resize(Image.RESIZE_AUTO, 1920);
     out = await img.encodeJPEG(90);
   } catch (e) {
-    const ct = r.headers.get("content-type") || "";
-    if (!/jpe?g|webp/i.test(ct)) {
+    if (!/jpe?g|webp/i.test(contentType || "")) {
       throw new Error("tiktok_image_format: TikTok needs a JPG or WEBP image and this one couldn't be converted (" + String(e).slice(0, 120) + ").");
     }
     out = bytes;
   }
-  const path = `${key}/${Date.now()}.jpg`;
+  const path = `${key}/${Date.now()}-${idx}.jpg`;
   const { error } = await svc.storage.from("tiktok-media").upload(path, out, { contentType: "image/jpeg", upsert: true });
   if (error) throw new Error("tiktok_media_stage_error: " + String(error.message || error));
   return TT_MEDIA_BASE + path;
@@ -146,14 +155,20 @@ async function pollStatus(token: string, publishId: string, maxMs = 25000): Prom
   return { status: last?.status || "PROCESSING", fail_reason: last?.fail_reason, post_ids: last?.publicaly_available_post_id };
 }
 
+// ---------- publish ----------
+export type TikTokMediaInput =
+  | { video: () => Promise<{ bytes: Uint8Array; contentType: string }> }
+  | { images: Array<() => Promise<{ bytes: Uint8Array; contentType: string }>> };
+
 export async function publishToTikTokFull(
   svc: any,
   acct: any,
   draft: any,
+  media: TikTokMediaInput | null,
 ): Promise<{ publish_id: string; status: string; note?: string }> {
   const opts: TikTokOptions = (draft.platform_options && draft.platform_options.tiktok) || {};
   const caption = String(draft.content || "").trim();
-  if (!draft.image_url && !draft.video_url) {
+  if (!media || ("images" in media && media.images.length === 0)) {
     throw new Error("tiktok_needs_media: TikTok posts need a photo or video — add one to this draft first.");
   }
   if (!opts.privacy_level) {
@@ -174,17 +189,17 @@ export async function publishToTikTokFull(
 
   let publishId = "";
 
-  if (draft.video_url) {
-    const vr = await fetch(draft.video_url);
-    if (!vr.ok) throw new Error("tiktok_video_fetch_error: couldn't download this draft's video (" + vr.status + ").");
-    const bytes = new Uint8Array(await vr.arrayBuffer());
+  if ("video" in media) {
+    let bytes: Uint8Array, ct: string;
+    try { ({ bytes, contentType: ct } = await media.video()); }
+    catch (e) { throw new Error("tiktok_video_fetch_error: couldn't read this draft's video (" + String((e as Error)?.message || e).slice(0, 200) + ")."); }
     const size = bytes.byteLength;
     if (size > 250 * 1024 * 1024) throw new Error("tiktok_video_too_large: keep TikTok videos under 250MB.");
     const MIN = 5 * 1024 * 1024, MAXC = 64 * 1024 * 1024;
     let chunkSize = size, total = 1;
     if (size > MAXC) {
       chunkSize = 32 * 1024 * 1024;
-      total = Math.floor(size / chunkSize);
+      total = Math.floor(size / chunkSize); // last chunk absorbs remainder (allowed up to 128MB)
     }
     if (size < MIN) { chunkSize = size; total = 1; }
     const initResp = await fetch(`${API}/post/publish/video/init/`, {
@@ -206,10 +221,9 @@ export async function publishToTikTokFull(
     if (!initResp.ok || init?.error?.code !== "ok") throw tiktokErr(init?.error?.code, init);
     publishId = init.data.publish_id;
     const uploadUrl = init.data.upload_url;
-    const ct = vr.headers.get("content-type") || "video/mp4";
     for (let i = 0; i < total; i++) {
       const startB = i * chunkSize;
-      const endB = i === total - 1 ? size : startB + chunkSize;
+      const endB = i === total - 1 ? size : startB + chunkSize; // exclusive
       const part = bytes.subarray(startB, endB);
       const up = await fetch(uploadUrl, {
         method: "PUT",
@@ -218,14 +232,20 @@ export async function publishToTikTokFull(
           "Content-Length": String(part.byteLength),
           "Content-Range": `bytes ${startB}-${endB - 1}/${size}`,
         },
-        body: part,
+        body: part as BodyInit,
       });
       if (!up.ok && up.status !== 206 && up.status !== 201) {
         throw new Error("tiktok_video_upload_error: chunk " + (i + 1) + "/" + total + " failed (" + up.status + ") " + (await up.text()).slice(0, 200));
       }
     }
   } else {
-    const photoUrl = await stagePhoto(svc, draft.image_url, String(draft.id || "draft"));
+    const photoUrls: string[] = [];
+    for (let i = 0; i < media.images.length && i < 35; i++) {
+      let got: { bytes: Uint8Array; contentType: string };
+      try { got = await media.images[i](); }
+      catch (e) { throw new Error("tiktok_image_fetch_error: couldn't read this draft's image (" + String((e as Error)?.message || e).slice(0, 200) + ")."); }
+      photoUrls.push(await stagePhoto(svc, got.bytes, got.contentType, String(draft.id || "draft"), i));
+    }
     const initResp = await fetch(`${API}/post/publish/content/init/`, {
       method: "POST",
       headers,
@@ -238,7 +258,7 @@ export async function publishToTikTokFull(
           auto_add_music: true,
           ...brand,
         },
-        source_info: { source: "PULL_FROM_URL", photo_cover_index: 0, photo_images: [photoUrl] },
+        source_info: { source: "PULL_FROM_URL", photo_cover_index: 0, photo_images: photoUrls },
         post_mode: "DIRECT_POST",
         media_type: "PHOTO",
       }),

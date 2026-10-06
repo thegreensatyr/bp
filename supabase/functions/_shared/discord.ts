@@ -9,6 +9,29 @@
 export const DISCORD_MAX_CONTENT = 2000;   // Discord's per-message content limit
 export const DISCORD_MAX_IMAGES = 4;       // BrandParent's per-post image cap
 export const DISCORD_MAX_MESSAGES = 5;     // cap for long posts split into chunks
+export const DISCORD_MAX_UPLOAD = 10_000_000; // per message on servers without boosts (Level 2: 50 MB, Level 3: 100 MB); conservative
+export const DISCORD_MAX_FILES = 10;       // attachments per message
+
+export type DiscordFile = { name: string; bytes: Uint8Array; contentType: string };
+
+/** Packs files into groups whose total size stays under `max` (a single oversize file gets its own group). */
+export function packDiscordFiles(files: DiscordFile[], max = DISCORD_MAX_UPLOAD): DiscordFile[][] {
+  const groups: DiscordFile[][] = [];
+  let cur: DiscordFile[] = [], curSize = 0;
+  for (const f of files) {
+    const n = f.bytes.byteLength;
+    if (cur.length && (curSize + n > max || cur.length >= DISCORD_MAX_FILES)) { groups.push(cur); cur = []; curSize = 0; }
+    cur.push(f); curSize += n;
+  }
+  if (cur.length) groups.push(cur);
+  return groups;
+}
+
+function safeFileName(name: string, i: number): string {
+  const ext = (name.match(/\.(png|jpe?g|mp4)$/i)?.[0] || "").toLowerCase();
+  const base = name.replace(/\.[^.]*$/, "").replace(/[^A-Za-z0-9_-]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 60) || `file${i + 1}`;
+  return base + ext;
+}
 
 const WEBHOOK_RE = /^https:\/\/discord\.com\/api(?:\/v\d{1,2})?\/webhooks\/(\d{15,25})\/([A-Za-z0-9_-]{20,120})\/?$/;
 
@@ -70,7 +93,14 @@ function safeUsername(name: unknown): string | undefined {
   return n;
 }
 
-async function postOnce(url: string, payload: Record<string, unknown>): Promise<Response> {
+async function postOnce(url: string, payload: Record<string, unknown>, files?: DiscordFile[]): Promise<Response> {
+  if (files && files.length) {
+    const form = new FormData();
+    const names = files.map((f, i) => safeFileName(f.name, i));
+    form.append("payload_json", JSON.stringify({ ...payload, attachments: names.map((filename, id) => ({ id, filename })) }));
+    files.forEach((f, i) => form.append(`files[${i}]`, new Blob([f.bytes as BlobPart], { type: f.contentType }), names[i]));
+    return await fetch(`${url}?wait=true`, { method: "POST", body: form });
+  }
   return await fetch(`${url}?wait=true`, {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -78,13 +108,13 @@ async function postOnce(url: string, payload: Record<string, unknown>): Promise<
   });
 }
 
-async function postWithRetry(url: string, payload: Record<string, unknown>) {
-  let resp = await postOnce(url, payload);
+async function postWithRetry(url: string, payload: Record<string, unknown>, files?: DiscordFile[]) {
+  let resp = await postOnce(url, payload, files);
   if (resp.status === 429) {
     const body = await resp.json().catch(() => ({}));
     const waitMs = Math.min(Math.ceil(((body as any).retry_after ?? 1) * 1000), 10_000);
     await new Promise((r) => setTimeout(r, waitMs));
-    resp = await postOnce(url, payload);
+    resp = await postOnce(url, payload, files);
   }
   return resp;
 }
@@ -94,12 +124,14 @@ async function postWithRetry(url: string, payload: Record<string, unknown>) {
  * - Text longer than 2000 chars is split into up to 5 messages (beyond that it is truncated).
  * - Up to 4 images are attached as embeds on the last message (same embed url => Discord renders a gallery).
  * - A video_url is appended as a link so Discord unfurls it.
+ * - Uploaded files (opts.files: PNG/JPEG/MP4 bytes from post-media) are sent as
+ *   real attachments (multipart), packed into messages of <= 10 MB each.
  * - Mentions are disabled so post text can never ping @everyone/@here/roles.
  * Never include the webhook URL in thrown errors.
  */
 export async function publishToDiscord(
   webhookUrl: string,
-  opts: { content: string; imageUrls?: string[]; videoUrl?: string | null; username?: string | null; avatarUrl?: string | null },
+  opts: { content: string; imageUrls?: string[]; videoUrl?: string | null; username?: string | null; avatarUrl?: string | null; files?: DiscordFile[] },
 ): Promise<{ post_id: string; message_ids: string[]; note?: string }> {
   const parsed = parseDiscordWebhookUrl(webhookUrl);
   if (!parsed) throw new Error("discord_bad_webhook: the stored Discord webhook is invalid — disconnect and reconnect Discord for this cubicle.");
@@ -107,7 +139,8 @@ export async function publishToDiscord(
   let text = (opts.content || "").trim();
   if (isHttpUrl(opts.videoUrl)) text = text ? `${text}\n\n${opts.videoUrl!.trim()}` : opts.videoUrl!.trim();
   const images = (opts.imageUrls || []).filter(isHttpUrl).slice(0, DISCORD_MAX_IMAGES);
-  if (!text && images.length === 0) throw new Error("discord_empty: nothing to post (no text or images).");
+  const fileGroups = packDiscordFiles(opts.files || []);
+  if (!text && images.length === 0 && fileGroups.length === 0) throw new Error("discord_empty: nothing to post (no text or images).");
 
   let chunks = text ? splitForDiscord(text) : [""];
   let note: string | undefined;
@@ -128,23 +161,33 @@ export async function publishToDiscord(
   const galleryUrl = images[0];
   const embeds = images.map((u) => ({ url: galleryUrl, image: { url: u } }));
 
-  const ids: string[] = [];
-  for (let i = 0; i < chunks.length; i++) {
-    const isLast = i === chunks.length - 1;
-    const payload: Record<string, unknown> = { ...base };
-    if (chunks[i]) payload.content = chunks[i];
-    if (isLast && embeds.length) payload.embeds = embeds;
+  // One request per text chunk; the last chunk carries the URL embeds and the
+  // first group of attachments; any further attachment groups follow on their own.
+  const sends: Array<{ content: string; embeds: boolean; files?: DiscordFile[] }> = chunks.map((c, i) => ({
+    content: c, embeds: i === chunks.length - 1, files: i === chunks.length - 1 ? fileGroups[0] : undefined,
+  }));
+  for (const g of fileGroups.slice(1)) sends.push({ content: "", embeds: false, files: g });
 
-    const resp = await postWithRetry(parsed.url, payload);
+  const ids: string[] = [];
+  for (let i = 0; i < sends.length; i++) {
+    const isLast = i === sends.length - 1;
+    const payload: Record<string, unknown> = { ...base };
+    if (sends[i].content) payload.content = sends[i].content;
+    if (sends[i].embeds && embeds.length) payload.embeds = embeds;
+
+    const resp = await postWithRetry(parsed.url, payload, sends[i].files);
     if (!resp.ok) {
       const errText = (await resp.text().catch(() => "")).slice(0, 300);
+      const tooBig = resp.status === 413 || /entity too large|file.*too large|40005/i.test(errText);
       const reason = resp.status === 404 || resp.status === 401
         ? "discord_webhook_gone: this webhook was deleted or revoked in Discord — create a new one and reconnect Discord for this cubicle."
+        : tooBig
+        ? `discord_file_too_large: Discord rejected the attachment as too large — servers without boosts accept up to ${DISCORD_MAX_UPLOAD / 1_000_000} MB per message (Level 2: 50 MB, Level 3: 100 MB). Use a smaller file or uncheck Discord.`
         : `discord_post_error (HTTP ${resp.status}): ${errText}`;
       if (ids.length) {
         // Some chunks already went out. Report success-with-warning so the
         // scheduler does not retry and duplicate the messages that were sent.
-        return { post_id: ids[0], message_ids: ids, note: `only ${ids.length} of ${chunks.length} messages were sent — ${reason}` };
+        return { post_id: ids[0], message_ids: ids, note: `only ${ids.length} of ${sends.length} messages were sent — ${reason}` };
       }
       throw new Error(reason);
     }
