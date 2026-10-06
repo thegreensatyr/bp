@@ -103,7 +103,7 @@
   <div id="cubicle-list"></div>
   <div class="side-foot">
     <b>Leather</b>
-    The Green Satyr LLC · parent identity
+    The Green Satyr LLC · parent brand
     <span class="studio-badge">Studio</span>
   </div>
 </aside>
@@ -125,7 +125,7 @@
         <div>
           <div class="card">
             <h3>Draft a post</h3>
-            <textarea id="draft" placeholder="Write as this brand… the Bleed Check watches as you type." oninput="runBleedCheck()"></textarea>
+            <textarea id="draft" placeholder="Write for this brand… the Bleed Check watches as you type." oninput="runBleedCheck()"></textarea>
             <div class="comp-actions">
               <button class="btn btn-brand" onclick="runBleedCheck(true)">Run Bleed Check</button>
               <button class="btn btn-coral" onclick="optimize()">✨ Optimize caption</button>
@@ -141,7 +141,7 @@
         <div>
           <div class="card">
             <h3>Bleed Check™</h3>
-            <div class="bleed-status bleed-clean" id="bleed-status">✓ Clean — no contamination</div>
+            <div class="bleed-status bleed-clean" id="bleed-status">✓ Clean — no brand contamination</div>
             <div id="bleed-list"><p class="bleed-empty">Flagged terms from other cubicles will appear here.</p></div>
           </div>
         </div>
@@ -341,14 +341,14 @@ function runBleedCheck(){
   const list = document.getElementById('bleed-list');
   if(!raw.trim()){
     status.className='bleed-status bleed-clean';
-    status.textContent='✓ Clean — no contamination';
+    status.textContent='✓ Clean — no brand contamination';
     list.innerHTML='<p class="bleed-empty">Flagged terms from other cubicles will appear here.</p>';
     document.getElementById('preview').textContent='Nothing yet.';
     return;
   }
   if(leaks.length){
     status.className='bleed-status bleed-dirty';
-    status.textContent='⚠ Contamination detected — '+leaks.length+' leak'+(leaks.length>1?'s':'');
+    status.textContent='⚠ Brand contamination detected — '+leaks.length+' leak'+(leaks.length>1?'s':'');
     list.innerHTML = leaks.map(l=> l.brand
       ? `<div class="bleed-item"><b>${l.term}</b> belongs to <span class="from" style="background:${l.brand.color}">${l.brand.name}</span></div>`
       : `<div class="bleed-item"><b>${l.term}</b> is on <b>${active.name}</b>'s never-say list <span class="from" style="background:#c0392b">blocked term</span></div>`

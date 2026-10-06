@@ -1,0 +1,148 @@
+{
+  "desktop": {
+    "compose": {
+      "inner": true,
+      "viewH": 734,
+      "totalH": 1573,
+      "screensTall": 2.14,
+      "els": {
+        "#draft": {
+          "top": 318,
+          "bottom": 488,
+          "scrollToSee": 0,
+          "inViewAtLoad": true,
+          "sticky": false
+        },
+        "#publish-targets": {
+          "top": 145,
+          "bottom": 270,
+          "scrollToSee": 0,
+          "inViewAtLoad": true,
+          "sticky": false
+        },
+        "#bleed-status": {
+          "top": 498,
+          "bottom": 531,
+          "scrollToSee": 0,
+          "inViewAtLoad": true,
+          "sticky": false
+        },
+        "#bleed-list": {
+          "top": 539,
+          "bottom": 579,
+          "scrollToSee": 0,
+          "inViewAtLoad": true,
+          "sticky": false
+        },
+        "#preview": {
+          "top": 614,
+          "bottom": 660,
+          "scrollToSee": 0,
+          "inViewAtLoad": true,
+          "sticky": false
+        },
+        "#sched-date": {
+          "top": 643,
+          "bottom": 679,
+          "scrollToSee": 0,
+          "inViewAtLoad": true,
+          "sticky": false
+        },
+        "#publish-btn": {
+          "top": 639,
+          "bottom": 682,
+          "scrollToSee": 0,
+          "inViewAtLoad": true,
+          "sticky": false
+        }
+      }
+    },
+    "voice": {
+      "inner": true,
+      "viewH": 734,
+      "totalH": 2262,
+      "screensTall": 3.08,
+      "els": {}
+    },
+    "connections": {
+      "inner": true,
+      "viewH": 734,
+      "totalH": 1308,
+      "screensTall": 1.78,
+      "els": {}
+    }
+  },
+  "mobile": {
+    "compose": {
+      "inner": false,
+      "viewH": 851,
+      "totalH": 2248,
+      "screensTall": 2.64,
+      "els": {
+        "#draft": {
+          "top": 398,
+          "bottom": 538,
+          "scrollToSee": 0,
+          "inViewAtLoad": true,
+          "sticky": false
+        },
+        "#publish-targets": {
+          "top": 278,
+          "bottom": 354,
+          "scrollToSee": 0,
+          "inViewAtLoad": true,
+          "sticky": false
+        },
+        "#bleed-status": {
+          "top": 548,
+          "bottom": 581,
+          "scrollToSee": 0,
+          "inViewAtLoad": true,
+          "sticky": false
+        },
+        "#bleed-list": {
+          "top": 628,
+          "bottom": 667,
+          "scrollToSee": 0,
+          "inViewAtLoad": true,
+          "sticky": false
+        },
+        "#preview": {
+          "top": 703,
+          "bottom": 795,
+          "scrollToSee": 0,
+          "inViewAtLoad": true,
+          "sticky": false
+        },
+        "#sched-date": {
+          "top": 804,
+          "bottom": 841,
+          "scrollToSee": 0,
+          "inViewAtLoad": true,
+          "sticky": false
+        },
+        "#publish-btn": {
+          "top": 804,
+          "bottom": 840,
+          "scrollToSee": 0,
+          "inViewAtLoad": true,
+          "sticky": false
+        }
+      }
+    },
+    "voice": {
+      "inner": false,
+      "viewH": 844,
+      "totalH": 3292,
+      "screensTall": 3.9,
+      "els": {}
+    },
+    "connections": {
+      "inner": false,
+      "viewH": 844,
+      "totalH": 2141,
+      "screensTall": 2.54,
+      "els": {}
+    }
+  }
+}
