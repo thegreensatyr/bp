@@ -490,6 +490,29 @@
   .opt-chips button{border:1.5px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit}
   .style-opts input[type=range]{accent-color:var(--brand-text)}
   .opt-chips button.sel{background:var(--brand);color:var(--on-brand);border-color:var(--brand)}
+
+  /* ===== Brand logos (2026-10-06): big tile in "Posting as", clear marks in the brand list, optional watermark ===== */
+  .posting-as{flex-wrap:nowrap;gap:14px;padding:12px 16px}
+  .posting-as .cub-dot{width:56px;height:56px;border-radius:14px;font-size:1.05rem;box-shadow:0 4px 14px -6px rgba(0,0,0,.45)}
+  .posting-as .cub-dot.has-logo{padding:4px}
+  .posting-as .pa-text{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .posting-as .pa-text b{font-size:1.12rem}
+  .cub-dot.has-logo{background:#fff !important;padding:2px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+  #cubicle-list .cub-dot{width:32px;height:32px;border-radius:9px}
+  @media(max-width:700px){
+    .posting-as .cub-dot{width:48px;height:48px;border-radius:12px}
+    .posting-as .pa-text b{font-size:1.04rem}
+    #cubicle-list .cub-dot{width:30px;height:30px;border-radius:999px}
+  }
+  #logo-watermark{display:none;position:fixed;top:66px;bottom:0;right:0;left:250px;pointer-events:none;z-index:0;opacity:calc(var(--wm-op,.09) * var(--wm-k,1));
+    background:right 3% bottom 4%/min(52vmin,460px) no-repeat}
+  body.has-watermark #logo-watermark{display:block}
+  body.has-watermark .content>.panel{position:relative;z-index:1}
+  @media(max-width:900px){#logo-watermark{left:200px}}
+  /* Phones have no side gutters, so the mark tucks into the lower-right corner, fainter, partly off-screen */
+  @media(max-width:700px){#logo-watermark{left:0;top:100px;--wm-k:.65;background-position:right -16vw bottom 6vh;background-size:min(78vw,400px)}}
+  .wm-toggle{display:flex;align-items:center;gap:8px;margin:12px 0 0;font-weight:600;cursor:pointer}
+  .wm-toggle input{width:18px;height:18px;accent-color:var(--brand-text)}
 </style>
 </head>
 <body>
@@ -532,6 +555,7 @@
   </div>
 
   <div class="content" id="content-root">
+    <div id="logo-watermark" aria-hidden="true"></div>
 
     <div id="no-cubicles" class="empty-state" style="display:none">
       <h2>Set up your first cubicle</h2>
@@ -695,6 +719,8 @@
               <label style="margin-top:18px">Workspace background</label>
               <div class="field-help" style="margin-top:0;margin-bottom:6px">Classic keeps this cubicle exactly as it looks now. Pick a texture, gradient or your own photo and the whole workspace follows: page, cards, buttons and corners.</div>
               <div class="bg-tiles" id="t-bg-swatches" role="group" aria-label="Workspace background"></div>
+              <label class="wm-toggle"><input type="checkbox" id="t-watermark" onchange="onWatermarkToggle()"> Show logo watermark</label>
+              <div class="field-help" id="t-watermark-help" style="margin-top:2px"></div>
               <div class="style-opts" id="t-style-opts" hidden>
                 <div class="opt-row"><span class="opt-lbl">Page tone</span><div class="opt-chips" data-key="tone">
                   <button type="button" data-val="base" onclick="setStyleOpt('tone','base')">Background color</button>
@@ -1385,8 +1411,8 @@ function renderPostingAs() {
   const el = document.getElementById('posting-as');
   if (!el || !active) return;
   const names = (connections || []).map(a => PLATFORM_LABEL[a.platform] || a.platform);
-  el.innerHTML = `${cubDot(active)} <span>Posting as <b>${escapeHtml(active.name)}</b></span>` +
-    `<span class="to">${names.length ? '→ ' + escapeHtml(names.join(', ')) : '→ no accounts connected yet'}</span>`;
+  el.innerHTML = `${cubDot(active)}<span class="pa-text"><span>Posting as <b>${escapeHtml(active.name)}</b></span>` +
+    `<span class="to">${names.length ? '→ ' + escapeHtml(names.join(', ')) : '→ no accounts connected yet'}</span></span>`;
 }
 
 async function setBrand(id) {
@@ -1641,13 +1667,18 @@ const STYLE_DEFAULTS = { v: 1, bg: 'solid', tone: 'base', card: 'solid', opacity
 function normalizeStyle(s) {
   if (!s || typeof s !== 'object') return null;
   const o = Object.assign({}, STYLE_DEFAULTS, s);
-  if (!BG_STYLES.some(b => b.id === o.bg)) o.bg = 'solid';
+  // bg 'classic' = keep the Classic rendering, only used to carry options like the logo watermark.
+  if (o.bg !== 'classic' && !BG_STYLES.some(b => b.id === o.bg)) o.bg = 'solid';
+  // Logo watermark: ON by default for new styles, OFF for Classic unless the owner turns it on.
+  const watermark = typeof s.watermark === 'boolean' ? s.watermark : o.bg !== 'classic';
+  if (o.bg === 'classic') return watermark ? { v: 1, bg: 'classic', watermark: true } : null;
   if (!['base', 'tint', 'deep', 'bold'].includes(o.tone)) o.tone = 'base';
   if (!['solid', 'frosted', 'outline', 'flat'].includes(o.card)) o.card = 'solid';
   if (!['sharp', 'soft', 'round'].includes(o.radius)) o.radius = 'soft';
   o.opacity = Math.round(Math.max(0.5, Math.min(1, Number(o.opacity) || 1)) * 100) / 100;
-  return { v: 1, bg: o.bg, tone: o.tone, card: o.card, opacity: o.opacity, radius: o.radius };
+  return { v: 1, bg: o.bg, tone: o.tone, card: o.card, opacity: o.opacity, radius: o.radius, watermark };
 }
+function isStyled(st) { return !!(st && st.bg !== 'classic'); }
 function svgUrl(svg) { return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")'; }
 // Monochrome noise tile: alpha = gain * (noise - 0.5) + mid, tinted with hex.
 function noiseSvg(w, h, freq, oct, hex, gain, mid, type, seed) {
@@ -1818,6 +1849,46 @@ function styleVars(t, st, classic) {
 }
 const STYLE_VAR_KEYS = ['--radius-card'];
 
+// Logo watermark: a grayscale copy of the logo, flipped light/dark when its ink would vanish on the page
+// (e.g. a dark logo on a night background), so it always reads as a faint mark and never as noise.
+const logoInkCache = {};
+function logoInkLum(url) {
+  if (!logoInkCache[url]) logoInkCache[url] = new Promise(res => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const c = document.createElement('canvas'); c.width = c.height = 48;
+        const x = c.getContext('2d'); x.drawImage(img, 0, 0, 48, 48);
+        const d = x.getImageData(0, 0, 48, 48).data; let l = 0, a = 0;
+        for (let i = 0; i < d.length; i += 4) { const w = d[i + 3] / 255; l += w * (0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]) / 255; a += w; }
+        res(a ? l / a : null);
+      } catch (e) { res(null); }
+    };
+    img.onerror = () => res(null);
+    img.src = url;
+  });
+  return logoInkCache[url];
+}
+let wmToken = 0;
+function updateWatermark(url, pageDark) {
+  const wm = document.getElementById('logo-watermark');
+  const tok = ++wmToken;
+  document.body.classList.toggle('has-watermark', !!url);
+  if (!wm) return;
+  if (!url) { wm.style.backgroundImage = 'none'; return; }
+  wm.style.backgroundImage = `url("${String(url).replace(/"/g, '%22')}")`;
+  wm.style.filter = 'grayscale(1)'; wm.style.removeProperty('--wm-op');
+  logoInkLum(url).then(ink => {
+    if (tok !== wmToken || ink == null) return;
+    const flip = pageDark ? ink < 0.5 : ink > 0.6;
+    // Push the mark toward the page's text tone (near-white on dark pages, near-black on light ones).
+    const ink2 = flip ? 1 - ink : ink;
+    wm.style.filter = 'grayscale(1)' + (flip ? ' invert(1)' : '') + (pageDark ? ` brightness(${Math.min(2.2, 0.9 / Math.max(ink2, 0.3)).toFixed(2)}) contrast(1.15)` : ' contrast(1.15)');
+    wm.style.setProperty('--wm-op', pageDark ? '0.1' : '0.09');
+  });
+}
+
 function applyThemeVars(t) {
   const root = document.documentElement;
   const bg = t.background;
@@ -1858,12 +1929,17 @@ function applyThemeVars(t) {
   } else {
     vars['--content-bg-image'] = 'none';
   }
-  const st = normalizeStyle(t.style);
+  const stAll = normalizeStyle(t.style);
+  const st = isStyled(stAll) ? stAll : null;
   if (st) Object.assign(vars, styleVars(t, st, vars));
   else STYLE_VAR_KEYS.forEach(k => root.style.removeProperty(k)); // Classic: untouched, exactly as before
   Object.entries(vars).forEach(([k, v]) => root.style.setProperty(k, v));
   document.body.classList.toggle('has-bg-image', !st && !!t.bgImage);
   document.body.classList.toggle('themed', !!st);
+  // Logo watermark: large, ~8% opacity, fixed behind the cards. Skipped for brands without a saved logo.
+  const wmLogo = stAll && stAll.watermark && active && active.logo_url;
+  const pageDark = st ? relLuminance(vars['--t-on-page']) > 0.5 : relLuminance(bg) < 0.35;
+  updateWatermark(wmLogo ? active.logo_url : '', pageDark);
   ['bg', 'card', 'radius'].forEach(k => { if (st) document.body.dataset['t' + k[0].toUpperCase() + k.slice(1)] = st[k]; else delete document.body.dataset['t' + k[0].toUpperCase() + k.slice(1)]; });
   ensureFontLoaded(t.headingFont);
   ensureFontLoaded(t.bodyFont);
@@ -2017,7 +2093,7 @@ function updateThemePreview() {
   const s1 = document.getElementById('theme-preview-swatch1');
   const s2 = document.getElementById('theme-preview-swatch2');
   if (!h || !pendingTheme) return;
-  const pst = normalizeStyle(pendingTheme.style);
+  const pst0 = normalizeStyle(pendingTheme.style), pst = isStyled(pst0) ? pst0 : null;
   if (pst) {
     const L = styleLayers(pendingThemeFull(), pst);
     box.style.background = ''; box.style.backgroundColor = L.page; box.style.backgroundImage = L.image;
@@ -2057,15 +2133,22 @@ function styleStarterFor(bg) {
 // Night-sky style textures read best on a dark page: on a light palette, previews and picks switch to the Deep tone.
 function tileToneFor(id) {
   const darkLook = ['starfield', 'neongrid', 'mist', 'grunge'].includes(id);
-  const st = normalizeStyle(pendingTheme && pendingTheme.style);
+  const st0 = normalizeStyle(pendingTheme && pendingTheme.style);
+  const st = isStyled(st0) ? st0 : null;
   if (!darkLook || !pendingTheme) return {};
   const page = stylePage(pendingThemeFull(), st || styleStarterFor(id));
   return relLuminance(page) < 0.22 ? {} : { tone: 'deep' };
 }
 function pickBgStyle(id) {
   if (!pendingTheme) return;
-  if (id === 'classic') pendingTheme.style = null;
-  else pendingTheme.style = normalizeStyle(Object.assign({}, pendingTheme.style || styleStarterFor(id), { bg: id }, tileToneFor(id)));
+  const cur = normalizeStyle(pendingTheme.style);
+  if (id === 'classic') {
+    // Back to Classic: the watermark is OFF unless this cubicle had it turned on as Classic (never carried over from a style).
+    const saved = normalizeStyle(active.theme_style);
+    const keep = cur && !isStyled(cur) ? cur.watermark : !!(saved && !isStyled(saved) && saved.watermark);
+    pendingTheme.style = keep ? { v: 1, bg: 'classic', watermark: true } : null;
+  }
+  else pendingTheme.style = normalizeStyle(Object.assign({}, isStyled(cur) ? cur : styleStarterFor(id), { bg: id }, tileToneFor(id)));
   if (id === 'photo' && !(active && active.background_image_url)) {
     const fold = document.querySelector('.bg-fold'); if (fold) fold.open = true;
     const note = document.getElementById('bg-note');
@@ -2075,7 +2158,15 @@ function pickBgStyle(id) {
 }
 function setStyleOpt(key, val) {
   if (!pendingTheme) return;
-  pendingTheme.style = normalizeStyle(Object.assign({}, pendingTheme.style || STYLE_DEFAULTS, { [key]: val }));
+  const cur = normalizeStyle(pendingTheme.style);
+  pendingTheme.style = normalizeStyle(Object.assign({}, isStyled(cur) ? cur : STYLE_DEFAULTS, { [key]: val }));
+  updateThemePreview();
+}
+function onWatermarkToggle() {
+  if (!pendingTheme) return;
+  const on = document.getElementById('t-watermark').checked;
+  const cur = normalizeStyle(pendingTheme.style);
+  pendingTheme.style = isStyled(cur) ? normalizeStyle(Object.assign({}, cur, { watermark: on })) : (on ? { v: 1, bg: 'classic', watermark: true } : null);
   updateThemePreview();
 }
 function onStyleOpacityInput() {
@@ -2085,9 +2176,18 @@ function onStyleOpacityInput() {
 function renderStylePicker() {
   const wrap = document.getElementById('t-bg-swatches');
   if (!wrap || !pendingTheme || !active) return;
-  const st = normalizeStyle(pendingTheme.style);
+  const stAll = normalizeStyle(pendingTheme.style);
+  const st = isStyled(stAll) ? stAll : null;
   const base = pendingThemeFull();
   wrap.innerHTML = '';
+  const wmBox = document.getElementById('t-watermark');
+  if (wmBox) {
+    const hasLogo = !!active.logo_url;
+    wmBox.checked = hasLogo && !!(stAll && stAll.watermark);
+    wmBox.disabled = !hasLogo;
+    const wmHelp = document.getElementById('t-watermark-help');
+    if (wmHelp) wmHelp.textContent = hasLogo ? 'A large, faint copy of your logo behind the cards. It never sits on top of text.' : 'Add a logo under Brand mark to use this.';
+  }
   [{ id: 'classic', label: 'Classic (as saved)' }].concat(BG_STYLES).forEach(b => {
     const sel = st ? st.bg === b.id : b.id === 'classic';
     const btn = document.createElement('button');
@@ -2282,7 +2382,7 @@ async function saveTheme() {
   if (error) {
     note.style.color = '#c0392b';
     note.textContent = /theme_style/.test(error.message || '')
-      ? 'Error: workspace styles need the theme_style database column (migration 20261006120000). Colors and fonts were not saved either; pick Classic to save without a style.'
+      ? 'Error: workspace styles need the theme_style database column (migration 20261006120000). Colors and fonts were not saved either; pick Classic (watermark off) to save without a style.'
       : 'Error: ' + error.message;
     return;
   }
