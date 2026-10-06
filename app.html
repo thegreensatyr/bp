@@ -71,6 +71,7 @@
 
   .optim-out{margin-top:14px;background:var(--cream);border-radius:10px;padding:14px;font-size:.9rem;line-height:1.6;display:none;white-space:pre-wrap}
   .optim-note{font-size:.72rem;color:var(--muted);margin-top:8px}
+  .spark{color:var(--teal-deep,#1E9C93);font-weight:700}
 
   .voice-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
   .voice-grid .card.full{grid-column:1/-1}
@@ -520,7 +521,7 @@
                   <div class="bleed-status bleed-clean" id="bleed-status">✓ Clean — no brand contamination</div>
                   <div class="bleed-actions">
                     <button class="btn btn-ghost btn-sm" onclick="runBleedCheck(true)">Run Bleed Check</button>
-                    <button class="btn btn-coral btn-sm" onclick="optimize()">✨ Optimize</button>
+                    <button class="btn btn-coral btn-sm" onclick="optimize()"><span class="spark" aria-hidden="true">✦</span> Optimize</button>
                   </div>
                 </div>
                 <div id="bleed-list"><p class="bleed-empty">Flagged terms from other cubicles will appear here.</p></div>
@@ -529,7 +530,7 @@
                   <div class="preview" id="preview">Nothing yet.</div>
                 </div>
                 <div class="optim-out" id="optim-out"></div>
-                <div class="demo-note" id="claude-note">✨ Caption optimization is live — running on Claude.</div>
+                <div class="demo-note" id="claude-note"><span class="spark" aria-hidden="true">✦</span> Optimize rewrites your draft in this brand's voice.</div>
               </div>
 
               <details class="fold media-fold" open>
@@ -2361,9 +2362,8 @@ async function optimize() {
     });
     if (error) throw error;
     if (!active || active.id !== forBrandId) return; // brand switched mid-request — drop the stale result
-    const providerLabel = data.provider === 'gemini' ? 'AI (free tier)' : 'Claude';
     playRewardTone();
-    let note = '✨ Optimized via ' + providerLabel + ' for ' + escapeHtml(active.name) + '.';
+    let note = '<span class="spark" aria-hidden="true">✦</span> Optimized in ' + escapeHtml(active.name) + '\'s voice.';
     if (data.limit) {
       note += ' ' + data.char_count + '/' + data.limit + ' characters' + (data.trimmed ? ' (trimmed to fit)' : '') + '.';
     }
