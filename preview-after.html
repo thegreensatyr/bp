@@ -453,7 +453,7 @@
   <button type="button" class="acct-toggle" onclick="document.body.classList.toggle('acct-open')" aria-label="Account menu" title="Account">☰</button>
   <div class="side-foot">
     <b id="parent-name-el">—</b>
-    parent identity
+    parent brand
     <span class="studio-badge">Studio</span>
     <br>
     <button class="tour-link" onclick="startTour()" style="margin-top:10px">🎓 Take the tour</button>
@@ -512,12 +512,12 @@
               <div id="discord-limit-warn" style="display:none;margin-top:8px;font-size:.8rem;font-weight:600;color:var(--muted)"></div>
 
               <div class="step-label"><span class="step-n">2</span> Write it <span class="step-hint">Bleed Check watches as you type</span></div>
-              <textarea id="draft" placeholder="Write as this brand… the Bleed Check watches as you type." oninput="runBleedCheck(); checkBlueskyLimit()"></textarea>
+              <textarea id="draft" placeholder="Write for this brand… the Bleed Check watches as you type." oninput="runBleedCheck(); checkBlueskyLimit()"></textarea>
 
               <!-- Bleed Check sits directly under the editor so results never land off-screen -->
               <div class="bleed-box" id="bleed-box">
                 <div class="bleed-row">
-                  <div class="bleed-status bleed-clean" id="bleed-status">✓ Clean — no contamination</div>
+                  <div class="bleed-status bleed-clean" id="bleed-status">✓ Clean — no brand contamination</div>
                   <div class="bleed-actions">
                     <button class="btn btn-ghost btn-sm" onclick="runBleedCheck(true)">Run Bleed Check</button>
                     <button class="btn btn-coral btn-sm" onclick="optimize()">✨ Optimize</button>
@@ -1074,7 +1074,7 @@ async function init() {
   if (!session) return;
 
   const { data: profile } = await sb.from('profiles').select('parent_name, subscription_status, tutorials_enabled').eq('id', session.user.id).single();
-  document.getElementById('parent-name-el').textContent = (profile && profile.parent_name) || 'My Identity';
+  document.getElementById('parent-name-el').textContent = (profile && profile.parent_name) || 'My brands';
   tutorialsEnabled = !profile || profile.tutorials_enabled !== false;
   document.getElementById('tutorial-toggle-input').checked = tutorialsEnabled;
 
@@ -2293,14 +2293,14 @@ function runBleedCheck(manual) {
   const list = document.getElementById('bleed-list');
   if (!raw.trim()) {
     status.className = 'bleed-status bleed-clean';
-    status.textContent = '✓ Clean — no contamination';
+    status.textContent = '✓ Clean — no brand contamination';
     list.innerHTML = '<p class="bleed-empty">Flagged terms from other cubicles will appear here.</p>';
     document.getElementById('preview').textContent = 'Nothing yet.';
     return;
   }
   if (leaks.length) {
     status.className = 'bleed-status bleed-dirty';
-    status.textContent = '⚠ Contamination detected — ' + leaks.length + ' leak' + (leaks.length > 1 ? 's' : '');
+    status.textContent = '⚠ Brand contamination detected — ' + leaks.length + ' leak' + (leaks.length > 1 ? 's' : '');
     list.innerHTML = leaks.map(l => l.brand
       ? `<div class="bleed-item"><b>${escapeHtml(l.term)}</b> belongs to <span class="from" style="background:${l.brand.color}">${escapeHtml(l.brand.name)}</span></div>`
       : `<div class="bleed-item"><b>${escapeHtml(l.term)}</b> is on <b>${escapeHtml(active.name)}</b>'s never-say list <span class="from" style="background:#c0392b">blocked term</span></div>`
@@ -2955,7 +2955,7 @@ function fullTourSteps() {
   return [
     { selector: '.side-label', title: 'Your cubicles', text: "Every brand gets its own cubicle — its own voice, colors, and content — so nothing bleeds between brands you run." },
     { before: () => showPanel('compose', document.querySelector('.tab[data-panel="compose"]')), selector: '.tab[data-panel="compose"]', title: 'Post', text: "Write a post here for whichever cubicle is active — top to bottom: pick platforms, write, check, add media, then schedule or publish from the bar at the bottom." },
-    { selector: '#bleed-status', title: 'Bleed Check™', text: "Flags wording that actually belongs to a different one of your brands before it goes out under the wrong name." },
+    { selector: '#bleed-status', title: 'Bleed Check™', text: "Stops brand contamination: flags wording that belongs to a different one of your brands before it goes out under the wrong name." },
     { before: () => showPanel('voice', document.querySelector('.tab[data-panel="voice"]')), selector: '.tab[data-panel="voice"]', title: 'Brand & voice', text: "Logo, the four brand colors, fonts, and the guided interview all live here — this is where you'd come back to rebrand a cubicle later." },
     { selector: '#interview-card', title: 'Getting to know you', text: "A short guided interview that fills out this cubicle's tone, audience, and vocabulary for you — nothing saves until you review and apply it." },
     { before: () => showPanel('compose', document.querySelector('.tab[data-panel="compose"]')), selector: '#queue-card', title: 'Up next', text: "Everything scheduled for this cubicle sits right beside the composer, so you can see a post land the moment you schedule it." },
