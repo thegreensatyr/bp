@@ -448,48 +448,6 @@
     .action-bar.has-date .btn{flex:1 1 40%}
     .bloom-fab{bottom:84px}
   }
-
-  /* ===== Immersive cubicle styles (opt-in per cubicle via cubicles.theme_style) =====================
-     Only applies when body.themed is set by applyThemeVars(); Classic cubicles never match these rules. */
-  .bleed-dirty,.bleed-box .bleed-dirty{background:#FDECEA;color:#9B1C1C}
-  body.themed::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-color:var(--t-page);background-image:var(--t-page-image);background-size:var(--t-page-size);background-repeat:var(--t-page-repeat);background-position:center}
-  body.themed{background:var(--t-page)}
-  body.themed .content{background:transparent}
-  body.themed aside{background:var(--t-side);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
-  body.themed .topbar{background:var(--t-bar);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
-  body.themed .card,body.themed .demo-note{background:var(--t-card);background-image:var(--t-card-image);background-size:var(--t-card-size);border:var(--t-card-border);box-shadow:var(--t-card-shadow);border-radius:var(--radius-card);-webkit-backdrop-filter:var(--t-blur);backdrop-filter:var(--t-blur)}
-  body.themed .bleed-box .demo-note{border:none;box-shadow:none;background:none !important;-webkit-backdrop-filter:none;backdrop-filter:none}
-  body.themed .action-bar,body.themed .sticky-save{background:var(--t-bar);border-top-color:var(--line)}
-  body.themed .section-head,body.themed .jump-row,body.themed .panel>h2,body.themed .panel>.panel-intro{color:var(--t-on-page);text-shadow:var(--t-text-shadow)}
-  body.themed .section-head .step-hint{color:var(--t-on-page);opacity:.8}
-  body.themed input[type=text],body.themed input[type=password],body.themed input[type=date],body.themed input[type=time],body.themed textarea,body.themed select,body.themed .theme-select{background:var(--t-input);color:var(--t-input-ink);border-radius:var(--t-radius-ctl)}
-  body.themed textarea::placeholder,body.themed input::placeholder{color:var(--muted)}
-  body.themed .composer-card textarea{border-bottom-left-radius:0;border-bottom-right-radius:0}
-  body.themed .bleed-box{background:var(--t-input);border-radius:0 0 var(--t-radius-ctl) var(--t-radius-ctl)}
-  body.themed .bleed-box:has(.bleed-dirty){background:var(--t-input);border-color:#E06666}
-  body.themed .bleed-box .bleed-item,body.themed .preview-wrap,body.themed .bleed-box .optim-out{background:var(--paper);color:var(--ink)}
-  body.themed mark{background:rgba(229,57,53,.32);color:inherit}
-  body.themed .btn,body.themed .tab,body.themed .target-pills label,body.themed .chip,body.themed .jump-chip,body.themed .bleed-box .bleed-status,body.themed .opt-chips button{border-radius:var(--t-radius-pill)}
-  body.themed .btn-brand,body.themed .tour-btn.primary{background:var(--t-btn);color:var(--t-on-btn)}
-  body.themed .posting-as,body.themed .tt-panel,body.themed .queue-card .cal-day,body.themed .optim-out,body.themed .preview-wrap{border-radius:var(--t-radius-ctl)}
-  body.themed[data-t-card="outline"] .btn-ghost{background:transparent}
-  body.themed[data-t-radius="sharp"] .step-n{border-radius:3px}
-  /* Look & feel picker */
-  .bg-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:12px 10px;margin:8px 0 4px}
-  .bg-tile{border:none;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:stretch;gap:6px;font-family:inherit;color:var(--ink-soft)}
-  .bg-tile-sw{position:relative;display:block;width:100%;aspect-ratio:1/1;border-radius:14px;border:1.5px solid var(--line);overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)}
-  .bg-tile-sw.empty{display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:var(--muted)}
-  .bg-tile-card{position:absolute;left:18%;right:18%;bottom:16%;height:34%;display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:700;font-size:.78rem}
-  .bg-tile.sel .bg-tile-sw{outline:3px solid var(--brand-text);outline-offset:2px}
-  .bg-tile:focus-visible .bg-tile-sw{outline:3px solid var(--teal);outline-offset:2px}
-  .bg-tile-lbl{font-size:.72rem;font-weight:600;text-align:center;line-height:1.2}
-  .style-opts{margin-top:8px;padding:12px 14px;border:1.5px solid var(--line);border-radius:14px;background:var(--cream)}
-  .opt-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0}
-  .opt-lbl{font-size:.82rem;font-weight:600;color:var(--ink-soft);min-width:96px}
-  .opt-chips{display:flex;gap:6px;flex-wrap:wrap}
-  .opt-chips button{border:1.5px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit}
-  .style-opts input[type=range]{accent-color:var(--brand-text)}
-  .opt-chips button.sel{background:var(--brand);color:var(--on-brand);border-color:var(--brand)}
 </style>
 </head>
 <body>
@@ -691,32 +649,6 @@
               <div id="t-detect-out"></div>
             </div>
 
-            <div class="style-block" id="style-block">
-              <label style="margin-top:18px">Workspace background</label>
-              <div class="field-help" style="margin-top:0;margin-bottom:6px">Classic keeps this cubicle exactly as it looks now. Pick a texture, gradient or your own photo and the whole workspace follows: page, cards, buttons and corners.</div>
-              <div class="bg-tiles" id="t-bg-swatches" role="group" aria-label="Workspace background"></div>
-              <div class="style-opts" id="t-style-opts" hidden>
-                <div class="opt-row"><span class="opt-lbl">Page tone</span><div class="opt-chips" data-key="tone">
-                  <button type="button" data-val="base" onclick="setStyleOpt('tone','base')">Background color</button>
-                  <button type="button" data-val="tint" onclick="setStyleOpt('tone','tint')">Tinted</button>
-                  <button type="button" data-val="deep" onclick="setStyleOpt('tone','deep')">Deep</button>
-                  <button type="button" data-val="bold" onclick="setStyleOpt('tone','bold')">Bold accent</button></div></div>
-                <div class="opt-row"><span class="opt-lbl">Cards</span><div class="opt-chips" data-key="card">
-                  <button type="button" data-val="solid" onclick="setStyleOpt('card','solid')">Solid</button>
-                  <button type="button" data-val="frosted" onclick="setStyleOpt('card','frosted')">Frosted glass</button>
-                  <button type="button" data-val="outline" onclick="setStyleOpt('card','outline')">Outlined</button>
-                  <button type="button" data-val="flat" onclick="setStyleOpt('card','flat')">Flat</button></div></div>
-                <div class="opt-row"><span class="opt-lbl">Corners</span><div class="opt-chips" data-key="radius">
-                  <button type="button" data-val="sharp" onclick="setStyleOpt('radius','sharp')">Sharp</button>
-                  <button type="button" data-val="soft" onclick="setStyleOpt('radius','soft')">Soft</button>
-                  <button type="button" data-val="round" onclick="setStyleOpt('radius','round')">Round</button></div></div>
-                <div class="opt-row"><span class="opt-lbl">Card opacity</span>
-                  <input type="range" id="t-card-opacity" min="50" max="100" step="5" style="flex:1;max-width:240px" oninput="onStyleOpacityInput()" aria-label="Card opacity">
-                  <span class="save-note" id="t-card-opacity-val"></span></div>
-                <div class="field-help">Text color is picked automatically for contrast, and cards get more solid if text would be hard to read.</div>
-              </div>
-            </div>
-
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
               <div>
                 <label>Background</label>
@@ -755,8 +687,8 @@
             </div>
 
             <details class="fold bg-fold">
-              <summary>Background photo <span class="step-hint">optional</span></summary>
-              <div class="field-help" style="margin-top:0">A photo or artwork that sits behind this brand's whole workspace (pick "Your photo" above once it's uploaded). JPG, PNG, or WEBP — large images are shrunk automatically.</div>
+              <summary>Background image or texture <span class="step-hint">optional</span></summary>
+              <div class="field-help" style="margin-top:0">A photo, texture, or artwork that sits behind this brand's whole workspace. JPG, PNG, or WEBP — large images are shrunk automatically.</div>
               <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px">
                 <div class="bg-thumb" id="bg-thumb">None</div>
                 <input type="file" id="bg-file" accept="image/png,image/jpeg,image/webp" style="max-width:220px">
@@ -1618,204 +1550,9 @@ function themeFromCubicle(c) {
     headingFont: c.font_heading || 'Fraunces',
     bodyFont: c.font_body || 'Inter',
     bgImage: c.background_image_url || '',
-    overlay: (c.background_overlay === 0 || c.background_overlay) ? c.background_overlay : 55,
-    style: normalizeStyle(c.theme_style)
+    overlay: (c.background_overlay === 0 || c.background_overlay) ? c.background_overlay : 55
   };
 }
-
-// --- Immersive workspace styles (opt-in) ------------------------------------
-// Saved per cubicle in cubicles.theme_style (jsonb). A cubicle WITHOUT theme_style renders exactly as
-// before ("Classic"); nothing is derived or auto-applied. Picking a background tile in Look & feel
-// creates theme_style, and then the whole workspace follows it: page background (solid, gradient,
-// texture or photo), card surface + opacity, text contrast, buttons, corner radius and card style.
-// All textures are generated here in CSS/SVG (no image files, nothing copyrighted).
-const BG_STYLES = [
-  { id: 'solid', label: 'Solid' }, { id: 'gradient', label: 'Gradient' }, { id: 'grain', label: 'Paper grain' },
-  { id: 'linen', label: 'Linen' }, { id: 'dots', label: 'Dot grid' }, { id: 'topo', label: 'Topographic' },
-  { id: 'starfield', label: 'Starfield' }, { id: 'wood', label: 'Wood grain' }, { id: 'marble', label: 'Marble' },
-  { id: 'neongrid', label: 'Neon grid' }, { id: 'mist', label: 'Mist' }, { id: 'grunge', label: 'Grunge' },
-  { id: 'photo', label: 'Your photo' }
-];
-const STYLE_DEFAULTS = { v: 1, bg: 'solid', tone: 'base', card: 'solid', opacity: 1, radius: 'soft' };
-function normalizeStyle(s) {
-  if (!s || typeof s !== 'object') return null;
-  const o = Object.assign({}, STYLE_DEFAULTS, s);
-  if (!BG_STYLES.some(b => b.id === o.bg)) o.bg = 'solid';
-  if (!['base', 'tint', 'deep', 'bold'].includes(o.tone)) o.tone = 'base';
-  if (!['solid', 'frosted', 'outline', 'flat'].includes(o.card)) o.card = 'solid';
-  if (!['sharp', 'soft', 'round'].includes(o.radius)) o.radius = 'soft';
-  o.opacity = Math.round(Math.max(0.5, Math.min(1, Number(o.opacity) || 1)) * 100) / 100;
-  return { v: 1, bg: o.bg, tone: o.tone, card: o.card, opacity: o.opacity, radius: o.radius };
-}
-function svgUrl(svg) { return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")'; }
-// Monochrome noise tile: alpha = gain * (noise - 0.5) + mid, tinted with hex.
-function noiseSvg(w, h, freq, oct, hex, gain, mid, type, seed) {
-  const [r, g, b] = hexToRgbArr(hex).map(v => (v / 255).toFixed(3));
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><filter id="n" x="0" y="0" width="100%" height="100%">` +
-    `<feTurbulence type="${type || 'fractalNoise'}" baseFrequency="${freq}" numOctaves="${oct}" seed="${seed || 7}" stitchTiles="stitch"/>` +
-    `<feColorMatrix values="0 0 0 0 ${r} 0 0 0 0 ${g} 0 0 0 0 ${b} ${gain} 0 0 0 ${(mid - gain / 2).toFixed(3)}"/></filter>` +
-    `<rect width="100%" height="100%" filter="url(#n)"/></svg>`;
-}
-function marbleSvg(hex, alpha) {
-  const [r, g, b] = hexToRgbArr(hex).map(v => (v / 255).toFixed(3));
-  const a = alpha, t = [0, 0, 0, a, 0, 0, 0, 0, a * .6, 0, 0, 0, 0, a * .85, 0, 0, 0, a * .5, 0, 0].map(x => +x.toFixed(3)).join(' ');
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640"><filter id="m" x="0" y="0" width="100%" height="100%">` +
-    `<feTurbulence type="fractalNoise" baseFrequency="0.0035 0.007" numOctaves="4" seed="5" stitchTiles="stitch"/>` +
-    `<feColorMatrix values="0 0 0 0 ${r} 0 0 0 0 ${g} 0 0 0 0 ${b} 1.6 0 0 0 -.3"/>` +
-    `<feComponentTransfer><feFuncA type="table" tableValues="${t}"/></feComponentTransfer></filter>` +
-    `<rect width="100%" height="100%" filter="url(#m)"/></svg>`;
-}
-function topoSvg(hex, alpha) {
-  const W = 640, rnd = bleedRng(11); let paths = '';
-  [[170, 190], [470, 440], [560, 80], [90, 520]].forEach(([cx, cy]) => {
-    const ph = [rnd() * 6, rnd() * 6, rnd() * 6];
-    for (let k = 1; k <= 7; k++) {
-      const R = 14 + k * 22; let d = '';
-      for (let i = 0; i <= 90; i++) {
-        const a = i / 90 * Math.PI * 2;
-        const rr = R * (1 + .2 * Math.sin(3 * a + ph[0]) + .1 * Math.sin(5 * a + ph[1] + k * .35) + .05 * Math.sin(8 * a + ph[2]));
-        d += (i ? 'L' : 'M') + (cx + rr * Math.cos(a)).toFixed(1) + ' ' + (cy + rr * Math.sin(a)).toFixed(1);
-      }
-      paths += `<path d="${d}Z"/>`;
-    }
-  });
-  const uses = [[-W, -W], [0, -W], [W, -W], [-W, 0], [W, 0], [-W, W], [0, W], [W, W]].map(([x, y]) => `<use href="#t" x="${x}" y="${y}"/>`).join('');
-  return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${W}" height="${W}"><g id="t" fill="none" stroke="${hex}" stroke-opacity="${alpha}" stroke-width="1.4">${paths}</g>${uses}</svg>`;
-}
-function starSvg(c1, c2, k) {
-  k = k || 1;
-  const W = 420, rnd = bleedRng(23); let s = '';
-  for (let i = 0; i < 280; i++) {
-    const x = ((rnd() + 1) / 2 * W).toFixed(1), y = ((rnd() + 1) / 2 * W).toFixed(1);
-    const m = Math.pow((rnd() + 1) / 2, 3), r = (0.5 + m * 1.6).toFixed(2), o = (0.45 + m * 0.5 + (rnd() + 1) * 0.025).toFixed(2);
-    s += `<circle cx="${x}" cy="${y}" r="${r}" fill="${i % 6 === 0 ? c2 : c1}" fill-opacity="${(o * k).toFixed(2)}"/>`;
-  }
-  for (let i = 0; i < 10; i++) {
-    const x = (rnd() + 1) / 2 * W, y = (rnd() + 1) / 2 * W, k = 3 + (rnd() + 1) * 2.4, q = k * 0.22;
-    s += `<path d="M${x} ${y - k}L${x + q} ${y - q}L${x + k} ${y}L${x + q} ${y + q}L${x} ${y + k}L${x - q} ${y + q}L${x - k} ${y}L${x - q} ${y - q}Z" fill="${c2}" fill-opacity="${(0.85 * k).toFixed(2)}"/>`;
-  }
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${W}">${s}</svg>`;
-}
-function pickReadable(cands, bg, min) {
-  for (const c of cands) if (isHex(c) && contrastRatio(c, bg) >= (min || 4.5)) return c;
-  return contrastRatio('#ffffff', bg) >= contrastRatio('#141320', bg) ? '#ffffff' : '#141320';
-}
-// Page tone + background layers for a style. Uses only the cubicle's own palette.
-function stylePage(t, st) {
-  const bg = t.background, a1 = t.headline, a2 = t.secondary;
-  return { base: bg, tint: mixHex(bg, a2, 0.3), deep: mixHex(a1, '#000000', 0.62), bold: a1 }[st.tone] || bg;
-}
-function styleLayers(t, st) {
-  const page = stylePage(t, st), dark = relLuminance(page) < 0.22;
-  const a1 = t.headline, a2 = t.secondary;
-  const ink = dark ? '#ffffff' : '#000000';
-  const glowA2 = contrastRatio(a2, page) >= 2.5 ? a2 : mixHex(a2, dark ? '#ffffff' : '#000000', 0.45);
-  const glowA1 = contrastRatio(a1, page) >= 1.6 ? a1 : glowA2;
-  const vignette = `radial-gradient(ellipse at 50% 40%, transparent 45%, ${rgbaOf(mixHex(page, '#000000', 0.6), dark ? 0.55 : 0.18)} 100%)`;
-  const L = { page, image: 'none', size: 'auto', repeat: 'repeat', dark };
-  switch (st.bg) {
-    case 'gradient':
-      L.image = `linear-gradient(165deg, ${page} 0%, ${mixHex(page, a1, 0.25)} 58%, ${mixHex(page, a2, 0.4)} 100%)`; L.size = '100% 100%'; L.repeat = 'no-repeat'; break;
-    case 'grain':
-      L.image = `${svgUrl(noiseSvg(220, 220, 0.85, 3, ink, dark ? 0.32 : 0.26, dark ? 0.07 : 0.06))}, radial-gradient(ellipse at 30% 0%, ${rgbaOf('#ffffff', dark ? 0.06 : 0.35)}, transparent 60%)`;
-      L.size = '220px 220px, 100% 100%'; L.repeat = 'repeat, no-repeat'; break;
-    case 'linen':
-      L.image = `repeating-linear-gradient(0deg, ${rgbaOf(ink, 0.05)} 0 1px, transparent 1px 4px), repeating-linear-gradient(90deg, ${rgbaOf(ink, 0.045)} 0 1px, transparent 1px 3px), ${svgUrl(noiseSvg(200, 200, 0.7, 2, ink, 0.2, 0.04))}`;
-      L.size = 'auto, auto, 200px 200px'; break;
-    case 'dots':
-      L.image = `radial-gradient(${rgbaOf(dark ? '#ffffff' : mixHex(a2, '#000000', 0.3), dark ? 0.22 : 0.32)} 1.4px, transparent 1.9px)`; L.size = '24px 24px'; break;
-    case 'topo':
-      L.image = `${svgUrl(topoSvg(dark ? mixHex(a2, '#ffffff', 0.35) : mixHex(a1, '#000000', 0.2), dark ? 0.24 : 0.2))}, ${vignette}`;
-      L.size = '640px 640px, 100% 100%'; L.repeat = 'repeat, no-repeat'; break;
-    case 'starfield':
-      L.image = `${svgUrl(starSvg(dark ? '#ffffff' : mixHex(page, '#000000', 0.6), glowA2))}, radial-gradient(ellipse at 15% 20%, ${rgbaOf(glowA1, 0.32)}, transparent 55%), radial-gradient(ellipse at 85% 75%, ${rgbaOf(glowA2, 0.2)}, transparent 50%)`;
-      L.size = '420px 420px, 100% 100%, 100% 100%'; L.repeat = 'repeat, no-repeat, no-repeat'; break;
-    case 'wood':
-      L.image = `repeating-linear-gradient(90deg, transparent 0 158px, ${rgbaOf('#000000', dark ? 0.35 : 0.12)} 158px 160px), ${svgUrl(noiseSvg(480, 480, '0.16 0.006', 3, dark ? '#000000' : mixHex(page, '#000000', 0.5), 0.9, 0.18, 'fractalNoise', 3))}`;
-      L.size = '160px 100%, 480px 480px'; L.repeat = 'repeat'; break;
-    case 'marble':
-      L.image = `${svgUrl(marbleSvg(dark ? mixHex(page, '#ffffff', 0.7) : mixHex(page, '#000000', 0.5), dark ? 0.55 : 0.4))}, linear-gradient(135deg, ${rgbaOf('#ffffff', dark ? 0.05 : 0.35)}, transparent 70%)`;
-      L.size = '640px 640px, 100% 100%'; L.repeat = 'repeat, no-repeat'; break;
-    case 'neongrid':
-      L.image = `linear-gradient(${rgbaOf(glowA2, 0.38)} 1px, transparent 1px), linear-gradient(90deg, ${rgbaOf(glowA2, 0.38)} 1px, transparent 1px), radial-gradient(ellipse at 50% 115%, ${rgbaOf(glowA1, 0.6)}, transparent 62%), radial-gradient(ellipse at 50% -15%, ${rgbaOf(glowA2, 0.28)}, transparent 55%)`;
-      L.size = '44px 44px, 44px 44px, 100% 100%, 100% 100%'; L.repeat = 'repeat, repeat, no-repeat, no-repeat'; break;
-    case 'mist':
-      L.image = `${svgUrl(noiseSvg(700, 700, 0.005, 5, dark ? mixHex(page, '#ffffff', 0.8) : '#ffffff', -1.0, dark ? -0.02 : 0.1, 'turbulence', 9))}, radial-gradient(ellipse at 50% 120%, ${rgbaOf(glowA1, 0.45)}, transparent 60%), ${vignette}`;
-      L.size = '700px 700px, 100% 100%, 100% 100%'; L.repeat = 'repeat, no-repeat, no-repeat'; break;
-    case 'grunge':
-      L.image = `${svgUrl(noiseSvg(420, 420, 0.014, 4, '#000000', 1.4, dark ? 0.3 : 0.12, 'fractalNoise', 13))}, ${svgUrl(noiseSvg(180, 180, 0.95, 2, ink, 0.6, dark ? 0.09 : 0.07))}, ${vignette}`;
-      L.size = '420px 420px, 180px 180px, 100% 100%'; L.repeat = 'repeat, repeat, no-repeat'; break;
-    case 'photo':
-      if (t.bgImage) {
-        const fade = Math.max(0.05, Math.min(0.95, 1 - (Number(t.overlay) || 55) / 100));
-        L.image = `linear-gradient(${rgbaOf(page, fade)}, ${rgbaOf(page, fade)}), url("${String(t.bgImage).replace(/"/g, '%22')}")`;
-        L.size = 'cover'; L.repeat = 'no-repeat';
-      }
-      break;
-  }
-  return L;
-}
-// The same texture, quieter, printed on the cards themselves, so the brand's surface is felt even on a
-// phone where the card fills the screen. Plain styles (solid, gradient, neon grid, mist, photo) keep plain cards.
-function cardPattern(t, st, surface) {
-  const dark = relLuminance(surface) < 0.22, ink = dark ? '#ffffff' : '#000000';
-  const a2 = contrastRatio(t.secondary, surface) >= 2.5 ? t.secondary : mixHex(t.secondary, ink, 0.45);
-  switch (st.bg) {
-    case 'grain': return { image: svgUrl(noiseSvg(220, 220, 0.85, 3, ink, dark ? 0.26 : 0.2, dark ? 0.05 : 0.04)), size: '220px 220px' };
-    case 'linen': return { image: `repeating-linear-gradient(0deg, ${rgbaOf(ink, 0.035)} 0 1px, transparent 1px 4px), repeating-linear-gradient(90deg, ${rgbaOf(ink, 0.03)} 0 1px, transparent 1px 3px)`, size: 'auto, auto' };
-    case 'dots': return { image: `radial-gradient(${rgbaOf(dark ? '#ffffff' : mixHex(t.secondary, '#000000', 0.3), dark ? 0.12 : 0.16)} 1.3px, transparent 1.8px)`, size: '24px 24px' };
-    case 'topo': return { image: svgUrl(topoSvg(dark ? mixHex(t.secondary, '#ffffff', 0.35) : mixHex(t.headline, '#000000', 0.2), dark ? 0.12 : 0.1)), size: '640px 640px' };
-    case 'starfield': return { image: svgUrl(starSvg(dark ? '#ffffff' : mixHex(surface, '#000000', 0.6), a2, 0.55)), size: '420px 420px' };
-    case 'wood': return { image: svgUrl(noiseSvg(480, 480, '0.16 0.006', 3, dark ? '#000000' : mixHex(surface, '#000000', 0.5), 0.6, 0.1, 'fractalNoise', 3)), size: '480px 480px' };
-    case 'marble': return { image: svgUrl(marbleSvg(dark ? mixHex(surface, '#ffffff', 0.7) : mixHex(surface, '#000000', 0.5), dark ? 0.28 : 0.2)), size: '640px 640px' };
-    case 'grunge': return { image: svgUrl(noiseSvg(180, 180, 0.95, 2, ink, 0.4, dark ? 0.05 : 0.04)), size: '180px 180px' };
-    default: return null;
-  }
-}
-// Overrides the classic variables when a cubicle has a style. Returns extra vars to set.
-function styleVars(t, st, classic) {
-  const a1 = t.headline, a2 = t.secondary;
-  const L = styleLayers(t, st), page = L.page;
-  // Cards: on the "background color" tone they use the classic paper; on tinted/deep/bold pages they
-  // carry the brand's own background color, so the brand's chosen text/background pair stays intact.
-  const surface = st.tone === 'base' ? classic['--paper'] : t.background;
-  const ink = pickReadable([t.text, classic['--ink']], surface);
-  let op = st.card === 'frosted' ? Math.min(st.opacity, 0.92) : st.opacity;
-  // Readability first: raise card opacity until text clears 4.5:1 against the blended surface.
-  while (op < 1 && contrastRatio(ink, mixHex(page, surface, op)) < 4.5) op = Math.min(1, Math.round((op + 0.04) * 100) / 100);
-  const surfDark = relLuminance(surface) < 0.2;
-  const eff = mixHex(page, surface, op); // what text actually sits on
-  let mk = 0.66; while (mk < 1 && contrastRatio(mixHex(eff, ink, mk), eff) < 4.5) mk = Math.min(1, mk + 0.03);
-  const input = surfDark ? mixHex(surface, '#ffffff', 0.07) : mixHex(surface, '#ffffff', 0.6);
-  const brandText = pickReadable([a1, a2, mixHex(a1, ink, 0.55)], surface, 3);
-  const btn = contrastRatio(a1, surface) >= 1.8 ? a1 : a2;
-  const R = { sharp: ['3px', '3px', '4px'], soft: ['14px', '10px', '12px'], round: ['26px', '16px', '999px'] }[st.radius];
-  const pageDark = L.dark;
-  const v = {
-    '--paper': surface, '--paper-a': rgbaOf(surface, op), '--cream': mixHex(surface, ink, 0.06),
-    '--ink': ink, '--ink-soft': mixHex(eff, ink, 0.88), '--muted': mixHex(eff, ink, mk), '--line': mixHex(eff, ink, 0.22),
-    '--brand-text': brandText, '--brand-soft': rgbaOf(brandText, surfDark ? 0.22 : 0.13),
-    '--content-bg-image': 'none',
-    '--t-page': page, '--t-page-image': L.image, '--t-page-size': L.size, '--t-page-repeat': L.repeat,
-    '--t-on-page': pickReadable([t.text, ink, '#ffffff', '#141320'], page),
-    '--t-card': rgbaOf(surface, op), '--t-bar': rgbaOf(surface, Math.max(op, 0.92)), '--t-input': input,
-    '--t-input-ink': pickReadable([ink, t.text], input),
-    '--t-card-border': st.card === 'outline' ? `1.5px solid ${rgbaOf(pickReadable([a2, a1, ink], mixHex(page, surface, op), 3), 0.8)}`
-      : st.card === 'frosted' ? `1px solid ${rgbaOf('#ffffff', pageDark ? 0.14 : 0.55)}` : '1px solid transparent',
-    '--t-card-shadow': st.card === 'solid' ? `0 1px 2px rgba(0,0,0,.08), 0 18px 40px -18px ${rgbaOf(mixHex(page, '#000000', 0.5), 0.6)}`
-      : st.card === 'frosted' ? '0 12px 34px -14px rgba(0,0,0,.4)' : 'none',
-    '--t-blur': st.card === 'frosted' ? 'blur(14px) saturate(1.15)' : (op < 1 ? 'blur(3px)' : 'none'),
-    '--radius-card': R[0], '--t-radius-ctl': R[1], '--t-radius-pill': R[2],
-    '--t-btn': btn, '--t-on-btn': pickReadable(['#ffffff', '#141320'], btn, 3),
-    '--t-side': rgbaOf(classic['--side-bg'], 0.84),
-    '--t-text-shadow': pageDark ? '0 1px 3px rgba(0,0,0,.45)' : 'none'
-  };
-  const pat = cardPattern(t, st, surface);
-  v['--t-card-image'] = pat ? pat.image : 'none';
-  v['--t-card-size'] = pat ? pat.size : 'auto';
-  return v;
-}
-const STYLE_VAR_KEYS = ['--radius-card'];
 
 function applyThemeVars(t) {
   const root = document.documentElement;
@@ -1857,13 +1594,8 @@ function applyThemeVars(t) {
   } else {
     vars['--content-bg-image'] = 'none';
   }
-  const st = normalizeStyle(t.style);
-  if (st) Object.assign(vars, styleVars(t, st, vars));
-  else STYLE_VAR_KEYS.forEach(k => root.style.removeProperty(k)); // Classic: untouched, exactly as before
   Object.entries(vars).forEach(([k, v]) => root.style.setProperty(k, v));
-  document.body.classList.toggle('has-bg-image', !st && !!t.bgImage);
-  document.body.classList.toggle('themed', !!st);
-  ['bg', 'card', 'radius'].forEach(k => { if (st) document.body.dataset['t' + k[0].toUpperCase() + k.slice(1)] = st[k]; else delete document.body.dataset['t' + k[0].toUpperCase() + k.slice(1)]; });
+  document.body.classList.toggle('has-bg-image', !!t.bgImage);
   ensureFontLoaded(t.headingFont);
   ensureFontLoaded(t.bodyFont);
   // Older builds set these on #content-root directly — clear them so the
@@ -1886,8 +1618,7 @@ function pendingThemeFull() {
     background: pendingTheme.background, text: pendingTheme.text,
     headline: pendingTheme.headline, secondary: pendingTheme.secondary,
     headingFont: pendingTheme.headingFont, bodyFont: pendingTheme.bodyFont,
-    overlay: pendingTheme.overlay,
-    style: normalizeStyle(pendingTheme.style)
+    overlay: pendingTheme.overlay
   });
 }
 
@@ -1895,8 +1626,7 @@ function themeIsDirty() {
   if (!active || !pendingTheme) return false;
   const a = themeFromCubicle(active), p = pendingThemeFull();
   return ['background','text','headline','secondary','headingFont','bodyFont','overlay']
-    .some(k => String(a[k]).toLowerCase() !== String(p[k]).toLowerCase())
-    || JSON.stringify(a.style) !== JSON.stringify(p.style);
+    .some(k => String(a[k]).toLowerCase() !== String(p[k]).toLowerCase());
 }
 
 function revertTheme() {
@@ -1922,8 +1652,7 @@ function renderThemeCard() {
     secondary: active.secondary_color || '#c9c6d3',
     headingFont: active.font_heading || 'Fraunces',
     bodyFont: active.font_body || 'Inter',
-    overlay: (active.background_overlay === 0 || active.background_overlay) ? active.background_overlay : 55,
-    style: normalizeStyle(active.theme_style)
+    overlay: (active.background_overlay === 0 || active.background_overlay) ? active.background_overlay : 55
   };
   const ov = document.getElementById('t-overlay');
   if (ov) ov.value = pendingTheme.overlay;
@@ -2016,15 +1745,7 @@ function updateThemePreview() {
   const s1 = document.getElementById('theme-preview-swatch1');
   const s2 = document.getElementById('theme-preview-swatch2');
   if (!h || !pendingTheme) return;
-  const pst = normalizeStyle(pendingTheme.style);
-  if (pst) {
-    const L = styleLayers(pendingThemeFull(), pst);
-    box.style.background = ''; box.style.backgroundColor = L.page; box.style.backgroundImage = L.image;
-    box.style.backgroundSize = L.size; box.style.backgroundRepeat = L.repeat;
-  } else {
-    box.style.backgroundImage = 'none'; box.style.background = pendingTheme.background;
-  }
-  renderStylePicker();
+  box.style.background = pendingTheme.background;
   h.style.fontFamily = `'${pendingTheme.headingFont}', serif`;
   h.style.color = pendingTheme.headline;
   p.style.fontFamily = `'${pendingTheme.bodyFont}', sans-serif`;
@@ -2040,90 +1761,6 @@ function updateThemePreview() {
   }
   const ovVal = document.getElementById('t-overlay-val');
   if (ovVal) ovVal.textContent = (pendingTheme.overlay || 0) + '%';
-}
-
-// Look & feel > Workspace background: visual tiles + card/tone/corner options.
-function styleStarterFor(bg) {
-  const darkLook = ['starfield', 'neongrid', 'mist', 'grunge'].includes(bg);
-  const baseDark = pendingTheme && relLuminance(pendingTheme.background) < 0.22;
-  return Object.assign({}, STYLE_DEFAULTS, {
-    tone: darkLook && !baseDark ? 'deep' : 'base',
-    card: ['photo', 'starfield', 'mist', 'marble'].includes(bg) ? 'frosted' : (bg === 'neongrid' ? 'outline' : 'solid'),
-    opacity: ['photo', 'starfield', 'mist', 'marble'].includes(bg) ? 0.8 : (bg === 'neongrid' ? 0.86 : 1),
-    radius: bg === 'neongrid' || bg === 'grunge' ? 'sharp' : 'soft'
-  });
-}
-// Night-sky style textures read best on a dark page: on a light palette, previews and picks switch to the Deep tone.
-function tileToneFor(id) {
-  const darkLook = ['starfield', 'neongrid', 'mist', 'grunge'].includes(id);
-  const st = normalizeStyle(pendingTheme && pendingTheme.style);
-  if (!darkLook || !pendingTheme) return {};
-  const page = stylePage(pendingThemeFull(), st || styleStarterFor(id));
-  return relLuminance(page) < 0.22 ? {} : { tone: 'deep' };
-}
-function pickBgStyle(id) {
-  if (!pendingTheme) return;
-  if (id === 'classic') pendingTheme.style = null;
-  else pendingTheme.style = normalizeStyle(Object.assign({}, pendingTheme.style || styleStarterFor(id), { bg: id }, tileToneFor(id)));
-  if (id === 'photo' && !(active && active.background_image_url)) {
-    const fold = document.querySelector('.bg-fold'); if (fold) fold.open = true;
-    const note = document.getElementById('bg-note');
-    if (note) { note.style.color = 'var(--muted)'; note.textContent = 'Upload a photo here and it becomes the background.'; }
-  }
-  updateThemePreview();
-}
-function setStyleOpt(key, val) {
-  if (!pendingTheme) return;
-  pendingTheme.style = normalizeStyle(Object.assign({}, pendingTheme.style || STYLE_DEFAULTS, { [key]: val }));
-  updateThemePreview();
-}
-function onStyleOpacityInput() {
-  const el = document.getElementById('t-card-opacity');
-  setStyleOpt('opacity', parseInt(el.value, 10) / 100);
-}
-function renderStylePicker() {
-  const wrap = document.getElementById('t-bg-swatches');
-  if (!wrap || !pendingTheme || !active) return;
-  const st = normalizeStyle(pendingTheme.style);
-  const base = pendingThemeFull();
-  wrap.innerHTML = '';
-  [{ id: 'classic', label: 'Classic (as saved)' }].concat(BG_STYLES).forEach(b => {
-    const sel = st ? st.bg === b.id : b.id === 'classic';
-    const btn = document.createElement('button');
-    btn.type = 'button'; btn.className = 'bg-tile' + (sel ? ' sel' : ''); btn.dataset.bg = b.id;
-    btn.setAttribute('aria-pressed', sel ? 'true' : 'false'); btn.onclick = () => pickBgStyle(b.id);
-    const sw = document.createElement('span'); sw.className = 'bg-tile-sw';
-    if (b.id === 'classic') {
-      sw.style.background = base.background;
-      if (base.bgImage) { sw.style.backgroundImage = `url("${String(base.bgImage).replace(/"/g, '%22')}")`; sw.style.backgroundSize = 'cover'; }
-    } else {
-      const L = styleLayers(base, Object.assign({}, st || styleStarterFor(b.id), { bg: b.id }, tileToneFor(b.id)));
-      sw.style.backgroundColor = L.page; sw.style.backgroundImage = L.image;
-      sw.style.backgroundSize = String(L.size).replace(/(\d+(?:\.\d+)?)px/g, (m, n) => (n / 2) + 'px');
-      sw.style.backgroundRepeat = L.repeat;
-      if (b.id === 'photo' && !base.bgImage) { sw.textContent = '＋'; sw.classList.add('empty'); }
-    }
-    if (b.id !== 'classic' && !(b.id === 'photo' && !base.bgImage)) {
-      const ts = normalizeStyle(Object.assign({}, st || styleStarterFor(b.id), { bg: b.id }, tileToneFor(b.id)));
-      const dk = relLuminance(base.background) < 0.2;
-      const tv = styleVars(base, ts, { '--paper': dk ? mixHex(base.background, '#ffffff', 0.07) : mixHex(base.background, '#ffffff', 0.7), '--ink': base.text, '--side-bg': '#000000' });
-      const card = document.createElement('i'); card.className = 'bg-tile-card';
-      card.style.background = tv['--t-card']; card.style.border = tv['--t-card-border']; card.style.color = tv['--ink'];
-      card.style.borderRadius = ts.radius === 'sharp' ? '2px' : ts.radius === 'round' ? '9px' : '5px';
-      card.textContent = 'Aa'; sw.appendChild(card);
-    }
-    const lbl = document.createElement('span'); lbl.className = 'bg-tile-lbl'; lbl.textContent = b.label;
-    btn.appendChild(sw); btn.appendChild(lbl); wrap.appendChild(btn);
-  });
-  const opts = document.getElementById('t-style-opts');
-  if (opts) opts.hidden = !st;
-  if (st) {
-    document.querySelectorAll('#t-style-opts .opt-chips').forEach(row => {
-      row.querySelectorAll('button').forEach(b => b.classList.toggle('sel', st[row.dataset.key] === b.dataset.val));
-    });
-    const op = document.getElementById('t-card-opacity'); if (op) op.value = Math.round(st.opacity * 100);
-    const ov = document.getElementById('t-card-opacity-val'); if (ov) ov.textContent = Math.round(st.opacity * 100) + '%';
-  }
 }
 
 function onOverlayInput() {
@@ -2271,20 +1908,10 @@ async function saveTheme() {
     font_body: pendingTheme.bodyFont,
     background_overlay: Math.max(0, Math.min(95, parseInt(pendingTheme.overlay, 10) || 55))
   };
-  // Workspace style lives in its own jsonb column. Classic cubicles that never picked a style don't send
-  // it at all, so their saves are unchanged (and still work before the theme_style migration is applied).
-  const style = normalizeStyle(pendingTheme.style);
-  if (style || active.theme_style) patch.theme_style = style;
   const { error } = await sb.from('cubicles').update(patch).eq('id', active.id);
   btn.disabled = false; btn.textContent = 'Save theme';
 
-  if (error) {
-    note.style.color = '#c0392b';
-    note.textContent = /theme_style/.test(error.message || '')
-      ? 'Error: workspace styles need the theme_style database column (migration 20261006120000). Colors and fonts were not saved either; pick Classic to save without a style.'
-      : 'Error: ' + error.message;
-    return;
-  }
+  if (error) { note.style.color = '#c0392b'; note.textContent = 'Error: ' + error.message; return; }
   Object.assign(active, patch);
   const idx = cubicles.findIndex(c => c.id === active.id);
   if (idx > -1) cubicles[idx] = active;

@@ -9,7 +9,7 @@ const DEMO = `
 setTimeout(() => {
   const d = document.getElementById('draft');
   if (!d) return;
-  d.value = "Running three brands? Give each one its own cubicle — and let Bleed Check catch it before a moon reading slips into the wrong feed. Zero bleed.";
+  d.value = "Forest rave this Friday, two hours under the trees. Pull a moon reading before you come. See you on the floor.";
   document.getElementById('draft-image').value = 'https://example.com/flyer.jpg';
   if (typeof runBleedCheck === 'function') runBleedCheck();
   if (typeof checkBlueskyLimit === 'function') checkBlueskyLimit();
@@ -28,3 +28,5 @@ function build(src, out) {
 }
 build(execSync('git show origin/main:app.html', { cwd: root, maxBuffer: 1 << 26 }).toString(), 'preview-before.html');
 build(fs.readFileSync(path.join(root, 'app.html'), 'utf8'), 'preview-after.html');
+// Theme comparison: the same demo cubicles on the layout just before immersive styles (22820f7).
+build(execSync('git show 22820f7:app.html', { cwd: root, maxBuffer: 1 << 26 }).toString(), 'preview-theme-before.html');
