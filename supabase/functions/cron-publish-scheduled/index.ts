@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { publishToTikTokFull } from "./tiktok.ts";
+import { publishToDiscord, collectDiscordImages } from "../_shared/discord.ts";
 
 // CRON_SECRET must match the Vault secret `cron_publish_secret` that the
 // pg_cron job `publish-scheduled-posts` sends in the x-cron-secret header.
@@ -46,7 +47,7 @@ function describeError(e: unknown) {
   return { name: "unknown", message: String(e) };
 }
 
-async function fetchDueDraftsWithRetry(svc: ReturnType<typeof createClient>, nowIso: string) {
+async function fetchDueDraftsWithRetry(svc: any, nowIso: string) {
   const maxAttempts = 3;
   let lastErr: unknown = null;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -255,12 +256,19 @@ Deno.serve(async (req: Request) => {
 
     const summary: Record<string, unknown>[] = [];
 
-    for (const draft of due || []) {
-      const { data: allAccounts } = await svc.from("social_accounts").select("*").eq("cubicle_id", draft.cubicle_id);
+    for (const draft of (due || []) as any[]) {
+      const { data: allAccounts } = await svc.from("social_accounts").select("*").eq("cubicle_id", draft.cubicle_id).eq("user_id", draft.user_id);
+      // ^ user_id filter: a draft may only ever publish through accounts owned by the draft's author,
+      //   even if its cubicle_id points at someone else's cubicle.
       const accounts = (draft.target_platforms && draft.target_platforms.length)
         ? (allAccounts || []).filter((a: any) => draft.target_platforms.includes(a.platform))
         : (allAccounts || []);
       const results: Record<string, any> = {};
+      let brand: { name?: string; logo_url?: string } | null = null;
+      if (accounts.some((a: any) => a.platform === "discord")) {
+        const { data: cub } = await svc.from("cubicles").select("name, logo_url").eq("id", draft.cubicle_id).eq("user_id", draft.user_id).maybeSingle();
+        brand = cub || null;
+      }
 
       if (!accounts || accounts.length === 0) {
         await svc.from("drafts").update({ publish_error: "no_connected_accounts" }).eq("id", draft.id);
@@ -281,6 +289,15 @@ Deno.serve(async (req: Request) => {
           } else if (acct.platform === "tiktok") {
             const r = await publishToTikTokFull(svc, acct, draft);
             results.tiktok = { ok: true, post_id: r.publish_id, status: r.status, note: r.note };
+          } else if (acct.platform === "discord") {
+            const r = await publishToDiscord(acct.access_token, {
+              content: draft.content,
+              imageUrls: collectDiscordImages(draft),
+              videoUrl: draft.video_url,
+              username: brand?.name,
+              avatarUrl: brand?.logo_url,
+            });
+            results.discord = { ok: true, post_id: r.post_id, message_ids: r.message_ids, note: r.note };
           }
         } catch (e) {
           results[acct.platform] = { ok: false, error: String(e) };
@@ -289,7 +306,7 @@ Deno.serve(async (req: Request) => {
 
       const anySucceeded = Object.values(results).some((r: any) => r.ok);
       const allErrors = Object.entries(results).filter(([, r]: any) => !r.ok).map(([p, r]: any) => `${p}: ${r.error}`).join(" | ");
-      const firstPostId = results.facebook?.post_id || results.instagram?.post_id || results.bluesky?.post_id || results.linkedin?.post_id || results.tiktok?.post_id || null;
+      const firstPostId = results.facebook?.post_id || results.instagram?.post_id || results.bluesky?.post_id || results.linkedin?.post_id || results.tiktok?.post_id || results.discord?.post_id || null;
 
       await svc.from("drafts").update({
         status: anySucceeded ? "published" : draft.status,

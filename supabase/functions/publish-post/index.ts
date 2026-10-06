@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { publishToTikTokFull } from "./tiktok.ts";
+import { publishToDiscord, collectDiscordImages } from "../_shared/discord.ts";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -292,7 +293,9 @@ Deno.serve(async (req: Request) => {
       return new Response(JSON.stringify({ error: "draft_not_found" }), { status: 404, headers: CORS_HEADERS });
     }
 
-    const { data: allAccounts } = await svc.from("social_accounts").select("*").eq("cubicle_id", draft.cubicle_id);
+    const { data: allAccounts } = await svc.from("social_accounts").select("*").eq("cubicle_id", draft.cubicle_id).eq("user_id", draft.user_id);
+    // ^ user_id filter: a draft may only ever publish through accounts owned by the draft's author,
+    //   even if its cubicle_id points at someone else's cubicle.
     const accounts = (draft.target_platforms && draft.target_platforms.length)
       ? (allAccounts || []).filter((a: any) => draft.target_platforms.includes(a.platform))
       : (allAccounts || []);
@@ -302,6 +305,11 @@ Deno.serve(async (req: Request) => {
     }
 
     const results: Record<string, any> = {};
+    let brand: { name?: string; logo_url?: string } | null = null;
+    if (accounts.some((a: any) => a.platform === "discord")) {
+      const { data: cub } = await svc.from("cubicles").select("name, logo_url").eq("id", draft.cubicle_id).eq("user_id", draft.user_id).maybeSingle();
+      brand = cub || null;
+    }
     for (const acct of accounts) {
       try {
         if (acct.platform === "facebook") {
@@ -323,6 +331,15 @@ Deno.serve(async (req: Request) => {
           results.tiktok = { ok: true, post_id: r.publish_id, status: r.status, note: r.note };
         } else if (acct.platform === "pinterest") {
           results.pinterest = { ok: true, post_id: await publishToPinterest(acct.external_account_id, acct.access_token, draft.content, draft.image_url) };
+        } else if (acct.platform === "discord") {
+          const r = await publishToDiscord(acct.access_token, {
+            content: draft.content,
+            imageUrls: collectDiscordImages(draft),
+            videoUrl: draft.video_url,
+            username: brand?.name,
+            avatarUrl: brand?.logo_url,
+          });
+          results.discord = { ok: true, post_id: r.post_id, message_ids: r.message_ids, note: r.note };
         }
       } catch (e) {
         results[acct.platform] = { ok: false, error: String(e) };
@@ -331,7 +348,7 @@ Deno.serve(async (req: Request) => {
 
     const anySucceeded = Object.values(results).some((r: any) => r.ok);
     const allErrors = Object.entries(results).filter(([, r]: any) => !r.ok).map(([p, r]: any) => `${p}: ${r.error}`).join(" | ");
-    const firstPostId = results.facebook?.post_id || results.instagram?.post_id || results.bluesky?.post_id || results.linkedin?.post_id || results.tiktok?.post_id || results.pinterest?.post_id || null;
+    const firstPostId = results.facebook?.post_id || results.instagram?.post_id || results.bluesky?.post_id || results.linkedin?.post_id || results.tiktok?.post_id || results.pinterest?.post_id || results.discord?.post_id || null;
 
     await svc.from("drafts").update({
       status: anySucceeded ? "published" : draft.status,
