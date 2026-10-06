@@ -180,6 +180,10 @@
   h1{color:#fff}
   h1 .teal{color:var(--lavender-silver)}
   h1 .coral{color:var(--teal-on-purple)}
+  /* three-line headline: "One of you." / "All of your brands." / "Zero bleed." */
+  header h1{font-size:clamp(1.85rem,8vw,3.6rem);max-width:none}
+  header h1 .teal,header h1 .coral{display:block}
+  @media(min-width:380px){header h1 .teal,header h1 .coral{white-space:nowrap}}
   header .sub{color:rgba(243,239,250,.88)}
   header .hero-note{color:rgba(243,239,250,.75)}
   header .btn-ghost{color:#fff;border-color:var(--teal)}
