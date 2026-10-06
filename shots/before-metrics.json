@@ -3,8 +3,8 @@
     "compose": {
       "inner": true,
       "viewH": 734,
-      "totalH": 1369,
-      "screensTall": 1.87,
+      "totalH": 1573,
+      "screensTall": 2.14,
       "els": {
         "#draft": {
           "top": 228,
@@ -14,10 +14,10 @@
           "sticky": false
         },
         "#publish-targets": {
-          "top": 626,
-          "bottom": 708,
-          "scrollToSee": 0,
-          "inViewAtLoad": true,
+          "top": 759,
+          "bottom": 889,
+          "scrollToSee": 155,
+          "inViewAtLoad": false,
           "sticky": false
         },
         "#bleed-status": {
@@ -35,23 +35,23 @@
           "sticky": false
         },
         "#preview": {
-          "top": 1272,
-          "bottom": 1318,
-          "scrollToSee": 584,
+          "top": 1453,
+          "bottom": 1522,
+          "scrollToSee": 788,
           "inViewAtLoad": false,
           "sticky": false
         },
         "#sched-date": {
-          "top": 1087,
-          "bottom": 1123,
-          "scrollToSee": 389,
+          "top": 1267,
+          "bottom": 1303,
+          "scrollToSee": 569,
           "inViewAtLoad": false,
           "sticky": false
         },
         "#publish-btn": {
-          "top": 1134,
-          "bottom": 1171,
-          "scrollToSee": 437,
+          "top": 1315,
+          "bottom": 1352,
+          "scrollToSee": 618,
           "inViewAtLoad": false,
           "sticky": false
         }
@@ -60,8 +60,8 @@
     "voice": {
       "inner": true,
       "viewH": 734,
-      "totalH": 2162,
-      "screensTall": 2.95,
+      "totalH": 2151,
+      "screensTall": 2.93,
       "els": {}
     },
     "calendar": {
@@ -74,8 +74,8 @@
     "connections": {
       "inner": true,
       "viewH": 734,
-      "totalH": 1202,
-      "screensTall": 1.64,
+      "totalH": 1550,
+      "screensTall": 2.11,
       "els": {}
     }
   },
@@ -83,55 +83,55 @@
     "compose": {
       "inner": false,
       "viewH": 844,
-      "totalH": 2274,
-      "screensTall": 2.69,
+      "totalH": 2488,
+      "screensTall": 2.95,
       "els": {
         "#draft": {
-          "top": 589,
-          "bottom": 779,
+          "top": 605,
+          "bottom": 795,
           "scrollToSee": 0,
           "inViewAtLoad": true,
           "sticky": false
         },
         "#publish-targets": {
-          "top": 1002,
-          "bottom": 1180,
-          "scrollToSee": 336,
+          "top": 1168,
+          "bottom": 1394,
+          "scrollToSee": 550,
           "inViewAtLoad": false,
           "sticky": false
         },
         "#bleed-status": {
-          "top": 2135,
-          "bottom": 2177,
-          "scrollToSee": 1333,
+          "top": 2349,
+          "bottom": 2391,
+          "scrollToSee": 1547,
           "inViewAtLoad": false,
           "sticky": false
         },
         "#bleed-list": {
-          "top": 2191,
-          "bottom": 2229,
-          "scrollToSee": 1385,
+          "top": 2405,
+          "bottom": 2443,
+          "scrollToSee": 1599,
           "inViewAtLoad": false,
           "sticky": false
         },
         "#preview": {
-          "top": 1945,
-          "bottom": 2037,
-          "scrollToSee": 1193,
+          "top": 2159,
+          "bottom": 2251,
+          "scrollToSee": 1407,
           "inViewAtLoad": false,
           "sticky": false
         },
         "#sched-date": {
-          "top": 1761,
-          "bottom": 1797,
-          "scrollToSee": 953,
+          "top": 1975,
+          "bottom": 2011,
+          "scrollToSee": 1167,
           "inViewAtLoad": false,
           "sticky": false
         },
         "#publish-btn": {
-          "top": 1808,
-          "bottom": 1845,
-          "scrollToSee": 1001,
+          "top": 2022,
+          "bottom": 2059,
+          "scrollToSee": 1215,
           "inViewAtLoad": false,
           "sticky": false
         }
@@ -140,8 +140,8 @@
     "voice": {
       "inner": false,
       "viewH": 844,
-      "totalH": 3579,
-      "screensTall": 4.24,
+      "totalH": 3568,
+      "screensTall": 4.23,
       "els": {}
     },
     "calendar": {
@@ -154,8 +154,8 @@
     "connections": {
       "inner": false,
       "viewH": 844,
-      "totalH": 1771,
-      "screensTall": 2.1,
+      "totalH": 2232,
+      "screensTall": 2.64,
       "els": {}
     }
   }

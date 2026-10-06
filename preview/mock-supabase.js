@@ -3,7 +3,7 @@
 (function () {
   const now = Date.now(), day = 86400000;
   const cubicles = [
-    { id: 'c1', name: 'DJ Green Satyr', icon_initials: 'GS', color: '#2f7d4f', secondary_color: '#c8a24a',
+    { id: 'c1', name: 'DJ Green Satyr', icon_initials: 'GS', color: '#2f7d4f', secondary_color: '#c9c6d3',
       background_color: '#f3efe4', text_color: '#1d2a1f', font_heading: 'Fraunces', font_body: 'Inter',
       tone: 'Playful, euphoric, underground', audience: 'House & techno heads, festival crowd',
       signature_phrases: ['see you on the floor', 'bass in the forest'], lexicon: ['satyr set', 'forest rave'],
@@ -12,21 +12,22 @@
       background_color: '#f6f0fa', text_color: '#24132f', font_heading: 'Fraunces', font_body: 'Inter',
       tone: 'Mystical, warm, reflective', audience: 'Tarot & ritual community',
       signature_phrases: ['the cards remember'], lexicon: ['moon reading', 'arcana'], never_says: [], created_at: '2026-01-02' },
-    { id: 'c3', name: 'Brandparent', icon_initials: 'BP', color: '#9B7FC4', secondary_color: '#c9c6d3',
-      background_color: '#faf7f2', text_color: '#1c1b2e', font_heading: 'Fraunces', font_body: 'Inter',
+    { id: 'c3', name: 'Brandparent', icon_initials: 'BP', color: '#5B2A86', secondary_color: '#DCD8E6',
+      background_color: '#F5F3F9', text_color: '#2A1F3D', font_heading: 'Fraunces', font_body: 'Inter',
       tone: 'Clear, friendly, founder-led', audience: 'Multi-brand creators',
-      signature_phrases: ['zero bleed'], lexicon: ['cubicle', 'bleed check'], never_says: [], created_at: '2026-01-03' }
+      signature_phrases: ['zero bleed', 'see you on the floor'], lexicon: ['cubicle', 'bleed check', 'forest rave'], never_says: [], created_at: '2026-01-03' }
   ];
   const social = [
-    { id: 's1', cubicle_id: 'c1', platform: 'bluesky', external_account_name: 'djgreensatyr.bsky.social' },
-    { id: 's2', cubicle_id: 'c1', platform: 'facebook', external_account_name: 'DJ Green Satyr' },
-    { id: 's3', cubicle_id: 'c1', platform: 'instagram', external_account_name: '@djgreensatyr' },
-    { id: 's4', cubicle_id: 'c1', platform: 'tiktok', external_account_name: '@djgreensatyr' }
+    { id: 's1', cubicle_id: 'c3', platform: 'bluesky', external_account_name: 'djgreensatyr.bsky.social' },
+    { id: 's2', cubicle_id: 'c3', platform: 'facebook', external_account_name: 'DJ Green Satyr' },
+    { id: 's3', cubicle_id: 'c3', platform: 'instagram', external_account_name: '@djgreensatyr' },
+    { id: 's4', cubicle_id: 'c3', platform: 'tiktok', external_account_name: '@djgreensatyr' },
+    { id: 's5', cubicle_id: 'c3', platform: 'discord', external_account_name: 'GreenSatyr #announcements' }
   ];
   const drafts = [
-    { id: 'd1', cubicle_id: 'c1', status: 'scheduled', content: 'Friday: two-hour forest rave set, doors at 9. See you on the floor.', scheduled_for: new Date(now + 2 * day).toISOString() },
-    { id: 'd2', cubicle_id: 'c1', status: 'scheduled', content: 'New mix drop — bass in the forest vol. 3 is live everywhere.', scheduled_for: new Date(now + 5 * day).toISOString() },
-    { id: 'd3', cubicle_id: 'c1', status: 'scheduled', content: 'Throwback to the sunrise set at Lightning in a Bottle.', scheduled_for: new Date(now + 9 * day).toISOString() }
+    { id: 'd1', cubicle_id: 'c3', status: 'scheduled', content: 'Friday: two-hour forest rave set, doors at 9. See you on the floor.', scheduled_for: new Date(now + 2 * day).toISOString() },
+    { id: 'd2', cubicle_id: 'c3', status: 'scheduled', content: 'New mix drop — bass in the forest vol. 3 is live everywhere.', scheduled_for: new Date(now + 5 * day).toISOString() },
+    { id: 'd3', cubicle_id: 'c3', status: 'scheduled', content: 'Throwback to the sunrise set at Lightning in a Bottle.', scheduled_for: new Date(now + 9 * day).toISOString() }
   ];
   const tables = {
     profiles: [{ id: 'u1', parent_name: 'Britannic Zane', subscription_status: 'active', tutorials_enabled: false }],
@@ -63,5 +64,5 @@
   };
   window.SUPABASE_URL = 'https://example.invalid';
   window.requireSession = async () => session;
-  try { localStorage.setItem('bp_active_cubicle_u1', 'c1'); } catch (e) {}
+  try { localStorage.setItem('bp_active_cubicle_u1', 'c3'); } catch (e) {}
 })();

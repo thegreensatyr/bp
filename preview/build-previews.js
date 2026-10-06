@@ -1,4 +1,4 @@
-// PREVIEW ONLY. Builds preview-before.html (from git main:app.html) and preview-after.html
+// PREVIEW ONLY. Builds preview-before.html (from git origin/main:app.html) and preview-after.html
 // (from the working-tree app.html) with the Supabase client swapped for preview/mock-supabase.js.
 // Usage: node preview/build-previews.js
 const fs = require('fs'), { execSync } = require('child_process'), path = require('path');
@@ -9,7 +9,7 @@ const DEMO = `
 setTimeout(() => {
   const d = document.getElementById('draft');
   if (!d) return;
-  d.value = "Friday night forest rave — two hours of deep, rolling house under the trees. Pull a moon reading before you come, then see you on the floor. 🌲";
+  d.value = "Running three brands? Give each one its own cubicle — and let Bleed Check catch it before a moon reading slips into the wrong feed. Zero bleed.";
   document.getElementById('draft-image').value = 'https://example.com/flyer.jpg';
   if (typeof runBleedCheck === 'function') runBleedCheck();
   if (typeof checkBlueskyLimit === 'function') checkBlueskyLimit();
@@ -26,5 +26,5 @@ function build(src, out) {
   fs.writeFileSync(path.join(root, out), html);
   console.log('wrote', out);
 }
-build(execSync('git show main:app.html', { cwd: root, maxBuffer: 1 << 26 }).toString(), 'preview-before.html');
+build(execSync('git show origin/main:app.html', { cwd: root, maxBuffer: 1 << 26 }).toString(), 'preview-before.html');
 build(fs.readFileSync(path.join(root, 'app.html'), 'utf8'), 'preview-after.html');

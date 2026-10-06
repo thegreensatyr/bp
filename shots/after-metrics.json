@@ -3,40 +3,40 @@
     "compose": {
       "inner": true,
       "viewH": 734,
-      "totalH": 1368,
-      "screensTall": 1.86,
+      "totalH": 1573,
+      "screensTall": 2.14,
       "els": {
         "#draft": {
-          "top": 274,
-          "bottom": 444,
+          "top": 318,
+          "bottom": 488,
           "scrollToSee": 0,
           "inViewAtLoad": true,
           "sticky": false
         },
         "#publish-targets": {
           "top": 145,
-          "bottom": 226,
+          "bottom": 270,
           "scrollToSee": 0,
           "inViewAtLoad": true,
           "sticky": false
         },
         "#bleed-status": {
-          "top": 454,
-          "bottom": 487,
+          "top": 498,
+          "bottom": 531,
           "scrollToSee": 0,
           "inViewAtLoad": true,
           "sticky": false
         },
         "#bleed-list": {
-          "top": 495,
-          "bottom": 534,
+          "top": 539,
+          "bottom": 579,
           "scrollToSee": 0,
           "inViewAtLoad": true,
           "sticky": false
         },
         "#preview": {
-          "top": 570,
-          "bottom": 616,
+          "top": 614,
+          "bottom": 660,
           "scrollToSee": 0,
           "inViewAtLoad": true,
           "sticky": false
@@ -60,15 +60,15 @@
     "voice": {
       "inner": true,
       "viewH": 734,
-      "totalH": 2275,
-      "screensTall": 3.1,
+      "totalH": 2262,
+      "screensTall": 3.08,
       "els": {}
     },
     "connections": {
       "inner": true,
       "viewH": 734,
-      "totalH": 1066,
-      "screensTall": 1.45,
+      "totalH": 1308,
+      "screensTall": 1.78,
       "els": {}
     }
   },
@@ -76,40 +76,40 @@
     "compose": {
       "inner": false,
       "viewH": 851,
-      "totalH": 2068,
-      "screensTall": 2.43,
+      "totalH": 2248,
+      "screensTall": 2.64,
       "els": {
         "#draft": {
-          "top": 378,
-          "bottom": 518,
+          "top": 398,
+          "bottom": 538,
           "scrollToSee": 0,
           "inViewAtLoad": true,
           "sticky": false
         },
         "#publish-targets": {
-          "top": 258,
-          "bottom": 334,
+          "top": 278,
+          "bottom": 354,
           "scrollToSee": 0,
           "inViewAtLoad": true,
           "sticky": false
         },
         "#bleed-status": {
-          "top": 528,
-          "bottom": 561,
+          "top": 548,
+          "bottom": 581,
           "scrollToSee": 0,
           "inViewAtLoad": true,
           "sticky": false
         },
         "#bleed-list": {
-          "top": 608,
-          "bottom": 648,
+          "top": 628,
+          "bottom": 667,
           "scrollToSee": 0,
           "inViewAtLoad": true,
           "sticky": false
         },
         "#preview": {
-          "top": 683,
-          "bottom": 775,
+          "top": 703,
+          "bottom": 795,
           "scrollToSee": 0,
           "inViewAtLoad": true,
           "sticky": false
@@ -133,15 +133,15 @@
     "voice": {
       "inner": false,
       "viewH": 844,
-      "totalH": 3305,
-      "screensTall": 3.92,
+      "totalH": 3292,
+      "screensTall": 3.9,
       "els": {}
     },
     "connections": {
       "inner": false,
       "viewH": 844,
-      "totalH": 1478,
-      "screensTall": 1.75,
+      "totalH": 2141,
+      "screensTall": 2.54,
       "els": {}
     }
   }

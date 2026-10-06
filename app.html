@@ -266,25 +266,26 @@
   .pick-color{display:inline-flex;align-items:center;gap:4px;margin:4px 10px 4px 0;font-size:.75rem}
   .pick-color .cw{width:18px;height:18px;border-radius:5px;border:1px solid var(--line);display:inline-block}
 
-  /* ===== Cubicle flow + warm pass (2026-10-05, ux/cubicle-flow) ==========================
+  /* ===== Cubicle flow + friendly purple/silver pass (2026-10-05, ux/cubicle-flow) ========
      Layout only — no JS behaviour changes. Order on the Post tab follows the task:
      who/where → write → Bleed Check (inline, under the editor) → media → platform settings
-     → sticky send bar. Warmer defaults: cream/plum instead of white/gray, soft shadows
+     → sticky send bar. Default palette: lavender-gray + plum + silver (teal only for focus rings), soft shadows
      instead of hairlines, sentence-case labels, rounder shapes. Per-cubicle themes still
      override every color via applyThemeVars(). */
   :root{
-    --cream:#fbf5ec; --paper:#fffaf3; --ink:#2a1f33; --ink-soft:#3d2f47; --muted:#7a6a78; --line:#ecdfcd;
-    --brand:#5B2A86; --brand-text:#5B2A86; --brand-soft:rgba(91,42,134,.12); --silver:#e7b77a; --brand-secondary:#e7b77a;
-    --side-bg:#4B1F6F; --side-fg:#fff4e6; --side-muted:#cdb8dc; --side-hover:#5e3184;
+    --cream:#F5F3F9; --paper:#FDFCFF; --ink:#2A1F3D; --ink-soft:#3D3152; --muted:#6B6480; --line:#E3DFEC;
+    --brand:#5B2A86; --brand-text:#5B2A86; --brand-soft:rgba(91,42,134,.12); --silver:#DCD8E6; --brand-secondary:#C9C6D3; --on-secondary:#2A1238;
+    --teal:#2BB5AA; --teal-deep:#1E9C93;
+    --side-bg:#4B1F6F; --side-fg:#F3EFFA; --side-muted:#C9BEDC; --side-hover:#5E3184;
     --radius-card:20px;
-    --shadow-card:0 1px 2px rgba(70,35,20,.05),0 12px 32px -14px rgba(70,35,20,.18);
+    --shadow-card:0 1px 2px rgba(42,20,70,.05),0 12px 32px -14px rgba(42,20,70,.2);
   }
   body{line-height:1.5}
   .panel{max-width:1060px}
   #panel-voice,#panel-connections{max-width:900px}
   .content{padding:24px 28px 40px}
 
-  /* cards & controls: softer, rounder, warmer */
+  /* cards & controls: softer, rounder, friendlier */
   .card{border-radius:var(--radius-card);border-color:transparent;box-shadow:var(--shadow-card);padding:22px 24px}
   .card h3{font-size:1.05rem;letter-spacing:-.005em}
   label{text-transform:none;letter-spacing:0;font-size:.86rem;font-weight:600;color:var(--ink-soft);margin:14px 0 6px}
@@ -298,7 +299,10 @@
   .btn-sm{padding:7px 14px;font-size:.8rem}
   .btn-danger{border-color:#c0392b;color:#c0392b}
   .chip{padding:6px 9px 6px 13px}
-  .topbar{background:var(--paper);box-shadow:0 6px 20px -16px rgba(70,35,20,.5)}
+  .topbar{background:var(--paper);box-shadow:0 6px 20px -16px rgba(42,20,70,.5)}
+  /* teal accent, used sparingly: keyboard focus rings + small hovers (fixed across every cubicle theme) */
+  .btn:focus-visible,.tab:focus-visible,.jump-chip:focus-visible,.fold>summary:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+  .target-pills label:has(input:focus-visible){outline:3px solid var(--teal);outline-offset:2px}
   .tabs{display:flex;gap:4px;align-items:center}
   .tab{padding:9px 16px}
   .tab.active{box-shadow:none;background:var(--brand-soft)}
@@ -373,6 +377,10 @@
   .connect-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
   .connect-card .field-help{margin:2px 0 12px;font-size:.82rem}
   .connect-card .comp-actions{margin-top:4px}
+  input[type=password]{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;font-family:inherit;font-size:.92rem;background:var(--cream);outline:none}
+  input[type=password]:focus{border-color:var(--brand)}
+  #conn-list .bleed-item{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+  #conn-list .bleed-item .btn{float:none !important;margin-left:auto}
 
   @media(max-width:900px){
     .composer-grid{grid-template-columns:1fr}
@@ -419,7 +427,7 @@
 
   .jump-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.8rem;color:var(--muted);margin:0 2px 14px}
   .jump-chip{border:1.5px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:.8rem;font-weight:600}
-  .jump-chip:hover{border-color:var(--brand)}
+  .jump-chip:hover{border-color:var(--teal-deep)}
   .section-head{scroll-margin-top:12px}
   @media(max-width:700px){
     .section-head{scroll-margin-top:110px}
@@ -1201,6 +1209,9 @@ function renderSidebar() {
     <button class="cub-btn ${active && c.id === active.id ? 'active' : ''}" onclick="setBrand('${c.id}')">
       ${cubDot(c)} ${escapeHtml(c.name)}
     </button>`).join('');
+  // Layout helper (ux/cubicle-flow): on phones the cubicle list is a sideways strip — keep the active brand in view.
+  const activeBtn = el.querySelector('.cub-btn.active');
+  if (activeBtn && el.scrollWidth > el.clientWidth) el.scrollLeft = Math.max(0, activeBtn.offsetLeft - el.offsetLeft - 8);
 }
 
 // --- Brand lock -------------------------------------------------------------

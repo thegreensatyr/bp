@@ -335,10 +335,15 @@
               <input type="text" id="draft-image" placeholder="https://… link to an already-hosted image" oninput="ttRenderPreview()">
               <label style="margin-top:14px">Video URL <span style="font-weight:400;text-transform:none;font-size:.78rem">(optional — used by TikTok &amp; Bluesky instead of the image)</span></label>
               <input type="text" id="draft-video" placeholder="https://… link to an already-hosted .mp4" oninput="ttRenderPreview()">
+              <div id="discord-extra" style="display:none">
+                <label style="margin-top:14px">Extra images for Discord <span style="font-weight:400;text-transform:none;font-size:.78rem">(optional — up to 3 more image URLs, one per line; Discord shows the Image URL above plus these, 4 max)</span></label>
+                <textarea id="draft-discord-images" style="min-height:70px" placeholder="https://… one image link per line"></textarea>
+              </div>
 
               <label style="margin-top:14px">Publish to</label>
               <div id="publish-targets" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center"></div>
               <div id="bsky-limit-warn" style="display:none;margin-top:8px;font-size:.8rem;font-weight:600;color:#c0392b"></div>
+              <div id="discord-limit-warn" style="display:none;margin-top:8px;font-size:.8rem;font-weight:600;color:var(--muted)"></div>
 
               <div class="tt-panel" id="tt-panel" style="display:none">
                 <div class="tt-head"><span class="tt-badge">TikTok</span><span id="tt-creator">Loading your TikTok account…</span></div>
@@ -590,6 +595,17 @@
             <button class="btn btn-brand" onclick="connectBluesky()" id="bsky-connect-btn">Connect Bluesky</button>
           </div>
           <div class="optim-out" id="bsky-out"></div>
+
+          <h3 style="margin-top:24px">Connect Discord</h3>
+          <p style="font-size:.85rem;color:var(--muted);margin:6px 0 14px">Posts into one channel of your Discord server, using this cubicle's name and logo. No developer app needed — in Discord open <b>Server Settings → Integrations → Webhooks → New Webhook</b>, pick the channel, then <b>Copy Webhook URL</b> and paste it here. Treat that URL like a password: anyone who has it can post in that channel. BrandParent stores it privately and never shows it again.</p>
+          <label>Webhook URL</label>
+          <input type="password" id="discord-webhook" placeholder="https://discord.com/api/webhooks/…" autocomplete="off" spellcheck="false">
+          <label>Label <span style="font-weight:400;text-transform:none;font-size:.78rem">(optional — e.g. "GreenSatyr #announcements")</span></label>
+          <input type="text" id="discord-label" placeholder="Server #channel" maxlength="80">
+          <div class="comp-actions" style="margin-top:14px">
+            <button class="btn btn-brand" onclick="connectDiscord()" id="discord-connect-btn">Connect Discord</button>
+          </div>
+          <div class="optim-out" id="discord-out"></div>
         </div>
       </div>
     </div>
@@ -2160,13 +2176,14 @@ async function schedulePost() {
     status: 'scheduled',
     scheduled_for: dateVal ? new Date(dateVal).toISOString() : null,
     target_platforms: targets.length ? targets : null,
-    platform_options: ttPlatformOptions(targets)
+    platform_options: buildPlatformOptions(targets)
   });
 
   if (error) { alert('Error: ' + error.message); return; }
   playRewardTone();
   draftCache[active.id] = { text: '', image: '', video: '' };
   ttResetAfterPost();
+  discordResetAfterPost();
   await loadDrafts();
   alert('Scheduled to ' + active.name + '\'s calendar. It will auto-publish to ' + (targets.length ? targets.join(', ') : 'every connected platform') + ' within 5 minutes of the scheduled time — no need to come back and click publish.');
 }
@@ -2197,7 +2214,7 @@ async function publishNow() {
     video_url: videoUrl || null,
     status: 'draft',
     target_platforms: targets.length ? targets : null,
-    platform_options: ttPlatformOptions(targets)
+    platform_options: buildPlatformOptions(targets)
   }).select().single();
 
   if (insertErr) {
@@ -2214,6 +2231,7 @@ async function publishNow() {
       const label = PLATFORM_LABEL[platform] || platform;
       if (!r.ok) return `✗ ${label}: ${String(r.error || '').replace(/^Error:\s*/, '').replace(/^[a-z]+_[a-z_]+:\s*/, '')}`;
       if (platform === 'tiktok') return `✓ ${label}: sent to TikTok` + (r.note ? ' — ' + r.note : ' — live on your profile.');
+      if (platform === 'discord') return `✓ ${label}: posted` + (r.note ? ' — ' + r.note : '');
       return `✓ ${label}: posted (${r.post_id})`;
     });
     const anyOk = Object.values(data.results || {}).some(r => r.ok);
@@ -2224,7 +2242,7 @@ async function publishNow() {
   }
 
   btn.disabled = false; btn.textContent = '🚀 Publish now';
-  if (!insertErr) { draftCache[active.id] = { text: '', image: '', video: '' }; }
+  if (!insertErr) { draftCache[active.id] = { text: '', image: '', video: '' }; discordResetAfterPost(); }
   ttValidate();
   await loadDrafts();
 }
@@ -2326,11 +2344,12 @@ async function saveFbPick() {
   }
 }
 
-const PLATFORM_LABEL = { facebook: 'Facebook Page', instagram: 'Instagram', bluesky: 'Bluesky', linkedin: 'LinkedIn', tiktok: 'TikTok', pinterest: 'Pinterest' };
+const PLATFORM_LABEL = { facebook: 'Facebook Page', instagram: 'Instagram', bluesky: 'Bluesky', linkedin: 'LinkedIn', tiktok: 'TikTok', pinterest: 'Pinterest', discord: 'Discord' };
 
 async function renderConnections() {
   document.getElementById('conn-brand').textContent = active.name;
-  const { data, error } = await sb.from('social_accounts').select('*').eq('cubicle_id', active.id);
+  // Named, non-secret columns only — tokens/app passwords/webhook URLs stay server-side.
+  const { data, error } = await sb.from('social_accounts').select('id, cubicle_id, platform, external_account_id, external_account_name, connected_at, token_expires_at').eq('cubicle_id', active.id);
   const list = document.getElementById('conn-list');
   connections = (!error && data) ? data : [];
 
@@ -2568,6 +2587,92 @@ function checkBlueskyLimit() {
     warn.style.display = 'none';
     warn.style.color = '#c0392b';
   }
+  discordSync();
+}
+
+// ================= Discord =================
+const DISCORD_LIMIT = 2000;
+function discordSelected() { return !!document.querySelector('.publish-target-cb[value="discord"]:checked'); }
+
+function discordSync() {
+  const extra = document.getElementById('discord-extra');
+  const warn = document.getElementById('discord-limit-warn');
+  if (!extra || !warn) return;
+  const on = discordSelected();
+  extra.style.display = on ? '' : 'none';
+  const len = document.getElementById('draft').value.length;
+  if (on && len > DISCORD_LIMIT) {
+    const parts = Math.ceil(len / DISCORD_LIMIT);
+    warn.style.display = 'block';
+    warn.textContent = `${len} characters — longer than Discord's ${DISCORD_LIMIT}-character limit, so it'll be sent as about ${parts} messages in a row.`;
+  } else {
+    warn.style.display = 'none';
+  }
+}
+
+function discordExtraImages() {
+  const el = document.getElementById('draft-discord-images');
+  if (!el) return [];
+  return el.value.split(/[\s,]+/).map(s => s.trim()).filter(s => /^https?:\/\//i.test(s)).slice(0, 3);
+}
+
+function buildPlatformOptions(targets) {
+  const opts = ttPlatformOptions(targets) || {};
+  if (targets && targets.includes('discord')) {
+    const extra = discordExtraImages();
+    if (extra.length) opts.discord = { extra_image_urls: extra };
+  }
+  return Object.keys(opts).length ? opts : null;
+}
+
+function discordResetAfterPost() {
+  const el = document.getElementById('draft-discord-images');
+  if (el) el.value = '';
+  discordSync();
+}
+
+// supabase-js hides the JSON body of non-2xx function responses behind
+// error.context; pull out our { message } so the user sees why it failed.
+async function functionErrorMessage(error, data) {
+  if (data && (data.message || data.error)) return data.message || data.error;
+  try {
+    if (error && error.context && typeof error.context.json === 'function') {
+      const body = await error.context.json();
+      if (body && (body.message || body.error)) return body.message || body.error;
+    }
+  } catch (e) {}
+  return (error && error.message) || 'unknown error';
+}
+
+async function connectDiscord() {
+  const input = document.getElementById('discord-webhook');
+  const labelEl = document.getElementById('discord-label');
+  const btn = document.getElementById('discord-connect-btn');
+  const out = document.getElementById('discord-out');
+  const webhookUrl = input.value.trim();
+  out.style.display = 'block';
+
+  if (!/^https:\/\/discord\.com\/api(\/v\d+)?\/webhooks\/\d+\/[\w-]+\/?$/.test(webhookUrl.split(/[?#]/)[0])) {
+    out.textContent = 'That doesn\'t look like a Discord webhook URL. It should start with https://discord.com/api/webhooks/ — copy it from Server Settings → Integrations → Webhooks.';
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Connecting…';
+  out.textContent = 'Checking the webhook with Discord…';
+  try {
+    const { data, error } = await sb.functions.invoke('discord-connect', {
+      body: { cubicle_id: active.id, webhook_url: webhookUrl, label: labelEl.value.trim() }
+    });
+    if (error || !data || !data.ok) throw new Error(await functionErrorMessage(error, data));
+    out.textContent = 'Connected: ' + active.name + ' now posts to Discord (' + data.name + ').';
+    input.value = '';
+    labelEl.value = '';
+    await renderConnections();
+    playRewardTone();
+  } catch (e) {
+    out.textContent = 'Connection failed: ' + (e.message || String(e));
+  }
+  btn.disabled = false; btn.textContent = 'Connect Discord';
 }
 
 async function connectBluesky() {
@@ -2709,7 +2814,7 @@ init();
 setTimeout(() => {
   const d = document.getElementById('draft');
   if (!d) return;
-  d.value = "Friday night forest rave — two hours of deep, rolling house under the trees. Pull a moon reading before you come, then see you on the floor. 🌲";
+  d.value = "Running three brands? Give each one its own cubicle — and let Bleed Check catch it before a moon reading slips into the wrong feed. Zero bleed.";
   document.getElementById('draft-image').value = 'https://example.com/flyer.jpg';
   if (typeof runBleedCheck === 'function') runBleedCheck();
   if (typeof checkBlueskyLimit === 'function') checkBlueskyLimit();
