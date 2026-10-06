@@ -331,14 +331,21 @@
               <div class="posting-as" id="posting-as"></div>
               <h3>Draft a post</h3>
               <textarea id="draft" placeholder="Write as this brand… the Bleed Check watches as you type." oninput="runBleedCheck(); checkBlueskyLimit()"></textarea>
-              <label style="margin-top:14px">Image URL <span style="font-weight:400;text-transform:none;font-size:.78rem">(required for Instagram, TikTok &amp; Pinterest — Facebook works without one)</span></label>
-              <input type="text" id="draft-image" placeholder="https://… link to an already-hosted image" oninput="ttRenderPreview()">
-              <label style="margin-top:14px">Video URL <span style="font-weight:400;text-transform:none;font-size:.78rem">(optional — used by TikTok &amp; Bluesky instead of the image)</span></label>
-              <input type="text" id="draft-video" placeholder="https://… link to an already-hosted .mp4" oninput="ttRenderPreview()">
-              <div id="discord-extra" style="display:none">
-                <label style="margin-top:14px">Extra images for Discord <span style="font-weight:400;text-transform:none;font-size:.78rem">(optional — up to 3 more image URLs, one per line; Discord shows the Image URL above plus these, 4 max)</span></label>
-                <textarea id="draft-discord-images" style="min-height:70px" placeholder="https://… one image link per line"></textarea>
-              </div>
+              <label style="margin-top:14px">Photos or video <span style="font-weight:400;text-transform:none;font-size:.78rem">(required for Instagram &amp; TikTok — Facebook, Bluesky &amp; Discord work without)</span></label>
+              <!-- Media uploads: js/media-upload.js renders the picker, previews and progress here -->
+              <div id="media-uploader"></div>
+              <details class="bpm-links" id="media-links">
+                <summary>Or paste a link to an image or video that's already online</summary>
+                <div class="field-help" id="media-links-note" style="display:none">Links are ignored while files are attached above.</div>
+                <label style="margin-top:10px">Image URL <span style="font-weight:400;text-transform:none;font-size:.78rem">(required for Instagram, TikTok &amp; Pinterest if no file is attached)</span></label>
+                <input type="text" id="draft-image" placeholder="https://… link to an already-hosted image" oninput="ttRenderPreview()">
+                <label style="margin-top:14px">Video URL <span style="font-weight:400;text-transform:none;font-size:.78rem">(optional — used by TikTok &amp; Bluesky instead of the image)</span></label>
+                <input type="text" id="draft-video" placeholder="https://… link to an already-hosted .mp4" oninput="ttRenderPreview()">
+                <div id="discord-extra" style="display:none">
+                  <label style="margin-top:14px">Extra images for Discord <span style="font-weight:400;text-transform:none;font-size:.78rem">(optional — up to 3 more image URLs, one per line; Discord shows the Image URL above plus these, 4 max)</span></label>
+                  <textarea id="draft-discord-images" style="min-height:70px" placeholder="https://… one image link per line"></textarea>
+                </div>
+              </details>
 
               <label style="margin-top:14px">Publish to</label>
               <div id="publish-targets" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center"></div>
@@ -709,6 +716,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="js/supabase-client.js"></script>
+<script src="js/media-rules.js"></script>
+<script src="js/media-upload.js"></script>
 <script>
 const COLORS = ['#1b5e20','#4a148c','#1565c0','#26374a','#5f7d54','#6b1620','#9B7FC4','#c0392b','#b8860b','#006d77'];
 const BG_COLORS = ['#faf7f2','#ffffff','#1c1b2e','#26374a','#0f1720','#f4ede2'];
@@ -1019,6 +1028,7 @@ async function setBrand(id) {
   document.getElementById('draft').value = cached.text || '';
   document.getElementById('draft-image').value = cached.image || '';
   document.getElementById('draft-video').value = cached.video || '';
+  mediaSetBrand(active.id);
   renderPostingAs();
   document.getElementById('optim-out').style.display = 'none';
   lastOptimizedCaption = '';
@@ -2163,12 +2173,14 @@ async function schedulePost() {
   const targets = getSelectedPlatforms();
   if (connections.length && !targets.length) { alert('Every platform is unchecked — check at least one under "Publish to" first.'); return; }
   if (targets.includes('tiktok') && !ttValidate()) { alert('Finish the TikTok settings first: ' + ttLastProblem); return; }
+  const mediaProblem = mediaBusy();
+  if (mediaProblem) { alert(mediaProblem); return; }
 
   if (!bleedGateOk(raw)) return;
   const schedLabel = (targets.length ? targets : connections.map(a => a.platform)).map(p => PLATFORM_LABEL[p] || p).join(', ') || 'every connected platform';
   if (!confirm(`Schedule this post as "${active.name}" to ${schedLabel}${dateVal ? ' on ' + dateVal : ''}?`)) return;
 
-  const { error } = await sb.from('drafts').insert({
+  const { error } = await sb.from('drafts').insert(withMedia({
     user_id: session.user.id,
     cubicle_id: active.id,
     content: raw,
@@ -2178,9 +2190,10 @@ async function schedulePost() {
     scheduled_for: dateVal ? new Date(dateVal).toISOString() : null,
     target_platforms: targets.length ? targets : null,
     platform_options: buildPlatformOptions(targets)
-  });
+  }));
 
   if (error) { alert('Error: ' + error.message); return; }
+  mediaCommitted();
   playRewardTone();
   draftCache[active.id] = { text: '', image: '', video: '' };
   ttResetAfterPost();
@@ -2197,6 +2210,8 @@ async function publishNow() {
   const targets = getSelectedPlatforms();
   if (connections.length && !targets.length) { alert('Every platform is unchecked — check at least one under "Publish to" first.'); return; }
   if (targets.includes('tiktok') && !ttValidate()) { alert('Finish the TikTok settings first: ' + ttLastProblem); return; }
+  const mediaProblem = mediaBusy();
+  if (mediaProblem) { alert(mediaProblem); return; }
   if (!bleedGateOk(raw)) return;
   const targetLabel = (targets.length ? targets : connections.map(a => a.platform)).map(p => PLATFORM_LABEL[p] || p).join(', ') || 'no connected accounts';
   if (!confirm(`Publish this post as "${active.name}" to ${targetLabel}?`)) return;
@@ -2207,7 +2222,7 @@ async function publishNow() {
   out.style.display = 'block';
   out.textContent = 'Saving draft, then publishing…';
 
-  const { data: draftRow, error: insertErr } = await sb.from('drafts').insert({
+  const { data: draftRow, error: insertErr } = await sb.from('drafts').insert(withMedia({
     user_id: session.user.id,
     cubicle_id: active.id,
     content: raw,
@@ -2216,21 +2231,22 @@ async function publishNow() {
     status: 'draft',
     target_platforms: targets.length ? targets : null,
     platform_options: buildPlatformOptions(targets)
-  }).select().single();
+  })).select().single();
 
   if (insertErr) {
     btn.disabled = false; btn.textContent = '🚀 Publish now';
     out.innerHTML = 'Error saving draft: ' + escapeHtml(insertErr.message);
     return;
   }
+  mediaCommitted();
 
   try {
     const { data, error } = await sb.functions.invoke('publish-post', { body: { draft_id: draftRow.id } });
-    if (error) throw error;
+    if (error) throw new Error((await fnErrorMessage(error)).replace(/^[a-z]+_[a-z_]+:\s*/, ''));
 
     const lines = Object.entries(data.results || {}).map(([platform, r]) => {
       const label = PLATFORM_LABEL[platform] || platform;
-      if (!r.ok) return `✗ ${label}: ${String(r.error || '').replace(/^Error:\s*/, '').replace(/^[a-z]+_[a-z_]+:\s*/, '')}`;
+      if (!r.ok) return `${r.skipped ? '– ' + label + ' skipped' : '✗ ' + label}: ${String(r.error || '').replace(/^Error:\s*/, '').replace(/^[a-z]+_[a-z_]+:\s*/, '')}`;
       if (platform === 'tiktok') return `✓ ${label}: sent to TikTok` + (r.note ? ' — ' + r.note : ' — live on your profile.');
       if (platform === 'discord') return `✓ ${label}: posted` + (r.note ? ' — ' + r.note : '');
       return `✓ ${label}: posted (${r.post_id})`;
@@ -2410,7 +2426,7 @@ let ttInfo = null, ttInfoFor = null, ttLoading = false, ttLastProblem = '';
 const TT_PRIVACY_LABEL = { PUBLIC_TO_EVERYONE: 'Everyone', MUTUAL_FOLLOW_FRIENDS: 'Friends (followers you follow back)', FOLLOWER_OF_CREATOR: 'Followers', SELF_ONLY: 'Only me' };
 
 function ttSelected() { return !!document.querySelector('.publish-target-cb[value="tiktok"]:checked'); }
-function ttIsVideo() { return !!(document.getElementById('draft-video') && document.getElementById('draft-video').value.trim()); }
+function ttIsVideo() { return !!composerMedia().vid; }
 
 async function ttSync(forceReload) {
   const panel = document.getElementById('tt-panel');
@@ -2477,15 +2493,15 @@ function ttApplyCreatorLimits() {
 function ttRenderPreview() {
   const box = document.getElementById('tt-preview');
   if (!box) return;
-  const vid = document.getElementById('draft-video').value.trim();
-  const img = document.getElementById('draft-image').value.trim();
+  const cm = composerMedia();
+  const vid = cm.vid, img = cm.img;
   document.querySelectorAll('.tt-vid-only').forEach(el => el.style.display = vid ? '' : 'none');
   if (ttInfo) ttApplyCreatorLimits();
   if (!ttSelected() || (!vid && !img)) { box.style.display = 'none'; box.innerHTML = ''; box.dataset.src = ''; ttValidate(); return; }
   const src = vid || img;
   if (box.dataset.src === src) return;
   box.dataset.src = src;
-  box.dataset.duration = '';
+  box.dataset.duration = cm.duration ? String(cm.duration) : '';
   box.style.display = 'block';
   if (vid) {
     box.innerHTML = '<video src="' + escapeHtml(vid) + '" controls muted playsinline preload="metadata"></video>';
@@ -2527,13 +2543,13 @@ function ttValidate() {
 
   let problem = '';
   if (ttSelected()) {
-    const vid = document.getElementById('draft-video').value.trim();
-    const img = document.getElementById('draft-image').value.trim();
+    const cm = composerMedia();
+    const vid = cm.vid, img = cm.img;
     const box = document.getElementById('tt-preview');
     const dur = parseFloat(box.dataset.duration || '');
     if (ttLoading) problem = 'still loading your TikTok account.';
     else if (!ttInfo) problem = 'your TikTok account couldn\'t be loaded — reconnect TikTok under Connections.';
-    else if (!vid && !img) problem = 'TikTok needs a photo or video — add an Image URL or Video URL.';
+    else if (!vid && !img) problem = 'TikTok needs a photo or video — attach one above.';
     else if (!sel.value) problem = 'choose who can see this post.';
     else if (disclose && !yours && !branded) problem = 'you turned on "Disclose post content" — pick "Your brand", "Branded content", or both.';
     else if (vid && dur && ttInfo.max_video_post_duration_sec && dur > ttInfo.max_video_post_duration_sec) problem = 'this video is ' + Math.round(dur) + 's — this account can post up to ' + ttInfo.max_video_post_duration_sec + 's.';
@@ -2589,6 +2605,7 @@ function checkBlueskyLimit() {
     warn.style.color = '#c0392b';
   }
   discordSync();
+  if (window.BPMedia) BPMedia.refreshHints(getSelectedPlatforms());
 }
 
 // ================= Discord =================
@@ -2631,6 +2648,57 @@ function discordResetAfterPost() {
   if (el) el.value = '';
   discordSync();
 }
+
+// ================= Media uploads (PNG / JPEG / MP4) =================
+// js/media-upload.js uploads files to the private Storage bucket `post-media`
+// under {user_id}/{cubicle_id}/ with the user's own session. The draft stores
+// the references in drafts.media; the publishers fetch/sign them server-side.
+// Uploaded files win over the pasted links when both are present.
+let mediaReady = false;
+function mediaSetBrand(cubicleId) {
+  if (!window.BPMedia) return;
+  if (!mediaReady) {
+    const mount = document.getElementById('media-uploader');
+    if (!mount) return;
+    BPMedia.init({
+      mount,
+      sb,
+      supabaseUrl: SUPABASE_URL,
+      apiKey: SUPABASE_PUBLISHABLE_KEY,
+      getToken: async () => { const { data } = await sb.auth.getSession(); if (!data.session) throw new Error('signed out'); return data.session.access_token; },
+      getContext: () => ({ userId: session && session.user && session.user.id, cubicleId: active && active.id }),
+      getPlatforms: () => getSelectedPlatforms(),
+      onChange: mediaChanged
+    });
+    mediaReady = true;
+  }
+  BPMedia.setBrand(cubicleId);
+  mediaChanged();
+}
+function mediaChanged() {
+  const has = !!(window.BPMedia && BPMedia.hasMedia());
+  const note = document.getElementById('media-links-note');
+  if (note) note.style.display = has ? '' : 'none';
+  if (typeof ttRenderPreview === 'function') ttRenderPreview();
+}
+// What will actually be posted: uploaded files first, else the pasted links.
+function composerMedia() {
+  const p = window.BPMedia && BPMedia.preview();
+  if (p) return { vid: p.kind === 'video' ? p.src : '', img: p.kind === 'image' ? p.src : '', duration: p.duration || 0, uploaded: true };
+  const v = document.getElementById('draft-video'), i = document.getElementById('draft-image');
+  return { vid: v ? v.value.trim() : '', img: i ? i.value.trim() : '', duration: 0, uploaded: false };
+}
+function mediaBusy() { return window.BPMedia ? BPMedia.busy() : null; }
+// Adds drafts.media only when files are attached, so text/link-only posts keep
+// working even before the media migration is applied.
+function withMedia(row) {
+  const media = window.BPMedia ? BPMedia.draftMedia() : [];
+  if (media.length) { row.media = media; row.image_url = null; row.video_url = null; }
+  return row;
+}
+// The saved draft now references these files: removing them from the composer
+// must not delete them from storage (a scheduled post still needs them).
+function mediaCommitted() { if (window.BPMedia) BPMedia.markCommitted(); }
 
 // supabase-js hides the JSON body of non-2xx function responses behind
 // error.context; pull out our { message } so the user sees why it failed.
