@@ -72,6 +72,11 @@
   .optim-out{margin-top:14px;background:var(--cream);border-radius:10px;padding:14px;font-size:.9rem;line-height:1.6;display:none;white-space:pre-wrap}
   .optim-note{font-size:.72rem;color:var(--muted);margin-top:8px}
   .spark{color:var(--teal-deep,#1E9C93);font-weight:700}
+  .sched-time{display:none}
+  .action-bar.has-date .sched-time{display:block}
+  .action-bar.has-date{gap:8px}
+  .action-bar.has-date .step-n{display:none}
+  .action-bar.has-date .sched-date{padding:8px 8px}
 
   .voice-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
   .voice-grid .card.full{grid-column:1/-1}
@@ -438,6 +443,9 @@
     .action-bar .sched-date{flex:0 1 128px;padding:8px 6px;font-size:14px}
     .action-bar .btn{flex:1 1 auto;padding:10px 8px;font-size:.82rem;white-space:nowrap}
     .action-bar #publish-btn{padding:10px 10px;font-size:.84rem}
+    .action-bar.has-date{flex-wrap:wrap}
+    .action-bar.has-date .sched-date{flex:1 1 40%}
+    .action-bar.has-date .btn{flex:1 1 40%}
     .bloom-fab{bottom:84px}
   }
 </style>
@@ -583,7 +591,8 @@
               <!-- Send bar: sticks to the bottom of the screen while you're anywhere in the composer -->
               <div class="action-bar">
                 <span class="step-n">4</span>
-                <input type="date" class="sched-date" id="sched-date" aria-label="Schedule date">
+                <input type="date" class="sched-date" id="sched-date" aria-label="Schedule date" onchange="schedDateChanged()">
+                <input type="time" class="sched-date sched-time" id="sched-time" value="09:00" step="300" aria-label="Schedule time (your local time)" title="Your local time">
                 <button class="btn btn-ghost" onclick="schedulePost()">🗓 Schedule</button>
                 <button class="btn btn-brand" onclick="publishNow()" id="publish-btn">🚀 Publish now</button>
               </div>
@@ -2234,7 +2243,7 @@ function renderCal() {
   if (!scheduled.length) { list.innerHTML = '<p class="cal-empty">Nothing scheduled.</p>'; return; }
   list.innerHTML = scheduled.map(d => `
     <div class="cal-day">
-      <span class="d">${d.scheduled_for ? new Date(d.scheduled_for).toLocaleDateString(undefined,{month:'short',day:'numeric'}) : 'No date'}</span>
+      <span class="d">${d.scheduled_for ? new Date(d.scheduled_for).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : 'No date'}</span>
       <span class="t">${escapeHtml(d.content.length > 70 ? d.content.slice(0,70)+'…' : d.content)}</span>
       <span class="tag" style="background:${active.color}">${(active.icon_initials||'').toUpperCase()}</span>
     </div>`).join('');
@@ -2387,10 +2396,36 @@ async function optimize() {
   }
 }
 
+// The date picker gives "YYYY-MM-DD" and the time picker "HH:MM". new Date("YYYY-MM-DD") would read that as
+// midnight UTC (the evening before in US time zones), so build the Date from parts: that's the user's local time.
+// toISOString() then stores the right instant in the timestamptz column, which the cron compares against now().
+const SCHED_DEFAULT_TIME = '09:00';
+function schedWhen() {
+  const d = document.getElementById('sched-date').value;
+  if (!d) return null;
+  const t = document.getElementById('sched-time').value || SCHED_DEFAULT_TIME;
+  const [y, m, day] = d.split('-').map(Number);
+  const [hh, mm] = t.split(':').map(Number);
+  const when = new Date(y, m - 1, day, hh || 0, mm || 0, 0, 0);
+  return isNaN(when.getTime()) ? null : when;
+}
+function schedDateChanged() {
+  const dateEl = document.getElementById('sched-date');
+  const timeEl = document.getElementById('sched-time');
+  dateEl.closest('.action-bar').classList.toggle('has-date', !!dateEl.value);
+  // Picked today but the default time already passed? Suggest the next full hour instead.
+  const when = schedWhen();
+  if (when && when.getTime() < Date.now() && timeEl.value === SCHED_DEFAULT_TIME) {
+    const next = new Date(); next.setMinutes(0, 0, 0); next.setHours(next.getHours() + 1);
+    if (next.toDateString() === when.toDateString()) timeEl.value = String(next.getHours()).padStart(2, '0') + ':00';
+  }
+}
+
 async function schedulePost() {
   const raw = document.getElementById('draft').value.trim();
   if (!raw) { alert('Nothing to schedule yet — write a draft first.'); return; }
   const dateVal = document.getElementById('sched-date').value;
+  const when = schedWhen();
   const imageUrl = document.getElementById('draft-image').value.trim();
   const videoUrl = document.getElementById('draft-video').value.trim();
   const targets = getSelectedPlatforms();
@@ -2399,7 +2434,9 @@ async function schedulePost() {
 
   if (!bleedGateOk(raw)) return;
   const schedLabel = (targets.length ? targets : connections.map(a => a.platform)).map(p => PLATFORM_LABEL[p] || p).join(', ') || 'every connected platform';
-  if (!confirm(`Schedule this post as "${active.name}" to ${schedLabel}${dateVal ? ' on ' + dateVal : ''}?`)) return;
+  const whenLabel = when ? when.toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }) : '';
+  if (when && when.getTime() < Date.now() && !confirm(`${whenLabel} has already passed, so this would publish within 5 minutes. Schedule it anyway?`)) return;
+  if (!confirm(`Schedule this post as "${active.name}" to ${schedLabel}${when ? ' for ' + whenLabel : ''}?`)) return;
 
   const { error } = await sb.from('drafts').insert({
     user_id: session.user.id,
@@ -2408,7 +2445,7 @@ async function schedulePost() {
     image_url: imageUrl || null,
     video_url: videoUrl || null,
     status: 'scheduled',
-    scheduled_for: dateVal ? new Date(dateVal).toISOString() : null,
+    scheduled_for: when ? when.toISOString() : null,
     target_platforms: targets.length ? targets : null,
     platform_options: buildPlatformOptions(targets)
   });
