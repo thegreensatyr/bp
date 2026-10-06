@@ -1,0 +1,73 @@
+# Mirrors the live per-function settings (read from the Management API on 2026-10-05).
+# IMPORTANT: `supabase functions deploy` uses these. OAuth callbacks and the cron
+# function MUST keep verify_jwt = false or they stop working.
+project_id = "owxaolqikmgtlegtficq"
+
+[functions.bluesky-connect]
+verify_jwt = true
+
+[functions.bp-stripe-admin]
+verify_jwt = true
+
+[functions.bp-test-interview]
+verify_jwt = true
+
+[functions.bp-verify-recent-sales]
+verify_jwt = true
+
+[functions.create-checkout-session]
+verify_jwt = true
+
+[functions.cron-publish-scheduled]
+verify_jwt = false
+
+[functions.detect-site-theme]
+verify_jwt = true
+
+[functions.disconnect-account]
+verify_jwt = true
+
+[functions.linkedin-oauth-callback]
+verify_jwt = false
+
+[functions.meta-oauth-callback]
+verify_jwt = false
+
+[functions.meta-pages]
+verify_jwt = true
+
+[functions.optimize-caption]
+verify_jwt = true
+
+[functions.pinterest-oauth-callback]
+verify_jwt = false
+
+[functions.publish-post]
+verify_jwt = true
+
+[functions.select-video-highlights]
+verify_jwt = true
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.temp-bsky-verify]
+verify_jwt = true
+
+[functions.tiktok-creator-info]
+verify_jwt = true
+
+[functions.tiktok-oauth-callback]
+verify_jwt = false
+
+[functions.upload-cubicle-logo]
+verify_jwt = true
+
+[functions.verify-stripe-prices]
+verify_jwt = true
+
+[functions.voice-interview]
+verify_jwt = true
+
+[functions.discord-connect]
+verify_jwt = true
