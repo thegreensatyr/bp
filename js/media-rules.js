@@ -25,7 +25,7 @@
 
   var ACCEPT = '.png,.jpg,.jpeg,.mp4,image/png,image/jpeg,video/mp4';
   var EXT = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', mp4: 'video/mp4' };
-  var LABEL = { bluesky: 'Bluesky', facebook: 'Facebook', instagram: 'Instagram', tiktok: 'TikTok', discord: 'Discord', linkedin: 'LinkedIn', pinterest: 'Pinterest' };
+  var LABEL = { bluesky: 'Bluesky', facebook: 'Facebook', instagram: 'Instagram', tiktok: 'TikTok', discord: 'Discord', linkedin: 'LinkedIn', pinterest: 'Pinterest', tumblr: 'Tumblr' };
 
   function fmtBytes(n) {
     if (n >= 1000000) return (Math.round(n / 100000) / 10) + ' MB';
@@ -181,6 +181,8 @@
           var total = imgs.reduce(function (a, i) { return a + i.size; }, 0);
           add('ok', vid ? 'video attached.' : (total > RULES.discordUploadMaxBytes ? 'images attached, split across messages to stay under 10 MB each.' : 'images attached.'));
         }
+      } else if (p === 'tumblr') {
+        add('ok', vid ? 'video post (Tumblr may take a few minutes to process it).' : (imgs.length > 30 ? 'only the first 30 images are used.' : (imgs.length > 1 ? imgs.length + '-photo post.' : 'photo post.')));
       } else if (p === 'linkedin' || p === 'pinterest') {
         if (vid) add('skip', 'video isn\'t supported here yet — ' + L + ' will be skipped.');
         else if (imgs.length > 1) add('info', 'only the first image is used.');

@@ -364,7 +364,7 @@ export class DraftMedia {
 
 // ---------------------------------------------------------------- per-platform plan
 
-export type Platform = "bluesky" | "facebook" | "instagram" | "tiktok" | "discord" | "linkedin" | "pinterest" | string;
+export type Platform = "bluesky" | "facebook" | "instagram" | "tiktok" | "discord" | "linkedin" | "pinterest" | "tumblr" | string;
 
 export type MediaPlan =
   | { use: "none" }
@@ -375,7 +375,7 @@ export type MediaPlan =
 
 const LABEL: Record<string, string> = {
   bluesky: "Bluesky", facebook: "Facebook", instagram: "Instagram", tiktok: "TikTok",
-  discord: "Discord", linkedin: "LinkedIn", pinterest: "Pinterest",
+  discord: "Discord", linkedin: "LinkedIn", pinterest: "Pinterest", tumblr: "Tumblr",
 };
 
 /**
@@ -433,6 +433,11 @@ export function planMedia(platform: Platform, set: MediaSet): MediaPlan {
       if (images.length) return { use: "images", images: images.slice(0, 1), note: images.length > 1 ? "Pinterest got the first image only" : undefined };
       if (video && set.mode === "upload") return { use: "skip", reason: `pinterest_video_unsupported: ${L} video pins aren't supported in BrandParent yet — attach an image or uncheck ${L}.` };
       return { use: "skip", reason: "pinterest_needs_image: Pinterest requires an image with every pin — add one to this draft first." };
+    case "tumblr":
+      // Upload mode: native video (multipart) or up to 30 images. URL mode: image first, else link the video.
+      if (video && (set.mode === "upload" || !images.length)) return { use: "video", video };
+      if (images.length) return { use: "images", images: set.mode === "url" ? images.slice(0, 1) : images };
+      return { use: "none" };
     default:
       return { use: "none" };
   }

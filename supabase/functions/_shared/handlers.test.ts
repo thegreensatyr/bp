@@ -26,6 +26,7 @@ const WEBHOOK = `https://discord.com/api/webhooks/123456789012345678/${"t".repea
 function fakeSupabase(state: { drafts: any[]; accounts: any[]; files: Record<string, Uint8Array> }) {
   const patches: Array<{ id: string; body: any }> = [];
   const discordForms: FormData[] = [];
+  const tumblrBodies: any[] = [];
   const orig = globalThis.fetch;
   globalThis.fetch = (async (input: any, init: any = {}) => {
     const url = new URL(typeof input === "string" ? input : input.url);
@@ -64,10 +65,11 @@ function fakeSupabase(state: { drafts: any[]; accounts: any[]; files: Record<str
       return json({ message: "unmocked supabase " + method + " " + p }, 599);
     }
     if (url.hostname === "discord.com") { discordForms.push(body as FormData); return json({ id: "msg-" + discordForms.length }); }
+    if (url.hostname === "api.tumblr.com") { tumblrBodies.push(JSON.parse(body)); return json({ meta: { status: 201 }, response: { id: "777" } }, 201); }
     if (url.hostname === "graph.facebook.com") return json({ id: "fbphoto", post_id: "PAGE1_7" });
     return json({ error: "unmocked " + url }, 599);
   }) as typeof fetch;
-  return { patches, discordForms, restore: () => { globalThis.fetch = orig; } };
+  return { patches, discordForms, tumblrBodies, restore: () => { globalThis.fetch = orig; } };
 }
 
 const baseDraft = { id: "d1", user_id: UID, cubicle_id: CID, content: "Fresh roast today", status: "draft", target_platforms: ["discord", "facebook"], platform_options: null, image_url: null, video_url: null };
@@ -136,5 +138,19 @@ Deno.test("cron: scheduled post with an uploaded video publishes; deleted file h
     const s2 = fx.patches.find((x) => x.id === "s2")!.body;
     assertEquals(s2.status, "draft");
     assertStringIncludes(s2.publish_error, "media_missing");
+  } finally { fx.restore(); }
+});
+
+Deno.test("cron: scheduled text post reaches Tumblr through the shared publisher", async () => {
+  const tumblr = { id: "a3", user_id: UID, cubicle_id: CID, platform: "tumblr", access_token: "ttok", refresh_token: "rt", token_expires_at: new Date(Date.now() + 3600_000).toISOString(), external_account_id: "t:main", account_meta: { blogs: [{ uuid: "t:main", name: "greensatyr" }] } };
+  const fx = fakeSupabase({ drafts: [{ ...baseDraft, id: "s3", status: "scheduled", scheduled_for: "2026-10-01T00:00:00Z", target_platforms: ["tumblr"], media: [] }], accounts: [...accounts, tumblr], files: {} });
+  try {
+    const res = await cronPublish(new Request("http://localhost/cron", { method: "POST", headers: { "x-cron-secret": "cron-secret-test" } }));
+    assertEquals(res.status, 200);
+    assertEquals(fx.tumblrBodies[0].content, [{ type: "text", text: "Fresh roast today" }]);
+    const s3 = fx.patches.find((x) => x.id === "s3")!.body;
+    assertEquals(s3.status, "published");
+    assertEquals(s3.platform_post_id, "777");
+    assertEquals(fx.discordForms.length, 0);
   } finally { fx.restore(); }
 });
