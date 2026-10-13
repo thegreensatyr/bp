@@ -6,6 +6,7 @@
 import { Image } from "https://deno.land/x/imagescript@1.3.0/mod.ts";
 import { publishToTikTokFull, type TikTokMediaInput } from "./tiktok.ts";
 import { collectDiscordImages, type DiscordFile, publishToDiscord } from "./discord.ts";
+import { publishToTumblr } from "./tumblr.ts";
 import { DraftMedia, fmtBytes, LIMITS, MediaError, type MediaPlan, planMedia, type ResolvedMedia } from "./media.ts";
 
 export type PublishResult = {
@@ -381,6 +382,7 @@ export async function publishToAccounts(svc: any, draft: any, accounts: any[], m
           results.tiktok = { ok: true, post_id: r.publish_id, status: r.status, note: r.note };
           break;
         }
+        case "tumblr": results.tumblr = await publishToTumblr(svc, acct, draft.content, plan, media); break;
         case "discord": results.discord = await discordPublish(acct.access_token, draft, plan, media, brand); break;
         default: break;
       }
@@ -397,7 +399,7 @@ export function summarize(results: Record<string, PublishResult>) {
   const anySucceeded = vals.some((r) => r.ok);
   const onlySkips = vals.length > 0 && vals.every((r) => !r.ok && r.skipped);
   const allErrors = Object.entries(results).filter(([, r]) => !r.ok).map(([p, r]) => `${p}: ${r.error}`).join(" | ");
-  const order = ["facebook", "instagram", "bluesky", "linkedin", "tiktok", "pinterest", "discord"];
+  const order = ["facebook", "instagram", "bluesky", "linkedin", "tiktok", "pinterest", "tumblr", "discord"];
   const firstPostId = order.map((p) => results[p]?.ok ? results[p]?.post_id : null).find(Boolean) || null;
   return { anySucceeded, onlySkips, allErrors, firstPostId };
 }

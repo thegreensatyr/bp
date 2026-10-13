@@ -934,7 +934,7 @@
           </div>
 
           <details class="card connect-card fold more-fold">
-            <summary>More platforms <span class="step-hint">LinkedIn, Pinterest</span></summary>
+            <summary>More platforms <span class="step-hint">LinkedIn, Pinterest, Tumblr</span></summary>
             <h3 style="margin-top:12px">LinkedIn</h3>
             <p class="field-help">Posts as your personal LinkedIn profile for now — a separate Company Page per brand needs LinkedIn's Community Management API, which requires a registered business entity, and is a later upgrade.</p>
             <div class="comp-actions">
@@ -944,6 +944,13 @@
             <p class="field-help">Pins go to the first board on your Pinterest account (the one it finds when you connect). Requires an image per post.</p>
             <div class="comp-actions">
               <button class="btn btn-brand" onclick="connectPinterest()">Connect Pinterest</button>
+            </div>
+            <h3 style="margin-top:18px">Tumblr</h3>
+            <p class="field-help">Posts to one of your Tumblr blogs — your primary blog unless you pick another. Text-only posts work too; photos and MP4 video are posted natively on Tumblr.</p>
+            <p class="save-note" id="tumblr-current" style="display:none"></p>
+            <div class="comp-actions" style="flex-wrap:wrap;gap:8px">
+              <button class="btn btn-brand" onclick="connectTumblr()">Connect Tumblr</button>
+              <button class="btn btn-ghost" id="tumblr-pick-btn" style="display:none" onclick="openTumblrPick(active.id)">Choose blog</button>
             </div>
           </details>
         </div>
@@ -963,6 +970,18 @@
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeFbPick()">Cancel</button>
       <button class="btn btn-brand" id="fbpick-save" onclick="saveFbPick()">Connect this Page</button>
+    </div>
+  </div>
+</div>
+<div class="modal-bg" id="tumblrpick-modal">
+  <div class="modal">
+    <h3>Which Tumblr blog is this brand?</h3>
+    <p class="sub" id="tumblrpick-sub">Your Tumblr login has more than one blog. Choose the one this brand should post to.</p>
+    <div id="tumblrpick-list" style="max-height:50vh;overflow-y:auto"></div>
+    <p class="save-note" id="tumblrpick-msg" style="margin-top:10px"></p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeTumblrPick()">Keep primary blog</button>
+      <button class="btn btn-brand" id="tumblrpick-save" onclick="saveTumblrPick()">Post to this blog</button>
     </div>
   </div>
 </div>
@@ -1329,6 +1348,16 @@ async function init() {
       await openFbPick(pickId);
     } else {
       alert('Facebook connected, but that brand could not be found. Open the brand and connect Facebook again.');
+    }
+  } else if (params.get('pick_tumblr')) {
+    const pickId = params.get('pick_tumblr');
+    window.history.replaceState({}, '', 'app.html');
+    if (cubicles.some(c => c.id === pickId)) {
+      await setBrand(pickId);
+      await renderConnections();
+      await openTumblrPick(pickId);
+    } else {
+      alert('Tumblr connected, but that brand could not be found. Open the brand and connect Tumblr again.');
     }
   } else if (params.get('connected')) {
     alert('Connected: ' + params.get('connected'));
@@ -3100,6 +3129,74 @@ const TIKTOK_CLIENT_KEY = 'aw7pgz7kpl3v4201';
 // Set once the Pinterest Developer App exists (developers.pinterest.com).
 // Not a secret; safe to expose client-side.
 const PINTEREST_CLIENT_ID = '';
+// Set once the Tumblr app exists (tumblr.com/oauth/apps). This is the app's
+// OAuth consumer key — not a secret. Must match TUMBLR_CLIENT_ID in Supabase secrets.
+const TUMBLR_CLIENT_ID = '';
+
+function connectTumblr() {
+  if (!TUMBLR_CLIENT_ID) { alert('Tumblr isn\'t connected yet — the Tumblr app still needs to be created. Ask to get this set up.'); return; }
+  const REDIRECT_URI = 'https://owxaolqikmgtlegtficq.supabase.co/functions/v1/tumblr-oauth-callback';
+  const scopes = 'basic write offline_access';
+  const url = `https://www.tumblr.com/oauth2/authorize?client_id=${encodeURIComponent(TUMBLR_CLIENT_ID)}&response_type=code&scope=${encodeURIComponent(scopes)}&state=${encodeURIComponent(active.id)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+  window.location.href = url;
+}
+
+let tumblrPickCubicle = null;
+async function openTumblrPick(cubicleId) {
+  tumblrPickCubicle = cubicleId;
+  const list = document.getElementById('tumblrpick-list');
+  const msg = document.getElementById('tumblrpick-msg');
+  const save = document.getElementById('tumblrpick-save');
+  msg.textContent = '';
+  list.innerHTML = '<p class="save-note">Loading your blogs…</p>';
+  save.disabled = true;
+  document.getElementById('tumblrpick-modal').classList.add('show');
+  try {
+    const { data, error } = await sb.functions.invoke('tumblr-blogs', { body: { action: 'list', cubicle_id: cubicleId } });
+    if (error || !data || data.error) throw new Error((data && (data.message || data.error)) || (error && error.message) || 'unknown error');
+    if (!data.blogs || !data.blogs.length) { list.innerHTML = '<p class="save-note">No blogs found. Reconnect Tumblr to refresh the list.</p>'; return; }
+    list.innerHTML = data.blogs.map(b => `
+      <label class="bleed-item" style="display:flex;align-items:center;gap:10px;cursor:pointer;min-height:44px">
+        <input type="radio" name="tumblrpick" value="${escapeHtml(b.uuid)}" ${b.uuid === data.selected ? 'checked' : ''} onchange="document.getElementById('tumblrpick-save').disabled=false">
+        <span style="min-width:0;overflow-wrap:anywhere"><b>${escapeHtml(b.title || b.name)}</b> <span class="save-note">${escapeHtml(b.name)}${b.primary ? ' · primary' : ''}</span></span>
+      </label>`).join('');
+    save.disabled = !list.querySelector('input:checked');
+  } catch (e) {
+    list.innerHTML = '';
+    msg.textContent = 'Could not load your blogs: ' + e.message;
+  }
+}
+function closeTumblrPick() {
+  document.getElementById('tumblrpick-modal').classList.remove('show');
+  tumblrPickCubicle = null;
+}
+async function saveTumblrPick() {
+  const picked = document.querySelector('#tumblrpick-list input[name="tumblrpick"]:checked');
+  const msg = document.getElementById('tumblrpick-msg');
+  const save = document.getElementById('tumblrpick-save');
+  if (!picked || !tumblrPickCubicle) { msg.textContent = 'Pick a blog first.'; return; }
+  save.disabled = true; save.textContent = 'Saving…';
+  try {
+    const { data, error } = await sb.functions.invoke('tumblr-blogs', { body: { action: 'select', cubicle_id: tumblrPickCubicle, blog_uuid: picked.value } });
+    if (error || !data || !data.ok) throw new Error((data && (data.message || data.error)) || (error && error.message) || 'unknown error');
+    closeTumblrPick();
+    await renderConnections();
+    alert('Connected: "' + active.name + '" now posts to the Tumblr blog ' + data.blog_name + '.');
+  } catch (e) {
+    msg.textContent = 'Could not save that blog: ' + e.message;
+  } finally {
+    save.disabled = false; save.textContent = 'Post to this blog';
+  }
+}
+
+function renderTumblrCard() {
+  const t = (connections || []).find(a => a.platform === 'tumblr');
+  const cur = document.getElementById('tumblr-current'), btn = document.getElementById('tumblr-pick-btn');
+  if (!cur || !btn) return;
+  cur.style.display = t ? '' : 'none';
+  btn.style.display = t ? '' : 'none';
+  if (t) cur.textContent = 'Posting to: ' + (t.external_account_name || t.external_account_id);
+}
 
 function connectLinkedIn() {
   if (!LINKEDIN_CLIENT_ID) { alert('LinkedIn isn\'t connected yet — the developer app still needs to be created. Ask to get this set up.'); return; }
@@ -3188,7 +3285,7 @@ async function saveFbPick() {
   }
 }
 
-const PLATFORM_LABEL = { facebook: 'Facebook Page', instagram: 'Instagram', bluesky: 'Bluesky', linkedin: 'LinkedIn', tiktok: 'TikTok', pinterest: 'Pinterest', discord: 'Discord' };
+const PLATFORM_LABEL = { facebook: 'Facebook Page', instagram: 'Instagram', bluesky: 'Bluesky', linkedin: 'LinkedIn', tiktok: 'TikTok', pinterest: 'Pinterest', tumblr: 'Tumblr', discord: 'Discord' };
 
 async function renderConnections() {
   document.getElementById('conn-brand').textContent = active.name;
@@ -3200,6 +3297,7 @@ async function renderConnections() {
   if (error) { list.innerHTML = '<p class="save-note">Error loading connections.</p>'; renderPublishTargets(); return; }
   if (!data || data.length === 0) {
     list.innerHTML = '<p class="save-note">No accounts connected yet for ' + escapeHtml(active.name) + '.</p>';
+    renderTumblrCard();
     renderPublishTargets();
     return;
   }
@@ -3208,6 +3306,7 @@ async function renderConnections() {
       <span class="from" style="background:#2E6B4A">connected</span>
       <button class="btn" style="float:right;padding:4px 12px;font-size:.75rem;background:#7a1f1f;color:#fff;border:none;border-radius:999px;cursor:pointer" onclick="disconnectAccount('${a.id}', '${escapeHtml(PLATFORM_LABEL[a.platform] || a.platform)}', this)">Disconnect</button></div>
   `).join('');
+  renderTumblrCard();
   renderPublishTargets();
 }
 

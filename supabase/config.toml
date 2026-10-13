@@ -71,3 +71,9 @@ verify_jwt = true
 
 [functions.discord-connect]
 verify_jwt = true
+
+[functions.tumblr-oauth-callback]
+verify_jwt = false
+
+[functions.tumblr-blogs]
+verify_jwt = true
