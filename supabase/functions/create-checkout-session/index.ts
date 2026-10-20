@@ -16,13 +16,25 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 // turned out Dustin had no funds available to test with — back to the real
 // $97 price here, unchanged from before that detour.)
 // 2026-09-18: promo codes disabled at checkout (allow_promotion_codes -> false).
-// BPTESTER100 (100% off) was still exposed on the live checkout's promo-code
-// field — this fully blocks any code from being applied, without needing to
-// touch/delete the coupon object in Stripe itself.
+// 2026-10-12: promo codes RE-ENABLED. Verified zero live promotion codes existed
+// beforehand (BPTESTER100 not present in live mode). Only codes now live are five
+// single-use BPGIFT-* codes on coupon bYZSaRJh (100% off, applies ONLY to the
+// Founding Member product prod_VD0zid3TV5YHXn, coupon capped at 5 total redemptions,
+// each code max 1 redemption, expire 2026-12-31). Free checkouts still fire
+// checkout.session.completed, which stripe-webhook uses to unlock the account.
+// 2026-10-20: added Studio ANNUAL billing ($24/mo billed yearly = $288/yr) and cut
+// the Studio free trial from 14 to 7 days for BOTH monthly and annual.
+// Annual buyers are still tier "studio" (same features, same webhook path) —
+// only the billing interval differs. The annual price is defined inline via
+// price_data on the existing Studio product, because no annual Price object
+// exists in Stripe yet; swap in a real price ID here later if one is created.
 const PRICE_IDS: Record<string, string> = {
   founding_member: "price_1UCaxPFgUjRxKtHkOdFIqXaq", // $97 one-time, LIVE mode
   studio: "price_1UCbtYFgUjRxKtHkgQL8KRNc",          // $27/mo recurring, LIVE mode
 };
+const STUDIO_PRODUCT_ID = "prod_VD1xlSnVe3VymN";
+const STUDIO_ANNUAL_CENTS = 28800; // $288/yr = $24/mo billed annually
+const STUDIO_TRIAL_DAYS = 7;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -43,13 +55,16 @@ Deno.serve(async (req) => {
       );
     }
 
-    const { tier } = await req.json();
+    const body = await req.json();
+    const tier = body?.tier;
     if (tier !== "founding_member" && tier !== "studio") {
       return new Response(JSON.stringify({ error: "tier must be 'founding_member' or 'studio'" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    // Anything other than an explicit "annual" on Studio is monthly (safe default).
+    const billing = tier === "studio" && body?.billing === "annual" ? "annual" : "monthly";
 
     // Identify the calling user from their Supabase auth JWT.
     const authHeader = req.headers.get("Authorization") ?? "";
@@ -72,20 +87,34 @@ Deno.serve(async (req) => {
 
     const origin = req.headers.get("origin") ?? "https://brandparent.app";
 
+    const lineItem =
+      tier === "studio" && billing === "annual"
+        ? {
+          price_data: {
+            currency: "usd",
+            product: STUDIO_PRODUCT_ID,
+            unit_amount: STUDIO_ANNUAL_CENTS,
+            recurring: { interval: "year" as const, interval_count: 1 },
+            tax_behavior: "exclusive" as const,
+          },
+          quantity: 1,
+        }
+        : { price: PRICE_IDS[tier], quantity: 1 };
+
     const session = await stripe.checkout.sessions.create({
       mode: tier === "founding_member" ? "payment" : "subscription",
-      line_items: [{ price: PRICE_IDS[tier], quantity: 1 }],
+      line_items: [lineItem],
       customer_email: user.email ?? undefined,
       client_reference_id: user.id,
-      metadata: { user_id: user.id, tier },
-      allow_promotion_codes: false,
+      metadata: { user_id: user.id, tier, billing },
+      allow_promotion_codes: true,
       // One-time "payment" mode does not create a Stripe Customer object by default —
       // force it so stripe_customer_id in profiles is always populated (needed for
       // support lookups/refunds), matching subscription mode's default behavior.
       customer_creation: tier === "founding_member" ? "always" : undefined,
       subscription_data:
         tier === "studio"
-          ? { trial_period_days: 14, metadata: { user_id: user.id, tier } }
+          ? { trial_period_days: STUDIO_TRIAL_DAYS, metadata: { user_id: user.id, tier, billing } }
           : undefined,
       payment_intent_data:
         tier === "founding_member" ? { metadata: { user_id: user.id, tier } } : undefined,

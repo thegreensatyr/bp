@@ -123,7 +123,7 @@
   .empty-state{max-width:520px;margin:60px auto;text-align:center}
   .empty-state h2{margin-bottom:10px}
   .empty-state p{color:var(--muted);margin-bottom:24px}
-  .paywall-tier-toggle{display:inline-flex;gap:4px;margin:18px 0;background:var(--cream);border:1.5px solid var(--line);border-radius:999px;padding:4px}
+  .paywall-tier-toggle{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:4px;margin:18px 0;background:var(--cream);border:1.5px solid var(--line);border-radius:999px;padding:4px}
   .paywall-tier-btn{border:none;background:none;cursor:pointer;padding:9px 18px;border-radius:999px;font-size:.82rem;font-weight:700;color:var(--ink);font-family:inherit;transition:all .15s}
   .paywall-tier-btn.active{background:var(--ink);color:#fff}
 
@@ -567,7 +567,8 @@
       <h2>Finish setting up your account</h2>
       <div class="paywall-tier-toggle" id="paywall-tier-toggle">
         <button type="button" class="paywall-tier-btn" id="paywall-tier-founding" onclick="setPaywallTier('founding_member')">Founding — $97</button>
-        <button type="button" class="paywall-tier-btn" id="paywall-tier-studio" onclick="setPaywallTier('studio')">Studio — trial</button>
+        <button type="button" class="paywall-tier-btn" id="paywall-tier-studio" onclick="setPaywallTier('studio', 'monthly')">Studio — $27/mo</button>
+        <button type="button" class="paywall-tier-btn" id="paywall-tier-studio-annual" onclick="setPaywallTier('studio', 'annual')">Studio Annual — $24/mo</button>
       </div>
       <p id="paywall-msg">Brandparent is $97 one-time — lifetime access to every cubicle you create.</p>
       <button class="btn btn-brand" onclick="startCheckout()" id="paywall-btn">Complete your $97 purchase</button>
@@ -1082,6 +1083,7 @@ let session = null;
 let connections = [];
 let tutorialsEnabled = true;
 let paywallTier = 'founding_member';
+let paywallBilling = 'monthly'; // Studio only: 'monthly' | 'annual'
 
 // --- Color contrast (WCAG relative luminance) -----------------------------
 // Used to warn when a picked text/background (or headline/background) pair
@@ -1264,17 +1266,21 @@ function openBloomBreak() {
 
 function renderPaywallCopy() {
   document.getElementById('paywall-msg').textContent = paywallTier === 'studio'
-    ? '$27/month · 14-day free trial · cancel anytime.'
+    ? (paywallBilling === 'annual'
+      ? '$24/month, billed $288 yearly · 7-day free trial · cancel anytime.'
+      : '$27/month · 7-day free trial · cancel anytime.')
     : 'Brandparent is $97 one-time — lifetime access to every cubicle you create.';
   document.getElementById('paywall-btn').textContent = paywallTier === 'studio'
     ? 'Start your free trial'
     : 'Complete your $97 purchase';
 }
 
-function setPaywallTier(tier) {
+function setPaywallTier(tier, billing) {
   paywallTier = tier === 'studio' ? 'studio' : 'founding_member';
+  paywallBilling = (paywallTier === 'studio' && billing === 'annual') ? 'annual' : 'monthly';
   document.getElementById('paywall-tier-founding').classList.toggle('active', paywallTier === 'founding_member');
-  document.getElementById('paywall-tier-studio').classList.toggle('active', paywallTier === 'studio');
+  document.getElementById('paywall-tier-studio').classList.toggle('active', paywallTier === 'studio' && paywallBilling === 'monthly');
+  document.getElementById('paywall-tier-studio-annual').classList.toggle('active', paywallTier === 'studio' && paywallBilling === 'annual');
   renderPaywallCopy();
 }
 
@@ -1292,7 +1298,8 @@ async function init() {
   // the auth user's metadata — otherwise lost once email confirmation routes them
   // through a link instead of straight to checkout.
   const metaTier = session.user.user_metadata && session.user.user_metadata.tier;
-  setPaywallTier(metaTier === 'studio' ? 'studio' : 'founding_member');
+  const metaBilling = session.user.user_metadata && session.user.user_metadata.billing;
+  setPaywallTier(metaTier === 'studio' ? 'studio' : 'founding_member', metaBilling);
 
   const params = new URLSearchParams(window.location.search);
   const paidStatuses = ['active', 'trialing'];
@@ -1376,7 +1383,7 @@ async function startCheckout() {
   btn.textContent = paywallTier === 'studio' ? 'Setting up your trial…' : 'Redirecting to payment…';
 
   const { data, error } = await sb.functions.invoke('create-checkout-session', {
-    body: { tier: paywallTier }
+    body: { tier: paywallTier, billing: paywallBilling }
   });
 
   if (error || !data || !data.url) {

@@ -67,10 +67,16 @@
     // if no ?tier= param is present (e.g. someone lands here directly).
     const params = new URLSearchParams(window.location.search);
     const TIER = params.get('tier') === 'studio' ? 'studio' : 'founding_member';
+    // Studio billing: 'annual' only when explicitly asked for; anything else is monthly.
+    const BILLING = (TIER === 'studio' && params.get('billing') === 'annual') ? 'annual' : 'monthly';
 
     if (TIER === 'studio') {
-      document.getElementById('signup-h1').textContent = 'Start your Studio trial';
-      document.getElementById('signup-sub').textContent = '$27/month · 14-day free trial · cancel anytime.';
+      document.getElementById('signup-h1').textContent = BILLING === 'annual'
+        ? 'Start your Studio Annual trial'
+        : 'Start your Studio trial';
+      document.getElementById('signup-sub').textContent = BILLING === 'annual'
+        ? '$24/month, billed $288 yearly · 7-day free trial · cancel anytime.'
+        : '$27/month · 7-day free trial · cancel anytime.';
       var fln=document.getElementById('founding-license-note'); if(fln) fln.style.display='none';
     }
 
@@ -126,7 +132,7 @@
 
       const { data, error } = await sb.auth.signUp({
         email, password,
-        options: { data: { parent_name: parentName, tier: TIER } }
+        options: { data: { parent_name: parentName, tier: TIER, billing: BILLING } }
       });
 
       if (error) {
@@ -156,7 +162,7 @@
       msg.textContent = 'Setting up payment…';
 
       const { data, error } = await sb.functions.invoke('create-checkout-session', {
-        body: { tier: TIER }
+        body: { tier: TIER, billing: BILLING }
       });
 
       if (error || !data || !data.url) {
