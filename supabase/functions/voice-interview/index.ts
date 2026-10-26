@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
 // Supabase Edge Function: voice-interview (v2, 2026-09-22)
 // Powers the "Getting to know you" interview in app.html's Voice Profile tab.
@@ -158,8 +159,36 @@ async function callModel(
   throw new Error(errors.join(" | ") || "no provider available");
 }
 
+// ---- Paid-members gate (audit 2026-10-26, C2) ------------------------------
+// Only accounts with an active or trialing membership may use this function,
+// so unpaid signups can't spend the project's AI credits.
+async function requirePaid(req: Request): Promise<{ ok: true } | { ok: false; status: number; body: Record<string, string> }> {
+  const authHeader = req.headers.get("Authorization") || "";
+  const url = Deno.env.get("SUPABASE_URL");
+  const pubRaw = Deno.env.get("SUPABASE_PUBLISHABLE_KEYS");
+  const anon = pubRaw ? JSON.parse(pubRaw).default : Deno.env.get("SUPABASE_ANON_KEY");
+  if (!url || !anon || !authHeader) {
+    return { ok: false, status: 401, body: { error: "unauthorized", message: "Please log in again." } };
+  }
+  const client = createClient(url, anon, { global: { headers: { Authorization: authHeader } } });
+  const { data: userData } = await client.auth.getUser();
+  const user = userData?.user;
+  if (!user) return { ok: false, status: 401, body: { error: "unauthorized", message: "Please log in again." } };
+  const { data, error } = await client.from("profiles").select("subscription_status").eq("id", user.id).single();
+  if (error) {
+    return { ok: false, status: 503, body: { error: "membership_check_failed", message: "We couldn't confirm your membership just now. Try again in a moment." } };
+  }
+  if (!["active", "trialing"].includes(String(data?.subscription_status || ""))) {
+    return { ok: false, status: 402, body: { error: "payment_required", message: "Your BrandParent membership isn't active yet. Finish checkout to use this." } };
+  }
+  return { ok: true };
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS_HEADERS });
+
+  const gate = await requirePaid(req);
+  if (!gate.ok) return new Response(JSON.stringify(gate.body), { status: gate.status, headers: JSON_HEADERS });
 
   try {
     const keys = { anthropic: Deno.env.get("ANTHROPIC_API_KEY"), gemini: Deno.env.get("GEMINI_API_KEY") };

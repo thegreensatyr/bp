@@ -110,24 +110,41 @@ async function igImageUrl(img: ResolvedMedia, media: DraftMedia): Promise<string
   return await media.storeDerived(img, "ig.jpg", jpeg, "image/jpeg");
 }
 
-async function igWaitReady(containerId: string, token: string, hint = "", maxMs = 90_000) {
+async function igWaitReady(containerId: string, token: string, hint = "", maxMs = 90_000, kind: "video" | "image" = "video") {
   const start = Date.now();
+  let first = true;
   while (Date.now() - start < maxMs) {
-    await deps.sleep(3000);
+    await deps.sleep(kind === "image" && first ? 1500 : 3000);
+    first = false;
     const r = await fetch(`${GRAPH}/${containerId}?fields=status_code,status&access_token=${encodeURIComponent(token)}`);
     const d: any = await r.json().catch(() => ({}));
-    if (d.status_code === "FINISHED") return;
+    if (d.status_code === "FINISHED" || d.status_code === "PUBLISHED") return;
     if (d.status_code === "ERROR" || d.status_code === "EXPIRED") {
+      if (kind === "image") throw new Error("instagram_image_processing_failed: Instagram couldn't process this image (" + String(d.status || d.status_code).slice(0, 200) + "). Use a JPEG between 4:5 and 1.91:1, under 8 MB." + hint);
       throw new Error("instagram_video_processing_failed: Instagram couldn't process this video (" + String(d.status || d.status_code).slice(0, 200) + "). Reels need H.264/HEVC MP4, 23–60 fps, at most 1920 px wide." + hint);
     }
   }
+  if (kind === "image") throw new Error("instagram_image_timeout: Instagram was still processing the image after " + Math.round(maxMs / 1000) + " seconds, so it wasn't published. Try Publish again in a minute.");
   throw new Error("instagram_video_timeout: Instagram was still processing the video after 90 seconds, so it wasn't published. Try Publish again in a minute.");
+}
+
+/** media_publish with one retry if Instagram still says the media isn't ready (error subcode 2207027). */
+async function igPublish(igUserId: string, creationId: string, token: string) {
+  try {
+    return await igPost(`${igUserId}/media_publish`, { creation_id: creationId, access_token: token }, "publish");
+  } catch (e) {
+    const msg = String(e);
+    if (!msg.includes("2207027") && !msg.includes("Media ID is not available")) throw e;
+    await deps.sleep(5000);
+    return await igPost(`${igUserId}/media_publish`, { creation_id: creationId, access_token: token }, "publish");
+  }
 }
 
 export async function publishToInstagram(igUserId: string, token: string, content: string, plan: MediaPlan, media: DraftMedia): Promise<PublishResult> {
   if (plan.use === "images" && plan.images.length === 1) {
     const c = await igPost(`${igUserId}/media`, { image_url: await igImageUrl(plan.images[0], media), caption: content, access_token: token }, "container");
-    const p = await igPost(`${igUserId}/media_publish`, { creation_id: c.id, access_token: token }, "publish");
+    await igWaitReady(c.id, token, "", 45_000, "image");
+    const p = await igPublish(igUserId, c.id, token);
     return { ok: true, post_id: p.id };
   }
   if (plan.use === "images") {
@@ -136,8 +153,10 @@ export async function publishToInstagram(igUserId: string, token: string, conten
       const c = await igPost(`${igUserId}/media`, { image_url: await igImageUrl(img, media), is_carousel_item: true, access_token: token }, "container");
       children.push(String(c.id));
     }
+    for (const id of children) await igWaitReady(id, token, "", 45_000, "image");
     const car = await igPost(`${igUserId}/media`, { media_type: "CAROUSEL", children: children.join(","), caption: content, access_token: token }, "carousel");
-    const p = await igPost(`${igUserId}/media_publish`, { creation_id: car.id, access_token: token }, "publish");
+    await igWaitReady(car.id, token, "", 45_000, "image");
+    const p = await igPublish(igUserId, car.id, token);
     return { ok: true, post_id: p.id };
   }
   if (plan.use === "video") {
@@ -145,7 +164,7 @@ export async function publishToInstagram(igUserId: string, token: string, conten
     await igWaitReady(c.id, token, plan.video.moovFirst === false
       ? " This file has its index (moov atom) at the end; re-export it with \"fast start\" / \"optimize for web\" turned on."
       : "");
-    const p = await igPost(`${igUserId}/media_publish`, { creation_id: c.id, access_token: token }, "publish");
+    const p = await igPublish(igUserId, c.id, token);
     return { ok: true, post_id: p.id };
   }
   throw new Error("instagram_needs_image: Instagram requires an image or video with every post — add one to this draft first.");

@@ -1,1 +1,8 @@
 /tt-media/*  https://owxaolqikmgtlegtficq.supabase.co/storage/v1/object/public/tiktok-media/:splat  200
+
+# Internal files are kept in the repo but never served (site audit 2026-10-26, C5)
+/supabase/*  /404.html  404!
+/docs/*      /404.html  404!
+/shots/*     /404.html  404!
+/preview/*   /404.html  404!
+/PLAN.md     /404.html  404!

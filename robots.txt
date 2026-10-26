@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /app
+Disallow: /login
+Disallow: /signup
+Disallow: /forgot-password
+Disallow: /update-password
+
+Sitemap: https://brandparent.app/sitemap.xml

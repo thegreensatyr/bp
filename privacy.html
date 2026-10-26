@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Privacy Policy — Brandparent</title>
+<title>Privacy Policy — BrandParent</title>
+<meta name="description" content="How BrandParent collects, uses and protects your data, including connected social accounts, AI features and payments.">
+<link rel="canonical" href="https://brandparent.app/privacy">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -33,11 +35,11 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="logo" href="index.html"><img src="brandparent-logo.png" alt="" onerror="this.style.display='none'">Brandparent</a>
+  <a class="logo" href="index.html"><img src="brandparent-logo.png" alt="" onerror="this.style.display='none'">BrandParent</a>
   <h1>Privacy Policy</h1>
-  <div class="updated">Last updated July 31, 2026</div>
+  <div class="updated">Last updated October 26, 2026</div>
 
-  <div class="note">Plain-language summary written by the Brandparent team, not a law firm. If you're relying on this for a compliance decision (GDPR, CCPA, or otherwise), have your own counsel review it.</div>
+  <div class="note">Plain-language summary written by the BrandParent team, not a law firm. If you're relying on this for a compliance decision (GDPR, CCPA, or otherwise), have your own counsel review it.</div>
 
   <h2>1. What we collect</h2>
   <table>
@@ -45,7 +47,9 @@
     <tr><td>Email address, password (hashed)</td><td>To create and secure your account.</td></tr>
     <tr><td>Cubicle details — brand name, tone, audience, signature phrases, lexicon</td><td>To power the voice profile and Bleed Check features you set up.</td></tr>
     <tr><td>Drafts and post content you write</td><td>To save your work, run Bleed Check, and publish or schedule posts.</td></tr>
-    <tr><td>Access tokens for social accounts you connect (Facebook, Instagram, Bluesky, LinkedIn, TikTok, Discord webhook URLs, etc.)</td><td>To post to that platform on your behalf, for the one cubicle you connected it to.</td></tr>
+    <tr><td>Logos, background images, and images or videos you attach to posts</td><td>To style your cubicles and publish the posts you create.</td></tr>
+    <tr><td>Billing status — your plan, Stripe customer ID and payment date (never your card number, which only Stripe sees)</td><td>To know which plan you're on.</td></tr>
+    <tr><td>Access tokens for social accounts you connect (TikTok, Bluesky, Tumblr, Discord webhook URLs, Facebook, Instagram, LinkedIn, Pinterest)</td><td>To post to that platform on your behalf, for the one cubicle you connected it to.</td></tr>
     <tr><td>Basic usage data (login times, error logs)</td><td>To keep the service running and debug problems.</td></tr>
   </table>
 
@@ -57,10 +61,10 @@
   </ul>
 
   <h2>3. Where it's stored</h2>
-  <p>Brandparent runs on Supabase (Postgres + authentication), with access to your data restricted by row-level security so only your own account can read or write it. Automated scheduled publishing runs inside that same database on a fixed schedule, using a secret credential that isn't exposed publicly.</p>
+  <p>BrandParent runs on Supabase (Postgres + authentication), with access to your data restricted by row-level security so only your own account can read or write it. Automated scheduled publishing runs inside that same database on a fixed schedule, using a secret credential that isn't exposed publicly.</p>
 
   <h2>4. Third parties we send data to</h2>
-  <p>When you connect a social account and publish or schedule content, we send that content (and, if included, an image URL) directly to the platform you connected — for example, Meta's Graph API for Facebook/Instagram, Bluesky's AT Protocol servers, LinkedIn's API, or TikTok's Content Posting API. We use Google's Gemini API (or Anthropic's Claude API, once configured) to power the optional "Optimize caption" feature; the draft text you submit for optimization is sent to that provider to generate a rewritten version, per their own data-use terms.</p>
+  <p>When you connect a social account and publish or schedule content, we send that content (and, if included, an image URL) directly to the platform you connected — for example, Meta's Graph API for Facebook/Instagram, Bluesky's AT Protocol servers, LinkedIn's API, or TikTok's Content Posting API. We use Anthropic's Claude API (with Google's Gemini API as a backup) to power the optional "Optimize caption" feature and the voice interview; the text you submit is sent to that provider to generate a response, per their own data-use terms. Payments are handled by Stripe, and the website is hosted by Netlify.</p>
 
   <h2>5. Your choices</h2>
   <ul>
@@ -73,7 +77,7 @@
   <p>We use only what's needed to keep you logged in (an authentication session). We don't run third-party ad-tracking cookies.</p>
 
   <h2>7. Children</h2>
-  <p>Brandparent isn't intended for anyone under 18. We don't knowingly collect data from children.</p>
+  <p>BrandParent isn't intended for anyone under 18. We don't knowingly collect data from children.</p>
 
   <h2>8. Changes</h2>
   <p>We'll update the date at the top of this page whenever this policy changes.</p>
@@ -81,7 +85,7 @@
   <h2>9. Contact</h2>
   <p>Questions, data requests, or deletion requests: <a href="mailto:thegreensatyr@gmail.com">thegreensatyr@gmail.com</a>.</p>
 
-  <div class="foot"><a href="terms.html">Terms of Service</a> · <a href="index.html">Back to Brandparent.app</a></div>
+  <div class="foot"><a href="terms.html">Terms of Service</a> · <a href="index.html">Back to BrandParent.app</a></div>
 </div>
 </body>
 </html>
