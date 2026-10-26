@@ -557,9 +557,11 @@
   <div class="content" id="content-root">
     <div id="logo-watermark" aria-hidden="true"></div>
 
+    <div id="launch-quest"></div>
+
     <div id="no-cubicles" class="empty-state" style="display:none">
-      <h2>Set up your first cubicle</h2>
-      <p>Give one of your brands its own room — voice, audience, and vocabulary. Bleed Check learns as you go.</p>
+      <h2>Give your first brand a home</h2>
+      <p>One room per brand — its own look, voice, and accounts. About a minute to start, and Bleed Check learns as you go.</p>
       <button class="btn btn-brand" onclick="openCubicleModal()">+ Create a cubicle</button>
     </div>
 
@@ -828,7 +830,7 @@
         <div class="voice-grid">
           <div class="card full" id="interview-card">
             <h3>Getting to know you</h3>
-            <p style="font-size:.85rem;color:var(--muted);margin-bottom:14px">A short guided interview that fills out this cubicle's tone, audience, signature phrases, lexicon, and never-says for you — nothing is saved until you review and apply it below.</p>
+            <p style="font-size:.85rem;color:var(--muted);margin-bottom:14px">A short guided chat (about 5 minutes) that fills out this cubicle's tone, audience, signature phrases, lexicon, and never-says for you. No wrong answers — talk like you'd talk to a fan. Nothing saves until you say so.</p>
             <div id="interview-start-row">
               <button class="btn btn-brand" onclick="startInterview()" id="interview-start-btn">Start interview</button>
             </div>
@@ -839,7 +841,7 @@
                 <button class="btn btn-brand" onclick="sendInterviewAnswer()" id="interview-send-btn">Send</button>
               </div>
               <div id="interview-done-row" style="display:none;margin-top:14px">
-                <button class="btn btn-brand" onclick="applyInterviewProfile()">Apply these answers to the Voice Profile below</button>
+                <button class="btn btn-brand" onclick="applyInterviewProfile()">Save these answers as my voice</button>
                 <button class="btn btn-ghost" onclick="resetInterview()">Start over</button>
               </div>
             </div>
@@ -892,12 +894,9 @@
         <div class="section-head"><span class="step-n">+</span> Connect a platform</div>
         <div class="connect-grid">
           <div class="card connect-card">
-            <h3>Facebook &amp; Instagram</h3>
-            <p class="field-help">One Facebook Page (and its linked Instagram) per brand.</p>
-            <div class="comp-actions">
-              <button class="btn btn-brand" onclick="connectMeta()">Connect Facebook &amp; Instagram</button>
-            </div>
-            <p style="font-size:.78rem;color:var(--muted);margin-top:12px" id="conn-dev-note">Note: this app is still in Meta's development mode, so only accounts with a role on the Brandparent Meta app (currently just you) can complete this connection until it passes App Review.</p>
+            <h3>Facebook &amp; Instagram <span class="bp-soon">Coming soon</span></h3>
+            <p class="field-help">One Facebook Page (and its linked Instagram) per brand. Meta is reviewing BrandParent now — we'll switch this on for everyone the moment they approve.</p>
+            <p style="font-size:.78rem;color:var(--muted);margin-top:12px" id="conn-dev-note">Already set up as a Meta tester for BrandParent? <a href="#" onclick="connectMeta();return false;" style="color:var(--brand-text,var(--brand));font-weight:700">Connect anyway</a></p>
           </div>
 
           <div class="card connect-card">
@@ -910,7 +909,15 @@
 
           <div class="card connect-card">
             <h3>Bluesky</h3>
-            <p class="field-help">No developer approval needed — generate a free <b>App Password</b> at bsky.app → Settings → App Passwords (not your main login password), then enter it here for this cubicle only.</p>
+            <p class="field-help">No approval needed — just a free <b>App Password</b> (a separate password made just for apps, so your real login stays private).</p>
+            <div class="bp-helper">
+              <span class="k">About 2 minutes</span>
+              <ol>
+                <li>Open <a href="https://bsky.app/settings/app-passwords" target="_blank" rel="noopener">Bluesky App Passwords</a> (log in if asked).</li>
+                <li>Tap <b>Add App Password</b>, name it "BrandParent", leave direct messages off, and create it.</li>
+                <li>Copy the code it shows (looks like <b>xxxx-xxxx-xxxx-xxxx</b>) and paste it below with your handle.</li>
+              </ol>
+            </div>
             <label>Handle</label>
             <input type="text" id="bsky-handle" placeholder="e.g. djgreensatyr.bsky.social">
             <label>App Password</label>
@@ -923,7 +930,16 @@
 
           <div class="card connect-card" id="discord-card">
             <h3>Discord</h3>
-            <p class="field-help">Posts into one channel of your Discord server, using this cubicle's name and logo. No developer app needed — in Discord open <b>Server Settings → Integrations → Webhooks → New Webhook</b>, pick the channel, then <b>Copy Webhook URL</b> and paste it here. Treat that URL like a password: anyone who has it can post in that channel. BrandParent stores it privately and never shows it again.</p>
+            <p class="field-help">Posts into one channel of your Discord server, using this cubicle's name and logo. No developer app needed.</p>
+            <div class="bp-helper">
+              <span class="k">About 2 minutes · you need to own or manage the server</span>
+              <ol>
+                <li>In Discord, open your server → <b>Server Settings</b> → <b>Integrations</b> → <b>Webhooks</b>.</li>
+                <li>Click <b>New Webhook</b> and choose the channel this brand should post in.</li>
+                <li>Click <b>Copy Webhook URL</b> and paste it below.</li>
+              </ol>
+            </div>
+            <p class="field-help">Keep that link private like a password — BrandParent stores it safely and never shows it again.</p>
             <label>Webhook URL</label>
             <input type="password" id="discord-webhook" placeholder="https://discord.com/api/webhooks/…" autocomplete="off" spellcheck="false">
             <label>Label <span class="label-hint">(optional — e.g. "GreenSatyr #announcements")</span></label>
@@ -989,10 +1005,21 @@
 <div class="modal-bg" id="cubicle-modal">
   <div class="modal modal-wide" id="cubicle-modal-inner">
     <h3>New cubicle</h3>
-    <div class="sub">One room, one voice. Set its name, logo, and brand colors now — you can fine-tune fonts and run the voice interview after.</div>
+    <div class="sub">One room, one voice. The name is the only must — about 1 minute. Everything else can wait.</div>
     <label>Brand name</label>
-    <input type="text" id="m-name" placeholder="e.g. Satyr Arcana">
-    <label>Initials (shows on the badge until you add a logo)</label>
+    <input type="text" id="m-name" placeholder="e.g. Satyr Arcana" oninput="onNewCubicleNameInput()">
+
+    <div class="m-detect">
+      <label style="margin:0">Have a website for this brand? <span style="font-weight:400;text-transform:none;font-size:.78rem">(optional)</span></label>
+      <div class="field-help" style="margin-top:2px">Paste it and we'll pull your colors and fonts for you.</div>
+      <div class="row">
+        <input type="text" inputmode="url" autocomplete="url" id="m-site-url" placeholder="yourbrand.com" onkeydown="if(event.key==='Enter'){event.preventDefault();detectForNewCubicle();}">
+        <button class="btn btn-brand" type="button" onclick="detectForNewCubicle()" id="m-detect-btn">Grab my look</button>
+      </div>
+      <div class="m-detect-out" id="m-detect-out"></div>
+    </div>
+
+    <label>Initials <span style="font-weight:400;text-transform:none;font-size:.78rem">(optional — we'll use the first letters of the name)</span></label>
     <input type="text" id="m-initials" maxlength="3" placeholder="e.g. SA">
 
     <label style="margin-top:14px">Logo <span style="font-weight:400;text-transform:none;font-size:.78rem">(optional — add it now or later)</span></label>
@@ -1005,9 +1032,9 @@
     </div>
     <div class="field-help" id="m-logo-note">PNG, JPG, WEBP, or SVG, up to 5MB.</div>
 
-    <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--line)">
-      <label style="margin-bottom:2px">Brand colors</label>
-      <div class="field-help" style="margin-top:0;margin-bottom:12px">These four colors are what set this cubicle apart — pick them for real contrast, not just to fill in the boxes.</div>
+    <details class="fold" id="m-colors-fold" style="margin-top:18px;padding-top:14px;border-top:1px solid var(--line)">
+      <summary>Brand colors <span class="step-hint" id="m-colors-hint">we've picked a starter set — open to change them</span></summary>
+      <div class="field-help" style="margin-top:8px;margin-bottom:12px">These four colors are what set this cubicle apart — pick them for real contrast, not just to fill in the boxes. You can change them anytime under Brand &amp; voice.</div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 20px">
         <div class="color-field">
@@ -1036,11 +1063,11 @@
         </div>
       </div>
 
-      <div class="mini-preview" id="m-mini-preview">
-        <div class="h" id="m-preview-heading">This is how it feels</div>
-        <div class="b" id="m-preview-body">Sample caption text — roughly how your composer and preview will look.</div>
-      </div>
       <div class="contrast-warn" id="m-contrast-warn"></div>
+    </details>
+    <div class="mini-preview" id="m-mini-preview">
+      <div class="h" id="m-preview-heading">This is how it feels</div>
+      <div class="b" id="m-preview-body">Sample caption text — roughly how your composer and preview will look.</div>
     </div>
 
     <div class="modal-actions">
@@ -1071,6 +1098,7 @@
 <script src="js/supabase-client.js"></script>
 <script src="js/media-rules.js"></script>
 <script src="js/media-upload.js"></script>
+<script src="js/launch-quest.js"></script>
 <script>
 const COLORS = ['#1b5e20','#4a148c','#1565c0','#26374a','#5f7d54','#6b1620','#9B7FC4','#c0392b','#b8860b','#006d77'];
 const BG_COLORS = ['#faf7f2','#ffffff','#1c1b2e','#26374a','#0f1720','#f4ede2'];
@@ -1305,6 +1333,7 @@ async function init() {
   const paidStatuses = ['active', 'trialing'];
   let status = profile && profile.subscription_status;
 
+  if (params.get('checkout') === 'success') window.BP_JUST_PAID = true;
   if (params.get('checkout') === 'success' && !paidStatuses.includes(status)) {
     // Stripe just redirected back — the webhook may take a couple seconds to land.
     document.getElementById('no-cubicles').style.display = 'none';
@@ -1319,6 +1348,7 @@ async function init() {
       status = p2 && p2.subscription_status;
     }
     window.history.replaceState({}, '', 'app.html');
+    if (!paidStatuses.includes(status)) toast('Your payment is still being confirmed by Stripe. Give it a minute, then refresh this page — you won\'t be charged twice.', 'info', { duration: 0 });
     document.getElementById('paywall-btn').style.display = '';
     document.getElementById('paywall-tier-toggle').style.display = '';
   }
@@ -1340,6 +1370,8 @@ async function init() {
   document.getElementById('paywall').style.display = 'none';
 
   await loadCubicles();
+  if (window.BP_JUST_PAID && params.get('checkout') === 'success') window.history.replaceState({}, '', 'app.html');
+  try { await BPQuest.start(); } catch (e) { console.error('Launch Quest failed to start', e); }
 
   if (tutorialsEnabled && cubicles.length === 0) {
     // Give the empty-state screen a moment to actually render before
@@ -1354,7 +1386,7 @@ async function init() {
       await setBrand(pickId);
       await openFbPick(pickId);
     } else {
-      alert('Facebook connected, but that brand could not be found. Open the brand and connect Facebook again.');
+      toast('Facebook connected, but that brand could not be found. Open the brand and connect Facebook again.', 'error');
     }
   } else if (params.get('pick_tumblr')) {
     const pickId = params.get('pick_tumblr');
@@ -1364,14 +1396,15 @@ async function init() {
       await renderConnections();
       await openTumblrPick(pickId);
     } else {
-      alert('Tumblr connected, but that brand could not be found. Open the brand and connect Tumblr again.');
+      toast('Tumblr connected, but that brand could not be found. Open the brand and connect Tumblr again.', 'error');
     }
   } else if (params.get('connected')) {
-    alert('Connected: ' + params.get('connected'));
+    const connLabel = PLATFORM_LABEL[params.get('connected')] || params.get('connected');
     window.history.replaceState({}, '', 'app.html');
     await renderConnections();
+    if (!(await BPQuest.onConnected())) toast(connLabel + ' is connected to ' + (active ? active.name : 'this brand') + '. One less tab to juggle.', 'success', { title: 'Connected' });
   } else if (params.get('connect_error')) {
-    alert('Connection failed: ' + params.get('connect_error'));
+    toast("That connection didn't go through — it happens to everyone. " + BPQuest.friendlyError(null, params.get('connect_error')) + ' Try connecting again from the Accounts tab.', 'error', { title: 'Not connected yet' });
     window.history.replaceState({}, '', 'app.html');
   }
 }
@@ -1635,9 +1668,12 @@ function applyInterviewProfile() {
   renderChips('v-lex', active.lexicon || [], 'lexicon', false);
   renderChips('v-never', active.never_says || [], 'never_says', true);
 
-  const note = document.getElementById('save-note');
-  note.style.color = 'var(--muted)';
-  note.textContent = 'Applied — review below, then click "Save voice profile" to keep it.';
+  saveVoice().then(ok => {
+    if (!ok) return;
+    const note = document.getElementById('save-note');
+    note.style.color = 'var(--muted)';
+    note.textContent = 'Saved ✓ — tweak anything below and hit "Save voice profile" again if you change something.';
+  });
 }
 
 const CURATED_HEADING_FONTS = ['Fraunces','Playfair Display','Cormorant Garamond','DM Serif Display','Libre Baskerville','Bitter','Cinzel','Cinzel Decorative','Abril Fatface','Bebas Neue','Oswald','Anton','Archivo Black','Alfa Slab One','Righteous','Lobster','Pacifico','Permanent Marker','Special Elite','IM Fell English','UnifrakturMaguntia','Pirata One','Creepster','Metal Mania','Rye','Monoton','Montserrat','Josefin Sans','Space Grotesk'];
@@ -2676,24 +2712,27 @@ async function saveVoice() {
   const { error } = await sb.from('cubicles').update(patch).eq('id', active.id);
   btn.disabled = false; btn.textContent = 'Save voice profile';
 
-  if (error) { note.textContent = 'Error: ' + error.message; note.style.color = '#c0392b'; return; }
+  if (error) { note.textContent = 'Not saved yet: ' + BPQuest.friendlyError(null, error.message); note.style.color = '#c0392b'; return false; }
   Object.assign(active, patch);
   const idx = cubicles.findIndex(c => c.id === active.id);
   if (idx > -1) cubicles[idx] = active;
   playRewardTone();
   note.style.color = 'var(--muted)';
   note.textContent = 'Saved ✓';
-  setTimeout(() => note.textContent = '', 2500);
+  setTimeout(() => { if (note.textContent === 'Saved ✓') note.textContent = ''; }, 2500);
   runBleedCheck();
+  BPQuest.onVoiceSaved();
+  return true;
 }
 
 async function deleteCubicle() {
   if (!confirm(`Delete "${active.name}" and all its drafts? This can't be undone.`)) return;
   await ensureFreshSession();
   const { error } = await sb.from('cubicles').delete().eq('id', active.id);
-  if (error) { alert('Error: ' + error.message); return; }
+  if (error) { toast(BPQuest.friendlyError(null, error.message), 'error', { title: 'Couldn\'t delete that brand' }); return; }
   active = null;
   await loadCubicles();
+  BPQuest.refresh({ fetch: true });
 }
 
 let newCubicleTheme = { background: '#faf7f2', text: '#1c1b2e', headline: COLORS[0], secondary: '#c9c6d3' };
@@ -2702,6 +2741,11 @@ let newCubicleLogoFile = null;
 function openCubicleModal() {
   document.getElementById('m-name').value = '';
   document.getElementById('m-initials').value = '';
+  document.getElementById('m-site-url').value = '';
+  document.getElementById('m-detect-out').innerHTML = '';
+  document.getElementById('m-colors-fold').open = false;
+  document.getElementById('m-colors-hint').textContent = "we've picked a starter set — open to change them";
+  newCubicleFonts = { heading: null, body: null };
   newCubicleLogoFile = null;
   document.getElementById('m-logo-file').value = '';
   document.getElementById('m-logo-preview-img').style.display = 'none';
@@ -2722,8 +2766,48 @@ function openCubicleModal() {
   });
   updateNewCubiclePreview();
   document.getElementById('cubicle-modal').classList.add('show');
+  setTimeout(() => { const n = document.getElementById('m-name'); if (n) n.focus(); }, 60);
 }
 function closeCubicleModal() { document.getElementById('cubicle-modal').classList.remove('show'); }
+
+let newCubicleFonts = { heading: null, body: null };
+function onNewCubicleNameInput() {
+  const v = document.getElementById('m-name').value.trim();
+  document.getElementById('m-preview-heading').textContent = v || 'This is how it feels';
+}
+// Same detect-site-theme function the Brand & voice tab uses — here it fills the
+// new cubicle's starter colors/fonts so a brand looks like itself from minute one.
+async function detectForNewCubicle() {
+  const input = document.getElementById('m-site-url');
+  const out = document.getElementById('m-detect-out');
+  const btn = document.getElementById('m-detect-btn');
+  let url = input.value.trim();
+  if (!url) { out.textContent = 'Paste your website address first — or skip this, it\'s optional.'; input.focus(); return; }
+  if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  btn.disabled = true; btn.textContent = 'Looking…';
+  out.textContent = 'Reading your site…';
+  try {
+    const { data, error } = await sb.functions.invoke('detect-site-theme', { body: { url } });
+    if (error) throw new Error(await fnErrorMessage(error));
+    if (!data || !data.ok || !data.suggested) throw new Error((data && data.error) || 'We couldn\'t read colors from that page.');
+    const sg = data.suggested;
+    THEME_FIELDS.forEach(k => { if (isHex(sg[k])) setNewCubicleColor(k, sg[k]); });
+    newCubicleFonts = { heading: sg.heading_font || null, body: sg.body_font || null };
+    if (newCubicleFonts.heading) ensureFontLoaded(newCubicleFonts.heading);
+    if (newCubicleFonts.body) ensureFontLoaded(newCubicleFonts.body);
+    const ph = document.getElementById('m-preview-heading');
+    const pb = document.getElementById('m-preview-body');
+    if (ph) ph.style.fontFamily = newCubicleFonts.heading ? `'${newCubicleFonts.heading}', serif` : '';
+    if (pb) pb.style.fontFamily = newCubicleFonts.body ? `'${newCubicleFonts.body}', sans-serif` : '';
+    const sw = THEME_FIELDS.map(k => `<span class="sw" style="background:${newCubicleTheme[k]}"></span>`).join('');
+    out.innerHTML = `${sw} <b>Got it.</b> Your colors${newCubicleFonts.heading ? ' and fonts' : ''} are in. Tweak anything that doesn't feel like you.`;
+    document.getElementById('m-colors-hint').textContent = 'pulled from your site — open to tweak';
+    if (typeof BPQuest !== 'undefined') BPQuest.celebrate('small');
+  } catch (e) {
+    out.textContent = "We couldn't read that site (" + BPQuest.friendlyError(null, e.message || String(e)).replace(/\.$/, '') + '). No worries — your starter colors are fine, and you can change them anytime.';
+  }
+  btn.disabled = false; btn.textContent = 'Grab my look';
+}
 
 function renderNewCubicleSwatches(kind) {
   const el = document.getElementById('m-' + kind + '-colors');
@@ -2780,7 +2864,7 @@ function onNewCubicleLogoChange(event) {
 async function createCubicle() {
   const name = document.getElementById('m-name').value.trim();
   const initials = document.getElementById('m-initials').value.trim() || name.slice(0,2).toUpperCase();
-  if (!name) { alert('Give the cubicle a name.'); return; }
+  if (!name) { toast('Give this brand a name first — that\'s the only box you have to fill in.', 'info'); document.getElementById('m-name').focus(); return; }
 
   const btn = document.getElementById('create-cubicle-btn');
   btn.disabled = true; btn.textContent = 'Creating…';
@@ -2793,11 +2877,13 @@ async function createCubicle() {
     secondary_color: newCubicleTheme.secondary,
     background_color: newCubicleTheme.background,
     text_color: newCubicleTheme.text,
+    ...(newCubicleFonts.heading ? { font_heading: newCubicleFonts.heading } : {}),
+    ...(newCubicleFonts.body ? { font_body: newCubicleFonts.body } : {}),
     role: '', audience: '', tone: '',
     signature_phrases: [], lexicon: [], never_says: []
   }).select().single();
 
-  if (error) { btn.disabled = false; btn.textContent = 'Create'; alert('Error: ' + error.message); return; }
+  if (error) { btn.disabled = false; btn.textContent = 'Create'; toast(BPQuest.friendlyError(null, error.message), 'error', { title: 'Brand not created yet' }); return; }
 
   // Logo upload needs the new row's id for its storage path, so it happens
   // right after insert — from Dustin's/the user's side it's still one step.
@@ -2820,10 +2906,11 @@ async function createCubicle() {
   }
 
   btn.disabled = false; btn.textContent = 'Create';
-  playRewardTone();
   closeCubicleModal();
   active = data;
   await loadCubicles();
+  if (newCubicleLogoFile && !data.logo_url) toast('Your brand is ready — the logo didn\'t upload, though. Add it anytime under Brand & voice.', 'info');
+  await BPQuest.onCubicleCreated(data);
 }
 
 async function loadDrafts() {
@@ -2920,6 +3007,7 @@ function runBleedCheck(mode) {
       : `<div class="bleed-item"><b>${escapeHtml(l.term)}</b> is on <b>${escapeHtml(active.name)}</b>'s never-say list <span class="from" style="background:#c0392b">blocked term</span></div>`
     ).join('');
     if (manual || (mode === 'typing' && sameBrand && !wasDirty)) playBleedAlert();
+    if ((manual || mode === 'typing') && leaks.some(l => l.brand)) BPQuest.onLeakCaught();
   } else {
     status.className = 'bleed-status bleed-clean';
     status.textContent = '✓ Clean — this reads as ' + active.name;
@@ -3026,16 +3114,16 @@ function schedDateChanged() {
 
 async function schedulePost() {
   const raw = document.getElementById('draft').value.trim();
-  if (!raw) { alert('Nothing to schedule yet — write a draft first.'); return; }
+  if (!raw) { toast('Nothing to schedule yet — write a few words first.', 'info'); document.getElementById('draft').focus(); return; }
   const dateVal = document.getElementById('sched-date').value;
   const when = schedWhen();
   const imageUrl = document.getElementById('draft-image').value.trim();
   const videoUrl = document.getElementById('draft-video').value.trim();
   const targets = getSelectedPlatforms();
-  if (connections.length && !targets.length) { alert('Every platform is unchecked — check at least one under "Publish to" first.'); return; }
-  if (targets.includes('tiktok') && !ttValidate()) { alert('Finish the TikTok settings first: ' + ttLastProblem); return; }
+  if (connections.length && !targets.length) { toast('Every platform is unchecked — tick at least one under "Publish to" first.', 'info'); return; }
+  if (targets.includes('tiktok') && !ttValidate()) { toast('Almost there — finish the TikTok settings first: ' + ttLastProblem, 'info'); return; }
   const mediaProblem = mediaBusy();
-  if (mediaProblem) { alert(mediaProblem); return; }
+  if (mediaProblem) { toast(mediaProblem, 'info'); return; }
 
   if (!bleedGateOk(raw)) return;
   const schedLabel = (targets.length ? targets : connections.map(a => a.platform)).map(p => PLATFORM_LABEL[p] || p).join(', ') || 'every connected platform';
@@ -3055,26 +3143,26 @@ async function schedulePost() {
     platform_options: buildPlatformOptions(targets)
   }));
 
-  if (error) { alert('Error: ' + error.message); return; }
+  if (error) { toast(BPQuest.friendlyError(null, error.message), 'error', { title: 'Not scheduled yet' }); return; }
   mediaCommitted();
   playRewardTone();
   draftCache[active.id] = { text: '', image: '', video: '' };
   ttResetAfterPost();
   discordResetAfterPost();
   await loadDrafts();
-  alert('Scheduled to ' + active.name + '\'s calendar. It will auto-publish to ' + (targets.length ? targets.join(', ') : 'every connected platform') + ' within 5 minutes of the scheduled time — no need to come back and click publish.');
+  toast('Scheduled to ' + active.name + '\'s calendar. It goes out to ' + (targets.length ? targets.map(p => PLATFORM_LABEL[p] || p).join(', ') : 'every connected platform') + ' within 5 minutes of the time you picked — you don\'t need to come back for it.', 'success', { title: 'On the calendar' });
 }
 
 async function publishNow() {
   const raw = document.getElementById('draft').value.trim();
-  if (!raw) { alert('Nothing to publish yet — write a draft first.'); return; }
+  if (!raw) { toast('Nothing to publish yet — write a few words first.', 'info'); document.getElementById('draft').focus(); return; }
   const imageUrl = document.getElementById('draft-image').value.trim();
   const videoUrl = document.getElementById('draft-video').value.trim();
   const targets = getSelectedPlatforms();
-  if (connections.length && !targets.length) { alert('Every platform is unchecked — check at least one under "Publish to" first.'); return; }
-  if (targets.includes('tiktok') && !ttValidate()) { alert('Finish the TikTok settings first: ' + ttLastProblem); return; }
+  if (connections.length && !targets.length) { toast('Every platform is unchecked — tick at least one under "Publish to" first.', 'info'); return; }
+  if (targets.includes('tiktok') && !ttValidate()) { toast('Almost there — finish the TikTok settings first: ' + ttLastProblem, 'info'); return; }
   const mediaProblem = mediaBusy();
-  if (mediaProblem) { alert(mediaProblem); return; }
+  if (mediaProblem) { toast(mediaProblem, 'info'); return; }
   if (!bleedGateOk(raw)) return;
   const targetLabel = (targets.length ? targets : connections.map(a => a.platform)).map(p => PLATFORM_LABEL[p] || p).join(', ') || 'no connected accounts';
   if (!confirm(`Publish this post as "${active.name}" to ${targetLabel}?`)) return;
@@ -3115,10 +3203,10 @@ async function publishNow() {
       return `✓ ${label}: posted (${r.post_id})`;
     });
     const anyOk = Object.values(data.results || {}).some(r => r.ok);
-    if (anyOk) playRewardTone();
+    if (anyOk) { playRewardTone(); BPQuest.onPublished(); }
     out.innerHTML = lines.map(l => escapeHtml(l)).join('<br>') || 'No connected accounts to publish to for this cubicle — connect one under the Accounts tab.';
   } catch (e) {
-    out.innerHTML = 'Publish failed: ' + escapeHtml(e.message || String(e));
+    out.innerHTML = 'Not published yet: ' + escapeHtml(BPQuest.friendlyError(null, e.message || String(e))) + ' Your words are still saved in the box.';
   }
 
   btn.disabled = false; btn.textContent = '🚀 Publish now';
@@ -3141,7 +3229,7 @@ const PINTEREST_CLIENT_ID = '';
 const TUMBLR_CLIENT_ID = 'IIyvICOVZPkYZ5ZT5v6uqTUgspxB1C3WwIlQe4KQoenU0BEUb3';
 
 function connectTumblr() {
-  if (!TUMBLR_CLIENT_ID) { alert('Tumblr isn\'t connected yet — the Tumblr app still needs to be created. Ask to get this set up.'); return; }
+  if (!TUMBLR_CLIENT_ID) { toast('Tumblr is coming soon — we\'ll let you know the moment it\'s ready.', 'info'); return; }
   const REDIRECT_URI = 'https://owxaolqikmgtlegtficq.supabase.co/functions/v1/tumblr-oauth-callback';
   const scopes = 'basic write offline_access';
   const url = `https://www.tumblr.com/oauth2/authorize?client_id=${encodeURIComponent(TUMBLR_CLIENT_ID)}&response_type=code&scope=${encodeURIComponent(scopes)}&state=${encodeURIComponent(active.id)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
@@ -3188,7 +3276,7 @@ async function saveTumblrPick() {
     if (error || !data || !data.ok) throw new Error((data && (data.message || data.error)) || (error && error.message) || 'unknown error');
     closeTumblrPick();
     await renderConnections();
-    alert('Connected: "' + active.name + '" now posts to the Tumblr blog ' + data.blog_name + '.');
+    if (!(await BPQuest.onConnected())) toast('"' + active.name + '" now posts to the Tumblr blog ' + data.blog_name + '. One less tab to juggle.', 'success', { title: 'Connected' });
   } catch (e) {
     msg.textContent = 'Could not save that blog: ' + e.message;
   } finally {
@@ -3206,7 +3294,7 @@ function renderTumblrCard() {
 }
 
 function connectLinkedIn() {
-  if (!LINKEDIN_CLIENT_ID) { alert('LinkedIn isn\'t connected yet — the developer app still needs to be created. Ask to get this set up.'); return; }
+  if (!LINKEDIN_CLIENT_ID) { toast('LinkedIn is coming soon — we\'ll let you know the moment it\'s ready.', 'info'); return; }
   const REDIRECT_URI = 'https://owxaolqikmgtlegtficq.supabase.co/functions/v1/linkedin-oauth-callback';
   const scopes = ['openid', 'profile', 'w_member_social'].join(' ');
   const url = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(scopes)}&state=${encodeURIComponent(active.id)}`;
@@ -3214,7 +3302,7 @@ function connectLinkedIn() {
 }
 
 function connectTikTok() {
-  if (!TIKTOK_CLIENT_KEY) { alert('TikTok isn\'t connected yet — the developer app still needs to be created. Ask to get this set up.'); return; }
+  if (!TIKTOK_CLIENT_KEY) { toast('TikTok is coming soon — we\'ll let you know the moment it\'s ready.', 'info'); return; }
   const REDIRECT_URI = 'https://owxaolqikmgtlegtficq.supabase.co/functions/v1/tiktok-oauth-callback';
   const scopes = ['user.info.basic', 'video.publish'].join(',');
   const url = `https://www.tiktok.com/v2/auth/authorize/?client_key=${TIKTOK_CLIENT_KEY}&scope=${encodeURIComponent(scopes)}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&state=${encodeURIComponent(active.id)}`;
@@ -3222,7 +3310,7 @@ function connectTikTok() {
 }
 
 function connectPinterest() {
-  if (!PINTEREST_CLIENT_ID) { alert('Pinterest isn\'t connected yet — the developer app still needs to be created. Ask to get this set up.'); return; }
+  if (!PINTEREST_CLIENT_ID) { toast('Pinterest is coming soon — we\'ll let you know the moment it\'s ready.', 'info'); return; }
   const REDIRECT_URI = 'https://owxaolqikmgtlegtficq.supabase.co/functions/v1/pinterest-oauth-callback';
   const scopes = ['boards:read', 'pins:write', 'user_accounts:read'].join(',');
   const url = `https://www.pinterest.com/oauth/?client_id=${PINTEREST_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(scopes)}&state=${encodeURIComponent(active.id)}`;
@@ -3235,8 +3323,8 @@ function connectMeta() {
   const scopes = ['pages_show_list', 'pages_read_engagement', 'pages_manage_posts', 'instagram_basic', 'instagram_content_publish'].join(',');
   const state = active.id;
   const url = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${APP_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(scopes)}&state=${encodeURIComponent(state)}&response_type=code`;
-  alert('You\'ll be sent to Facebook. When it asks which Pages to allow, include the Page for "' + active.name + '". If you allow more than one Page, BrandParent will ask which one belongs to this brand.');
-  window.location.href = url;
+  toast('Sending you to Facebook. When it asks which Pages to allow, include the Page for "' + active.name + '".', 'info', { duration: 0 });
+  setTimeout(() => { window.location.href = url; }, 2200);
 }
 
 let fbPickCubicle = null;
@@ -3284,7 +3372,7 @@ async function saveFbPick() {
     closeFbPick();
     await renderConnections();
     playRewardTone();
-    alert('Connected: "' + active.name + '" now posts to the Facebook Page "' + data.page_name + '"' + (data.instagram ? ' and Instagram @' + data.instagram : '') + '.');
+    if (!(await BPQuest.onConnected())) toast('"' + active.name + '" now posts to the Facebook Page "' + data.page_name + '"' + (data.instagram ? ' and Instagram @' + data.instagram : '') + '. One less tab to juggle.', 'success', { title: 'Connected' });
   } catch (e) {
     msg.textContent = 'Could not connect that Page: ' + e.message;
   } finally {
@@ -3324,9 +3412,10 @@ async function disconnectAccount(accountId, label, btn) {
     const { data, error } = await sb.functions.invoke('disconnect-account', { body: { account_id: accountId } });
     if (error || !data || !data.ok) throw new Error((data && (data.message || data.error)) || (error && error.message) || 'unknown error');
     await renderConnections();
-    if (typeof toast === 'function') toast(label + ' disconnected.');
+    toast(label + ' disconnected.', 'info');
+    BPQuest.refresh();
   } catch (e) {
-    alert('Couldn\'t disconnect ' + label + ': ' + e.message);
+    toast('Couldn\'t disconnect ' + label + ': ' + BPQuest.friendlyError(null, e.message), 'error');
     if (btn) { btn.disabled = false; btn.textContent = 'Disconnect'; }
   }
 }
@@ -3666,13 +3755,14 @@ async function connectDiscord() {
       body: { cubicle_id: active.id, webhook_url: webhookUrl, label: labelEl.value.trim() }
     });
     if (error || !data || !data.ok) throw new Error(await functionErrorMessage(error, data));
-    out.textContent = 'Connected: ' + active.name + ' now posts to Discord (' + data.name + ').';
+    out.textContent = 'Connected: ' + active.name + ' now posts to Discord (' + data.name + '). One less tab to juggle.';
     input.value = '';
     labelEl.value = '';
     await renderConnections();
     playRewardTone();
+    BPQuest.onConnected();
   } catch (e) {
-    out.textContent = 'Connection failed: ' + (e.message || String(e));
+    out.textContent = "That one didn't take — it happens to everyone. " + BPQuest.friendlyError('discord', e.message || String(e));
   }
   btn.disabled = false; btn.textContent = 'Connect Discord';
 }
@@ -3685,7 +3775,7 @@ async function connectBluesky() {
 
   if (!handle || !appPassword) {
     out.style.display = 'block';
-    out.textContent = 'Enter both a handle and an app password first.';
+    out.textContent = 'Fill in both boxes — your handle (like yourname.bsky.social) and the App Password from step 3.';
     return;
   }
 
@@ -3697,13 +3787,15 @@ async function connectBluesky() {
     const { data, error } = await sb.functions.invoke('bluesky-connect', {
       body: { cubicle_id: active.id, handle, app_password: appPassword }
     });
-    if (error) throw error;
-    out.textContent = 'Connected as @' + data.handle + ' for ' + active.name + '.';
+    if (error || !data || data.error) throw new Error(await functionErrorMessage(error, data));
+    out.textContent = 'Connected as @' + data.handle + ' for ' + active.name + '. One less tab to juggle.';
     document.getElementById('bsky-handle').value = '';
     document.getElementById('bsky-password').value = '';
     await renderConnections();
+    playRewardTone();
+    BPQuest.onConnected();
   } catch (e) {
-    out.textContent = 'Connection failed: ' + (e.message || String(e));
+    out.textContent = "That one didn't take — it happens to everyone. " + BPQuest.friendlyError('bluesky', e.message || String(e));
   }
 
   btn.disabled = false; btn.textContent = 'Connect Bluesky';
@@ -3716,7 +3808,7 @@ async function connectBluesky() {
 // matches what's actually on screen instead of a stale step list.
 function firstRunTourSteps() {
   return [
-    { selector: '#no-cubicles .btn-brand', title: 'Start here', text: "Name, initials, logo, and all four brand colors are on this one screen now — no more hunting through tabs to finish setting up a cubicle." },
+    { selector: '#lq-step-brand .lq-go, #no-cubicles .btn-brand', title: 'Start here', text: "Your Launch Quest walks you through setup in five short steps. Start by naming your first brand — paste your website and we'll pull your colors for you." },
     { before: () => document.body.classList.add('acct-open'), selector: '.tutorial-toggle', title: 'Turning this off', text: "Flip this off anytime to stop tutorials from popping up. \"Take the tour\" right above it always brings this back on demand, even with tutorials off." }
   ];
 }
@@ -3726,7 +3818,7 @@ function fullTourSteps() {
     { before: () => showPanel('compose', document.querySelector('.tab[data-panel="compose"]')), selector: '.tab[data-panel="compose"]', title: 'Post', text: "Write a post here for whichever cubicle is active — top to bottom: pick platforms, write, check, add media, then schedule or publish from the bar at the bottom." },
     { selector: '#bleed-status', title: 'Bleed Check™', text: "Stops brand contamination: flags wording that belongs to a different one of your brands before it goes out under the wrong name." },
     { before: () => showPanel('voice', document.querySelector('.tab[data-panel="voice"]')), selector: '.tab[data-panel="voice"]', title: 'Brand & voice', text: "Logo, the four brand colors, fonts, and the guided interview all live here — this is where you'd come back to rebrand a cubicle later." },
-    { selector: '#interview-card', title: 'Getting to know you', text: "A short guided interview that fills out this cubicle's tone, audience, and vocabulary for you — nothing saves until you review and apply it." },
+    { selector: '#interview-card', title: 'Getting to know you', text: "A short guided chat that fills out this cubicle's tone, audience, and vocabulary for you — nothing saves until you say so." },
     { before: () => showPanel('compose', document.querySelector('.tab[data-panel="compose"]')), selector: '#queue-card', title: 'Up next', text: "Everything scheduled for this cubicle sits right beside the composer, so you can see a post land the moment you schedule it." },
     { before: () => document.body.classList.add('acct-open'), selector: '.tutorial-toggle', title: 'Turning this off', text: "Flip this off anytime to stop tutorials from popping up automatically. \"Take the tour\" above it always brings this back on demand." }
   ];
