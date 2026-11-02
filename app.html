@@ -2893,7 +2893,7 @@ async function createCubicle() {
   if (error) { btn.disabled = false; btn.textContent = 'Create'; toast(BPQuest.friendlyError(null, error.message), 'error', { title: 'Brand not created yet' }); return; }
 
   // Logo upload needs the new row's id for its storage path, so it happens
-  // right after insert — from Dustin's/the user's side it's still one step.
+  // right after insert — from the user's side it's still one step.
   if (newCubicleLogoFile) {
     btn.textContent = 'Uploading logo…';
     const fd = new FormData();

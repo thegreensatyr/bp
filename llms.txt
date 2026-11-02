@@ -1,0 +1,20 @@
+# BrandParent
+
+> BrandParent is a multi-brand social media workspace for people who run more than one brand. Each brand gets its own cubicle with its own look, voice and connected accounts, and Bleed Check flags any draft that uses another brand's names or vocabulary before it is published. Founded by B. Xen Zane.
+
+## Product
+- [Home](https://brandparent.app/): features, pricing, FAQ
+- [Live demo, no signup](https://brandparent.app/demo): try Bleed Check with six example brands
+- [Help](https://brandparent.app/help): setup steps, connecting accounts, media limits
+
+## Platforms (November 2026)
+- Live: Bluesky, Tumblr, Discord
+- TikTok: connects; posts stay private until TikTok approves the app
+- Coming soon: Facebook and Instagram (waiting on Meta's review), LinkedIn, Pinterest
+
+## Pricing
+- Founding Member: $97 one-time, lifetime access, 50 spots, 14-day refund
+- Studio: $27/month or $288/year, 7-day free trial
+
+## Legal
+- [Privacy](https://brandparent.app/privacy) · [Terms](https://brandparent.app/terms)
