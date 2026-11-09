@@ -3,6 +3,11 @@
   <url><loc>https://brandparent.app/</loc><lastmod>2026-10-26</lastmod><priority>1.0</priority></url>
   <url><loc>https://brandparent.app/demo</loc><lastmod>2026-10-26</lastmod><priority>0.8</priority></url>
   <url><loc>https://brandparent.app/help</loc><lastmod>2026-10-26</lastmod><priority>0.6</priority></url>
+  <url><loc>https://brandparent.app/blog</loc><lastmod>2026-11-09</lastmod><priority>0.7</priority></url>
+  <url><loc>https://brandparent.app/blog/brand-contamination</loc><lastmod>2026-11-09</lastmod><priority>0.7</priority></url>
+  <url><loc>https://brandparent.app/blog/schedule-bluesky-posts</loc><lastmod>2026-11-09</lastmod><priority>0.5</priority></url>
+  <url><loc>https://brandparent.app/blog/schedule-tumblr-posts</loc><lastmod>2026-11-09</lastmod><priority>0.5</priority></url>
+  <url><loc>https://brandparent.app/blog/discord-webhook-posts</loc><lastmod>2026-11-09</lastmod><priority>0.5</priority></url>
   <url><loc>https://brandparent.app/privacy</loc><lastmod>2026-10-26</lastmod><priority>0.3</priority></url>
   <url><loc>https://brandparent.app/terms</loc><lastmod>2026-10-26</lastmod><priority>0.3</priority></url>
 </urlset>
