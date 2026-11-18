@@ -951,6 +951,17 @@
             <div class="optim-out" id="discord-out"></div>
           </div>
 
+          <div class="card connect-card" id="mastodon-card">
+            <h3>Mastodon</h3>
+            <p class="field-help">No developer app or approval needed — works on any Mastodon server (mastodon.social, your own instance, etc.).</p>
+            <label>Your server</label>
+            <input type="text" id="mastodon-instance" placeholder="e.g. mastodon.social" autocomplete="off" spellcheck="false">
+            <div class="comp-actions" style="margin-top:14px">
+              <button class="btn btn-brand" onclick="connectMastodon()" id="mastodon-connect-btn">Connect Mastodon</button>
+            </div>
+            <div class="optim-out" id="mastodon-out"></div>
+          </div>
+
           <details class="card connect-card fold more-fold">
             <summary>More platforms <span class="step-hint">LinkedIn, Pinterest, Tumblr</span></summary>
             <h3 style="margin-top:12px">LinkedIn</h3>
@@ -3387,7 +3398,7 @@ async function saveFbPick() {
   }
 }
 
-const PLATFORM_LABEL = { facebook: 'Facebook Page', instagram: 'Instagram', bluesky: 'Bluesky', linkedin: 'LinkedIn', tiktok: 'TikTok', pinterest: 'Pinterest', tumblr: 'Tumblr', discord: 'Discord' };
+const PLATFORM_LABEL = { facebook: 'Facebook Page', instagram: 'Instagram', bluesky: 'Bluesky', linkedin: 'LinkedIn', tiktok: 'TikTok', pinterest: 'Pinterest', tumblr: 'Tumblr', discord: 'Discord', mastodon: 'Mastodon' };
 
 async function renderConnections() {
   document.getElementById('conn-brand').textContent = active.name;
@@ -3772,6 +3783,33 @@ async function connectDiscord() {
     out.textContent = "That one didn't take — it happens to everyone. " + BPQuest.friendlyError('discord', e.message || String(e));
   }
   btn.disabled = false; btn.textContent = 'Connect Discord';
+}
+
+async function connectMastodon() {
+  const input = document.getElementById('mastodon-instance');
+  const btn = document.getElementById('mastodon-connect-btn');
+  const out = document.getElementById('mastodon-out');
+  const instance = input.value.trim();
+  out.style.display = 'block';
+
+  if (!instance) {
+    out.textContent = 'Enter your Mastodon server address, like mastodon.social.';
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Connecting…';
+  out.textContent = 'Registering BrandParent with that server…';
+  try {
+    const { data, error } = await sb.functions.invoke('mastodon-connect', {
+      body: { cubicle_id: active.id, instance }
+    });
+    if (error || !data || !data.ok || !data.url) throw new Error(await functionErrorMessage(error, data));
+    out.textContent = 'Sending you to ' + instance + ' to approve the connection…';
+    setTimeout(() => { window.location.href = data.url; }, 600);
+  } catch (e) {
+    out.textContent = "That one didn't take — it happens to everyone. " + BPQuest.friendlyError('mastodon', e.message || String(e));
+    btn.disabled = false; btn.textContent = 'Connect Mastodon';
+  }
 }
 
 async function connectBluesky() {

@@ -340,6 +340,57 @@ export async function publishToPinterest(boardId: string, token: string, content
   return { ok: true, post_id: data.id || "posted", note: plan.note };
 }
 
+// ------------------------------------------------------------------ Mastodon
+
+async function mastodonUploadMedia(instance: string, token: string, bytes: Uint8Array, mime: string, name: string): Promise<string> {
+  const form = new FormData();
+  form.append("file", new Blob([bytes as BlobPart], { type: mime }), name || "media");
+  const resp = await fetch(`https://${instance}/api/v1/media`, {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${token}` },
+    body: form,
+  });
+  const data: any = await resp.json().catch(() => ({}));
+  if (!resp.ok && resp.status !== 202) throw new Error("mastodon_media_upload_error: " + JSON.stringify(data).slice(0, 300));
+  const id = data.id;
+  if (!id) throw new Error("mastodon_media_upload_error: no media id returned");
+  if (resp.status === 202 || !data.url) {
+    // Still processing (common for video) — poll until ready, same shape as Instagram's container wait.
+    for (let attempt = 0; attempt < 20; attempt++) {
+      await deps.sleep(1500);
+      const r = await fetch(`https://${instance}/api/v1/media/${id}`, { headers: { "Authorization": `Bearer ${token}` } });
+      if (r.status === 200) break;
+      if (r.status !== 206) {
+        const d = await r.json().catch(() => ({}));
+        throw new Error("mastodon_media_processing_failed: " + JSON.stringify(d).slice(0, 300));
+      }
+    }
+  }
+  return id;
+}
+
+export async function publishToMastodon(instance: string, token: string, content: string, plan: MediaPlan, media: DraftMedia): Promise<PublishResult> {
+  if (!instance) throw new Error("mastodon_no_instance: this Mastodon connection is missing its server address — disconnect and reconnect it.");
+  const mediaIds: string[] = [];
+  if (plan.use === "images") {
+    for (const img of plan.images.slice(0, LIMITS.maxImages)) {
+      const bytes = await media.bytes(img);
+      mediaIds.push(await mastodonUploadMedia(instance, token, bytes, img.mime || "image/jpeg", img.name || "image.jpg"));
+    }
+  } else if (plan.use === "video") {
+    const bytes = await media.bytes(plan.video);
+    mediaIds.push(await mastodonUploadMedia(instance, token, bytes, plan.video.mime || "video/mp4", plan.video.name || "video.mp4"));
+  }
+  const resp = await fetch(`https://${instance}/api/v1/statuses`, {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${token}`, "content-type": "application/json", "Idempotency-Key": crypto.randomUUID() },
+    body: JSON.stringify({ status: content, media_ids: mediaIds.length ? mediaIds : undefined }),
+  });
+  const data: any = await resp.json().catch(() => ({}));
+  if (!resp.ok) throw new Error("mastodon_post_error: " + JSON.stringify(data).slice(0, 300));
+  return { ok: true, post_id: data.id, post_url: data.url || data.uri };
+}
+
 // ------------------------------------------------------------------ TikTok / Discord adapters
 
 function tiktokMediaInput(plan: MediaPlan, media: DraftMedia): TikTokMediaInput | null {
@@ -403,6 +454,7 @@ export async function publishToAccounts(svc: any, draft: any, accounts: any[], m
         }
         case "tumblr": results.tumblr = await publishToTumblr(svc, acct, draft.content, plan, media); break;
         case "discord": results.discord = await discordPublish(acct.access_token, draft, plan, media, brand); break;
+        case "mastodon": results.mastodon = await publishToMastodon(acct.account_meta?.instance, acct.access_token, draft.content, plan, media); break;
         default: break;
       }
     } catch (e) {
@@ -418,7 +470,7 @@ export function summarize(results: Record<string, PublishResult>) {
   const anySucceeded = vals.some((r) => r.ok);
   const onlySkips = vals.length > 0 && vals.every((r) => !r.ok && r.skipped);
   const allErrors = Object.entries(results).filter(([, r]) => !r.ok).map(([p, r]) => `${p}: ${r.error}`).join(" | ");
-  const order = ["facebook", "instagram", "bluesky", "linkedin", "tiktok", "pinterest", "tumblr", "discord"];
+  const order = ["facebook", "instagram", "bluesky", "linkedin", "tiktok", "pinterest", "tumblr", "discord", "mastodon"];
   const firstPostId = order.map((p) => results[p]?.ok ? results[p]?.post_id : null).find(Boolean) || null;
   return { anySucceeded, onlySkips, allErrors, firstPostId };
 }
